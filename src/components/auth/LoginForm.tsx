@@ -8,6 +8,7 @@ import { fetchAPI, handleAPIResponse } from "../../services/api/fetchApi.config.
 import { theme } from "../../assets/themes/index.ts";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/auth/AuthContext.tsx";
+import { useToast } from "../../contexts/global/ToastContext.tsx";
 
 
 export const LoginForm = () => {
@@ -15,6 +16,7 @@ export const LoginForm = () => {
     const [password, setPassword] = useState('azerty');
     const [loading, setLoading] = useState(false);
     const { setUser, setIsAuthenticated } = useAuth();
+    const { callToast } = useToast();
     const navigate = useNavigate();
 
     const handleChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
@@ -41,12 +43,13 @@ export const LoginForm = () => {
                     (userData) => {
                         setUser(userData);
                         setIsAuthenticated(true);
+                        callToast('success', 'Connexion réussie.');
                         navigate('/home');
                     },
                     (error) => {
                         setUser(null);
                         setIsAuthenticated(false);
-                        console.error(error);
+                        callToast('error', error.message);
                     }
                 );
             } catch (error) {
