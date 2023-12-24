@@ -7,12 +7,14 @@ import { useState, ChangeEvent } from "react";
 import { fetchAPI, handleAPIResponse } from "../../services/api/fetchApi.config.ts";
 import { theme } from "../../assets/themes/index.ts";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/auth/AuthContext.tsx";
 
 
 export const LoginForm = () => {
     const [email, setEmail] = useState('test@example.com');
     const [password, setPassword] = useState('azerty');
     const [loading, setLoading] = useState(false);
+    const { setUser, setIsAuthenticated } = useAuth();
     const navigate = useNavigate();
 
     const handleChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
@@ -37,10 +39,13 @@ export const LoginForm = () => {
                 handleAPIResponse<AuthUser>(
                     response,
                     (userData) => {
-                        console.log(userData)
+                        setUser(userData);
+                        setIsAuthenticated(true);
                         navigate('/home');
                     },
                     (error) => {
+                        setUser(null);
+                        setIsAuthenticated(false);
                         console.error(error);
                     }
                 );
