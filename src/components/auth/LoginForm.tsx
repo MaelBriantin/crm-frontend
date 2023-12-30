@@ -43,13 +43,13 @@ export const LoginForm = () => {
                     (userData) => {
                         setUser(userData);
                         setIsAuthenticated(true);
-                        callToast('success', 'Connexion réussie.');
+                        //callToast('success', 'Connexion réussie.');
                         navigate('/home');
                     },
                     (error) => {
                         setUser(null);
                         setIsAuthenticated(false);
-                        callToast('error', error.message);
+                        callToast('error', error.message, 5000);
                     }
                 );
             } catch (error) {
@@ -86,8 +86,8 @@ const LoginFormStyle = styled.form`
   height: 400px;
   width: 400px;
   border-radius: ${theme.materialDesign.borderRadius.default};
-  box-shadow: ${theme.shadows.card};
-  background: whitesmoke;
+  box-shadow: ${theme.shadows.default};
+  background: white;
   .welcome{
     display: flex;
     justify-content: center;

@@ -1,28 +1,16 @@
-import { useNavigate } from "react-router-dom";
 import { theme } from "../assets/themes/index.ts";
-import { Button } from "../components/global/Button.tsx";
-import { fetchAPI } from "../services/api/fetchApi.config.ts";
 import styled from "styled-components";
 
 export const HomePage = () => {
-    const navigate = useNavigate();
     return (
         <Container>
-            <Welcome>Welcome !</Welcome>
-            <Button value={'Déconnexion'} onClick={async (e) => {
-                e.preventDefault();
-                try {
-                    fetchAPI('/logout', 'POST')
-                    navigate('/login');
-                } catch (e) {
-                    console.error(e);
-                }
-            }} />
+            <Welcome>Accueil</Welcome>
         </Container>
     );
 };
 
 const Container = styled.div`
+    position: relative;
     width: 100%;
     height: 100%;
     display: flex;

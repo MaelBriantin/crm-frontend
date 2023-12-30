@@ -6,7 +6,9 @@ const colors = {
     ancient_white: '#fdf5df',
     background_dark: "#292729",
     // primary: "#67b6b9",
-    primary: "#BB2649",
+    primary: "#BB2649", // viva magenta 
+    // primary: "#317773", // teal
+    // primary: "#4D4DFF", // neon blue
     primary_cake: "#3f7f8e",
     green: "green",
     success: "#60bd4f",
@@ -40,7 +42,8 @@ const fonts= {
         XXXS: "8px",
         XXS: "10px",
         XS: "12px",
-        P0: "15px",
+        S: "14px",
+        P0: "16px",
         P1: "18px",
         P2: "20px",
         P3: "24px",
@@ -74,7 +77,8 @@ const materialDesign = {
         default: '14px'
     },
     borderRadius: {
-        default: '2px'
+        default: '2px',
+        rounded: '4px'
     }
 }
 const gridUnit = 8;
@@ -87,8 +91,9 @@ const borderRadius = {
 const shadows = {
     header: "black 10px 8px 100px",
     frame: "2px 10px 14px 6px rgba(0,0,0,0.2)",
-    card: "-5px 5px 25px 0px rgb(0 0 0 / 20%)"
-
+    card: "-5px 5px 25px 0px rgb(0 0 0 / 20%)",
+    default: "-1px 1px 5px 1px rgb(0 0 0 / 20%)",
+    inset: "inset -1px 1px 5px 2px rgb(0 0 0 / 20%)",
 };
 
 export const theme = {
