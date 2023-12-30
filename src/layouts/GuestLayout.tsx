@@ -19,4 +19,5 @@ const GuestLayoutStyle = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    background: whitesmoke;
 `;
