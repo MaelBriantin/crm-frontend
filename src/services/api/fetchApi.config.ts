@@ -18,8 +18,8 @@ export const fetchAPI = async <D extends object, T extends object>(
   url: string,
   method: string = 'GET',
   data: D | null = null
-): Promise<APIResponseFormat<T>> => {
-  const baseURL: string = 'http://localhost:8000';
+): Promise<{ data: T | null; error: null | APIResponseError }> => {
+  const baseURL: string = import.meta.env.VITE_API_URL as string;
   const xsrfToken: string = decodeURIComponent(getCookie('XSRF-TOKEN'));
   try {
     const options: FetchAPIOptions = {
@@ -70,7 +70,7 @@ export const fetchAPI = async <D extends object, T extends object>(
  *
  * @returns {void}
  */
-export const handleAPIResponse = <T>(response: APIResponseFormat<T>, onSuccess: (data: T) => void, onError: (error: APIResponseError) => void) => {
+export const handleAPIResponse = <T>(response: APIResponseFormat<T>, onSuccess: (data: T[]) => void, onError: (error: APIResponseError) => void) => {
     if (response.data && !response.error) {
       onSuccess(response.data);
     } 
