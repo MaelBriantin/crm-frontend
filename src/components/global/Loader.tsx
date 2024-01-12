@@ -1,17 +1,20 @@
 import styled, { keyframes } from "styled-components";
 import { AiOutlineLoading } from "react-icons/ai";
 import { theme } from "../../assets/themes/index.ts";
-import { useAuthMiddleware } from "../../hooks/useAuthMiddleware.ts";
-import { useCheckAuth } from "../../hooks/useCheckAuth.ts";
+import { useAuthMiddleware } from "../../hooks/auth/useAuthMiddleware.ts";
+import { useCheckAuth } from "../../hooks/auth/useCheckAuth.ts";
 
 export const Loader: React.FC<{ blurry?: boolean }> = ({ blurry = false }) => {
+
   useCheckAuth();
   useAuthMiddleware();
+
   return (
     <LoaderContainer $blurry={blurry}>
       <AiOutlineLoading className={'loader'} />
     </LoaderContainer>
   );
+
 };
 
 const Spinning = keyframes`
@@ -20,7 +23,7 @@ const Spinning = keyframes`
   }
 `
 
-const LoaderContainer = styled.div<{ $blurry?:boolean }>`
+const LoaderContainer = styled.div<{ $blurry?: boolean }>`
   position: absolute;
   top: 0; 
   left: 0;

@@ -4,7 +4,7 @@ import { LoginPage } from "../pages/auth/LoginPage.tsx";
 import { GuestLayout } from "../layouts/GuestLayout.tsx";
 import { AuthenticatedLayout } from "../layouts/AuthenticatedLayout.tsx";
 import { LoadingPage } from "../pages/LoadingPage.tsx";
-import { useCheckAuth } from "../hooks/useCheckAuth.ts";
+import { useCheckAuth } from "../hooks/auth/useCheckAuth.ts";
 import { useAuth } from "../contexts/auth/AuthContext.tsx";
 
 export const Router = () => {

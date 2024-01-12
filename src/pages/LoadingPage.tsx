@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useAuthMiddleware } from "../hooks/useAuthMiddleware";
+import { useAuthMiddleware } from "../hooks/auth/useAuthMiddleware.ts";
 import { Loader } from "../components/global/Loader.tsx";
 
 export const LoadingPage = () => {
