@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-import { fetchAPI } from "../services/api/fetchApi.config"; 
-import { useAuth } from "../contexts/auth/AuthContext";
+import { fetchAPI } from "../../services/api/fetchApi.config"; 
+import { useAuth } from "../../contexts/auth/AuthContext";
+import { firstOf, isEmpty } from "../../utils/helpers/spells";
 
 /**
  * Custom hook to check user authentication status and update the authentication context.
@@ -25,15 +26,13 @@ export const useCheckAuth = (): void => {
         const checkLoggedIn = async (): Promise<void> => {
             try {
                 const response: APIResponseFormat<AuthUser | object | string> = await fetchAPI('/check-auth');
-                if (response.data
-                    && (response.data === 'Not authenticated'
-                        || response.data === 'Unauthenticated')) {
-                    setUser(null);
-                    setIsAuthenticated(false);
+                if (response.data && !isEmpty(response.data)) {
+                    setUser(firstOf(response.data) as AuthUser)
+                    setIsAuthenticated(true);
                     setLoading(false);
                 } else {
-                    setUser(response.data as AuthUser)
-                    setIsAuthenticated(true);
+                    setUser(null);
+                    setIsAuthenticated(false);
                     setLoading(false);
                 }
             } catch (error) {
