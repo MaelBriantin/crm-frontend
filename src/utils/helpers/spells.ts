@@ -32,3 +32,40 @@ export const isEmpty = (element: Array<String | Number> | Object): boolean => {
 export const firstOf = <T>(array: T[]): T | null => {
   return array.length > 0 ? array[0] : null;
 };
+
+
+/**
+ * Sorts an array of objects by a specified key and direction.
+ * 
+ * @template T - The type of objects in the array.
+ * @param {T[]} array - The array to be sorted.
+ * @param {keyof T} key - The key to sort the objects by.
+ * @param {boolean} asc - The direction to sort the objects in (true for ascending, false for descending).
+ * @returns {T[]} - The sorted array.
+ */
+export const sortBy = <T>(array: T[], key: keyof T | null, asc: boolean | null): T[] => {
+  if (key) {
+    return array.sort((a: T, b: T) => {
+      if (asc) {
+        if (a[key] < b[key]) {
+          return -1;
+        }
+        if (a[key] > b[key]) {
+          return 1;
+        }
+        return 0;
+      } else if (!asc) {
+        if (a[key] > b[key]) {
+          return -1;
+        }
+        if (a[key] < b[key]) {
+          return 1;
+        }
+        return 0;
+      } else {
+        return 0;
+      }
+    });
+  }
+  return array;
+};

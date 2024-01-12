@@ -1,6 +1,8 @@
 import React from 'react';
 import { styled, css, RuleSet } from 'styled-components';
 import { theme } from '../../assets/themes';
+import { sortBy } from '../../utils/helpers/spells';
+import { VscChevronDown, VscBlank } from "react-icons/vsc";
 
 type DataTableProps<T> = {
     data: T[];
@@ -11,6 +13,7 @@ type DataTableProps<T> = {
 type ColumnProps = {
     text: string;
     value: string;
+    sortable: boolean;
 };
 
 type TableRowProps = {
@@ -22,18 +25,48 @@ type TableCellProps = {
 };
 
 export const DataTable: React.FC<DataTableProps<any>> = ({ data, columns, selectable = false }) => {
+
+    const [sort, setSort] = React.useState<string | null>(null);
+    const [sortDirection, setSortDirection] = React.useState<boolean>(true);
+
+    const sortedData = sortBy(data, sort, sortDirection);
+
+    const handleSort = (column: ColumnProps) => {
+        if (column.sortable) {
+            if (sort === column.value) {
+                setSortDirection(!sortDirection);
+            } else {
+                setSortDirection(true);
+                setSort(column.value);
+            }
+        }
+    };
+
     return (
         <Container>
             <Table>
                 <thead>
                     <TableRowHeader>
                         {columns.map((column, index) => (
-                            <TableHeader key={index}>{column.text}</TableHeader>
+                            <TableHeader key={index}
+                                onClick={() => handleSort(column)}
+                                $sort={sort === column.value}
+                                $sortable={column.sortable}
+                            >
+                                <ColumnTitle $sort={sort === column.value} $sortDirection={sortDirection}>
+                                    <span className={'columnTitle'}>{column.text}</span>
+                                    <span className={'sortIcon'}>
+                                        {(column.sortable && column.value) === sort 
+                                            ? <VscChevronDown />
+                                            : <VscBlank />  }
+                                    </span>
+                                </ColumnTitle>
+                            </TableHeader>
                         ))}
                     </TableRowHeader>
                 </thead>
                 <tbody>
-                    {data.map((row, rowIndex) => (
+                    {sortedData.map((row, rowIndex) => (
                         <TableRowBody key={rowIndex} $selectable={selectable}>
                             {columns.map((column, columnIndex) => (
                                 <TableCell key={columnIndex}>
@@ -65,7 +98,7 @@ const Table = styled.table`
     overflow: auto;
 `;
 
-const TableHeader = styled.th`
+const TableHeader = styled.th<{ $sort: boolean, $sortable: boolean }>`
     padding: 8px;
     background-color: #f5f5f5;
     border-bottom: 1px solid #f5f5f5;
@@ -73,6 +106,33 @@ const TableHeader = styled.th`
     position: sticky;
     top: 0;
     z-index: 1;
+    user-select: none;
+    cursor: default;
+    ${({ $sortable }): false | RuleSet<object> => $sortable && css`
+        &:hover {
+            background-color: ${theme.colors.white};
+            cursor: pointer;
+            box-shadow: inset ${theme.shadows.default};
+        }
+    `}
+`;
+
+const ColumnTitle = styled.div<{$sort: boolean, $sortDirection: boolean}>`
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px;
+    .sortIcon{
+        ${({ $sort }): false | RuleSet<object> => $sort && css`color: ${theme.colors.primary};`}
+        font-size: ${theme.fonts.size.P0};
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        ${({ $sortDirection }): false | RuleSet<object> => $sortDirection && css`transform: rotate(180deg);`}
+    }
 `;
 
 const TableRow = styled.tr<TableRowProps>`

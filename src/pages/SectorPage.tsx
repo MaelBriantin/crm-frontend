@@ -35,35 +35,35 @@ export const SectorPage: React.FC = () => {
 
     const columns = [
         {
-            text: 'Numéro',
+            text: 'Identifiant',
             value: 'id',
+            sortable: true
         },
         {
             text: 'Nom du secteur',
             value: 'name',
+            sortable: true
         },
         {
             text: 'Codes postaux associés',
             value: 'postcodes',
+            sortable: false
         },
     ];
 
-    const columSectors = sectors.map((sector) => {
+    const sectorsData = sectors.map((sector) => {
         return {
             ...sector,
             postcodes: sector.postcodes.map((postcode) => postcode.postcode).join(' / '),
         };
     });
 
-    console.log(columSectors);
-
-
     return (
         <Container>
             {isEmpty(sectors) && <Loader />}
             {!isEmpty(sectors) &&
 
-                <DataTable data={columSectors} columns={columns} selectable />
+                <DataTable data={sectorsData} columns={columns} selectable />
 
             }
         </Container>
