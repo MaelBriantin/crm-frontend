@@ -4,63 +4,27 @@ import { MdAlternateEmail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { Button } from "../global/Button.tsx";
 import { useState, ChangeEvent } from "react";
-import { fetchAPI, handleAPIResponse } from "../../services/api/fetchApi.config.ts";
 import { theme } from "../../assets/themes/index.ts";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/auth/AuthContext.tsx";
-import { useToast } from "../../contexts/global/ToastContext.tsx";
+import { useLoginService } from "../../hooks/auth/useLogin.ts";
 
 
 export const LoginForm = () => {
+
     const [email, setEmail] = useState('test@example.com');
     const [password, setPassword] = useState('azerty');
-    const [loading, setLoading] = useState(false);
-    const { setUser, setIsAuthenticated } = useAuth();
-    const { callToast } = useToast();
+    const { loginService, loading } = useLoginService();
     const navigate = useNavigate();
 
     const handleChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
         setEmail(e.target.value);
     }
-
     const handleChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
     }
-
     const login = async (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault();
-
-        if (email !== '' && password !== '') {
-            setLoading(true);
-            try {
-                await fetchAPI('/sanctum/csrf-cookie');
-                const response = await fetchAPI<{ email: string, password: string }, AuthUser>('/login', 'POST', {
-                    email,
-                    password,
-                });
-                handleAPIResponse<AuthUser>(
-                    response,
-                    (userData) => {
-                        setUser(userData);
-                        setIsAuthenticated(true);
-                        //callToast('success', 'Connexion réussie.');
-                        navigate('/home');
-                    },
-                    (error) => {
-                        setUser(null);
-                        setIsAuthenticated(false);
-                        callToast('error', error.message, 5000);
-                    }
-                );
-            } catch (error) {
-                console.error('Erreur lors de la connexion:', error);
-            } finally {
-                setLoading(false);
-            }
-        } else {
-            console.error('Veuillez entrer un email et un mot de passe.');
-            setLoading(false);
-        }
+        loginService(email, password, navigate);
     };
 
     return (
@@ -75,6 +39,7 @@ export const LoginForm = () => {
             </div>
         </LoginFormStyle>
     );
+    
 };
 
 const LoginFormStyle = styled.form`
