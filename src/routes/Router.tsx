@@ -6,6 +6,7 @@ import { AuthenticatedLayout } from "../layouts/AuthenticatedLayout.tsx";
 import { LoadingPage } from "../pages/LoadingPage.tsx";
 import { useCheckAuth } from "../hooks/auth/useCheckAuth.ts";
 import { useAuth } from "../contexts/auth/AuthContext.tsx";
+import { SectorPage } from "../pages/SectorPage.tsx";
 
 export const Router = () => {
     useCheckAuth();
@@ -26,6 +27,7 @@ export const Router = () => {
                 // routes only accessible if the user is authenticated
                 <Route element={<AuthenticatedLayout />}>
                     <Route path={'/home'} element={<HomePage />} />
+                    <Route path={'/sectors'} element={<SectorPage />} />
                     {/* Other routes to add */}
                 </Route>
 
