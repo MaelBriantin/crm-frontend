@@ -3,11 +3,13 @@ import { styled, css, RuleSet } from 'styled-components';
 import { theme } from '../../assets/themes';
 import { sortBy } from '../../utils/helpers/spells';
 import { VscChevronDown, VscBlank } from "react-icons/vsc";
+import { Chip } from './Chip';
 
 type DataTableProps<T> = {
     data: T[];
     columns: ColumnProps[];
     selectable?: boolean;
+    chips?: boolean;
 };
 
 type ColumnProps = {
@@ -28,6 +30,7 @@ export const DataTable: React.FC<DataTableProps<any>> = ({ data, columns, select
 
     const [sort, setSort] = React.useState<string | null>(null);
     const [sortDirection, setSortDirection] = React.useState<boolean>(true);
+    const [hoveredRow, setHoveredRow] = React.useState<number | null>(null);
 
     const sortedData = sortBy(data, sort, sortDirection);
 
@@ -41,7 +44,6 @@ export const DataTable: React.FC<DataTableProps<any>> = ({ data, columns, select
             }
         }
     };
-
     return (
         <Container>
             <Table>
@@ -56,9 +58,9 @@ export const DataTable: React.FC<DataTableProps<any>> = ({ data, columns, select
                                 <ColumnTitle $sort={sort === column.value} $sortDirection={sortDirection}>
                                     <span className={'columnTitle'}>{column.text}</span>
                                     <span className={'sortIcon'}>
-                                        {(column.sortable && column.value) === sort 
+                                        {(column.sortable && column.value) === sort
                                             ? <VscChevronDown />
-                                            : <VscBlank />  }
+                                            : <VscBlank />}
                                     </span>
                                 </ColumnTitle>
                             </TableHeader>
@@ -67,12 +69,26 @@ export const DataTable: React.FC<DataTableProps<any>> = ({ data, columns, select
                 </thead>
                 <tbody>
                     {sortedData.map((row, rowIndex) => (
-                        <TableRowBody key={rowIndex} $selectable={selectable}>
+                        <TableRowBody key={rowIndex} $selectable={selectable} onMouseEnter={() => setHoveredRow(rowIndex)} onMouseLeave={() => setHoveredRow(null)} >
                             {columns.map((column, columnIndex) => (
                                 <TableCell key={columnIndex}>
-                                    {Array.isArray(row[column.value])
-                                        ? row[column.value].join(", ")
-                                        : row[column.value]}
+                                    {
+                                        Array.isArray(row[column.value])
+                                            ?
+                                            <ChipContainer>
+                                                {row[column.value].map((item: string, index: number) => (
+                                                    <Chip
+                                                        key={index} text={item}
+                                                        color={rowIndex === hoveredRow 
+                                                            ? { background: theme.colors.white, text: theme.colors.primary } 
+                                                            : { background: theme.colors.primary, text: theme.colors.white }
+                                                        }
+                                                        // color={{ background: theme.colors.greyLight, text: 'black'}}
+                                                    />
+                                                ))}
+                                            </ChipContainer>
+                                            : row[column.value]
+                                    }
                                 </TableCell>
                             ))}
                         </TableRowBody>
@@ -83,6 +99,13 @@ export const DataTable: React.FC<DataTableProps<any>> = ({ data, columns, select
 
     );
 };
+
+const ChipContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+`;
 
 const Container = styled.div`
     width: 100%;
@@ -117,7 +140,7 @@ const TableHeader = styled.th<{ $sort: boolean, $sortable: boolean }>`
     `}
 `;
 
-const ColumnTitle = styled.div<{$sort: boolean, $sortDirection: boolean}>`
+const ColumnTitle = styled.div<{ $sort: boolean, $sortDirection: boolean }>`
     display: flex;
     justify-content: flex-start;
     align-items: center;

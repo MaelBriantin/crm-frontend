@@ -47,14 +47,15 @@ export const SectorPage: React.FC = () => {
         {
             text: 'Codes postaux associés',
             value: 'postcodes',
-            sortable: false
+            sortable: false,
+            chips: true
         },
     ];
 
     const sectorsData = sectors.map((sector) => {
         return {
             ...sector,
-            postcodes: sector.postcodes.map((postcode) => postcode.postcode).join(' / '),
+            postcodes: sector.postcodes.map((postcode) => postcode.postcode),
         };
     });
 
