@@ -14,7 +14,7 @@ import { getCookie } from "../../utils/helpers/getCookie";
  * 
  * @throws Will throw an error if the HTTP request fails or if there is an issue processing the response.
  */
-export const fetchAPI = async <D extends object, T extends object>(
+export const fetchAPI = async <D extends object | null, T extends object | null>(
   url: string,
   method: string = 'GET',
   data: D | null = null
