@@ -1,25 +1,70 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { theme } from '../assets/themes/index.ts';
 import { isEmpty } from '../utils/helpers/spells.ts';
 import { Loader } from '../components/global/Loader.tsx';
-
-type Sector = {
-    id: number;
-    name: string;
-    postcodes: string[];
-};
+import { fetchAPI, handleAPIResponse } from '../services/api/fetchApi.config.ts';
+import { DataTable } from '../components/global/DataTable.tsx';
+import { SectorType } from '../types/DataTypes.ts';
 
 export const SectorPage: React.FC = () => {
-    const [sectors, setSectors] = useState<Sector[]>([]);
+    const [sectors, setSectors] = useState<SectorType[]>([]);
+
+    useEffect(() => {
+        fetchSectors();
+    }, []);
+
+    const fetchSectors = async (): Promise<SectorType[] | []> => {
+        try {
+            const response = await fetchAPI<null, SectorType[]>('/api/sectors');
+
+            handleAPIResponse<SectorType>(
+                response,
+                (sectors) => {
+                    setSectors(sectors as SectorType[]);
+                },
+                (error) => {
+                    console.error(error.message);
+                }
+            );
+            return [];
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    const columns = [
+        {
+            text: 'Numéro',
+            value: 'id',
+        },
+        {
+            text: 'Nom du secteur',
+            value: 'name',
+        },
+        {
+            text: 'Codes postaux associés',
+            value: 'postcodes',
+        },
+    ];
+
+    const columSectors = sectors.map((sector) => {
+        return {
+            ...sector,
+            postcodes: sector.postcodes.map((postcode) => postcode.postcode).join(' / '),
+        };
+    });
+
+    console.log(columSectors);
+
 
     return (
         <Container>
             {isEmpty(sectors) && <Loader />}
             {!isEmpty(sectors) &&
-                <div>
-                    <Welcome>Secteurs</Welcome>
-                </div>
+
+                <DataTable data={columSectors} columns={columns} selectable />
+
             }
         </Container>
     );
@@ -27,17 +72,13 @@ export const SectorPage: React.FC = () => {
 
 const Container = styled.div`
     position: relative;
-    width: 100%;
-    height: 100%;
+    width: 90%;
+    height: 90%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     gap: 20px;
-`
-
-const Welcome = styled.div`
-    font-size: ${theme.fonts.size.P4};
-    font-family: ${theme.fonts.family.dancing};
-`
+    overflow: scroll;
+`;
 
