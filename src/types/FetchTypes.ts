@@ -15,6 +15,6 @@ type APIResponseError = {
 }
 
 type APIResponseFormat<T> = {
-    data: T | null;
+    data: T[] | null;
     error: APIResponseError | null;
 }

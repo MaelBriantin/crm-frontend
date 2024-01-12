@@ -4,7 +4,7 @@ import { NavbarItem } from "./NavbarItem";
 import { VscSettingsGear, VscQuestion, VscSignOut, VscHome, VscSmiley, VscSymbolMethod, VscGift, VscPieChart, VscJersey, VscFiles } from "react-icons/vsc";
 import { PiButterflyThin } from "react-icons/pi";
 import { LiaMapMarkedAltSolid } from "react-icons/lia";
-import { fetchAPI } from "../../services/api/fetchApi.config";
+import { useLogoutService } from "../../hooks/auth/useLogout";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Dispatch, SetStateAction } from "react";
 
@@ -26,18 +26,17 @@ type NavbarGroups = {
 
 export const Navbar = (props: NavbarProps) => {
     const { showNavbar, setShowNavbar } = props;
-    const logout = async (e: React.MouseEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        try {
-            fetchAPI('/logout', 'POST')
-            navigate('/login');
-        } catch (e) {
-            console.error(e);
-        }
-    }
+
+    const { logoutService } = useLogoutService();
     const navigate = useNavigate();
     const location = useLocation();
+
     const actualPath = location.pathname;
+
+    const logout = async (e: React.MouseEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        logoutService(navigate);
+    };
 
     const links: NavbarGroups[] = [
         {
@@ -93,7 +92,7 @@ export const Navbar = (props: NavbarProps) => {
             <NavListContainer $showNavbar={showNavbar}>
 
                 <AppName>
-                    <PiButterflyThin className="logo" onClick={() => {setShowNavbar(!showNavbar)}}/>
+                    <PiButterflyThin className="logo" onClick={() => { setShowNavbar(!showNavbar) }} />
                 </AppName>
 
                 <NavLinks>
@@ -106,13 +105,13 @@ export const Navbar = (props: NavbarProps) => {
                                 <NavGroupName>{group.groupName}</NavGroupName>
                                 {group.items.map((item) => (
                                     <NavbarItem
-                                    key={item.path}
-                                    selected={item.path === actualPath}
-                                    value={item.text}
-                                    onClick={() => navigate(item.path)}
-                                    icon={item.icon}
+                                        key={item.path}
+                                        selected={item.path === actualPath}
+                                        value={item.text}
+                                        onClick={() => navigate(item.path)}
+                                        icon={item.icon}
                                     />
-                                    ))}
+                                ))}
                             </NavGroup>
                         ))
                     }
@@ -130,13 +129,13 @@ export const Navbar = (props: NavbarProps) => {
 
 const NavbarContainer = styled.div<{ $showNavbar: boolean }>`
     transition: all 450ms ease-in-out;
-    ${({ $showNavbar }): false | RuleSet<object> | undefined => $showNavbar 
-    ? css`
+    ${({ $showNavbar }): false | RuleSet<object> | undefined => $showNavbar
+        ? css`
         //opacity: 1;
         width: 350px;
         transform: translateX(0);
         `
-    : css`
+        : css`
         //opacity: 0;
         width: 0;
         transform: translateX(10%);
@@ -152,11 +151,11 @@ const NavbarContainer = styled.div<{ $showNavbar: boolean }>`
 
 const NavListContainer = styled.div<{ $showNavbar: boolean }>`
     transition: all 650ms ease-in-out;
-    ${({ $showNavbar }): false | RuleSet<object> | undefined => $showNavbar 
-    ? css`
+    ${({ $showNavbar }): false | RuleSet<object> | undefined => $showNavbar
+        ? css`
         opacity: 1;
         `
-    : css`
+        : css`
         opacity: 0;
         `
     };
