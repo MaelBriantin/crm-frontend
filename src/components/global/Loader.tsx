@@ -1,13 +1,8 @@
 import styled, { keyframes } from "styled-components";
 import { AiOutlineLoading } from "react-icons/ai";
 import { theme } from "../../assets/themes/index.ts";
-import { useAuthMiddleware } from "../../hooks/auth/useAuthMiddleware.ts";
-import { useCheckAuth } from "../../hooks/auth/useCheckAuth.ts";
 
 export const Loader: React.FC<{ blurry?: boolean }> = ({ blurry = false }) => {
-
-  useCheckAuth();
-  useAuthMiddleware();
 
   return (
     <LoaderContainer $blurry={blurry}>
