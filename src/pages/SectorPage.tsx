@@ -48,7 +48,7 @@ export const SectorPage: React.FC = () => {
             text: 'Codes postaux associés',
             value: 'postcodes',
             sortable: false,
-            chips: true
+            type: 'chips'
         },
     ];
 
@@ -80,6 +80,5 @@ const Container = styled.div`
     justify-content: flex-start;
     align-items: center;
     gap: 20px;
-    overflow: scroll;
 `;
 

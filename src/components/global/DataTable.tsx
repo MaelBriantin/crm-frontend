@@ -1,38 +1,44 @@
 import React from 'react';
 import { styled, css, RuleSet } from 'styled-components';
 import { theme } from '../../assets/themes';
-import { sortBy } from '../../utils/helpers/spells';
-import { VscChevronDown, VscBlank } from "react-icons/vsc";
-import { Chip } from './Chip';
+import { sortBy, extractBetween } from '../../utils/helpers/spells';
+import { VscChevronDown, VscBlank, VscChevronLeft, VscChevronRight } from "react-icons/vsc";
+import { DataTableCell } from './DataTableCell';
 
 type DataTableProps<T> = {
     data: T[];
     columns: ColumnProps[];
     selectable?: boolean;
-    chips?: boolean;
+    rowsPerPage?: number;
 };
 
 type ColumnProps = {
     text: string;
     value: string;
     sortable: boolean;
+    type?: string;
 };
 
 type TableRowProps = {
     even?: boolean;
 };
 
-type TableCellProps = {
-    even?: boolean;
-};
-
-export const DataTable: React.FC<DataTableProps<any>> = ({ data, columns, selectable = false }) => {
+export const DataTable: React.FC<DataTableProps<any>> = ({ data, columns, selectable = false, rowsPerPage = 10 }) => {
 
     const [sort, setSort] = React.useState<string | null>(null);
     const [sortDirection, setSortDirection] = React.useState<boolean>(true);
-    const [hoveredRow, setHoveredRow] = React.useState<number | null>(null);
+    const [page, setPage] = React.useState<number>(1);
+
+    const dataNumber = data.length;
+    const maxPageNumber = Math.ceil(dataNumber / rowsPerPage);
+
+    if (maxPageNumber < page) {
+        setPage(maxPageNumber);
+    };
 
     const sortedData = sortBy(data, sort, sortDirection);
+    const dataOnPage = extractBetween(sortedData, (page - 1) * rowsPerPage, page * rowsPerPage);
+
 
     const handleSort = (column: ColumnProps) => {
         if (column.sortable) {
@@ -68,46 +74,41 @@ export const DataTable: React.FC<DataTableProps<any>> = ({ data, columns, select
                     </TableRowHeader>
                 </thead>
                 <tbody>
-                    {sortedData.map((row, rowIndex) => (
-                        <TableRowBody key={rowIndex} $selectable={selectable} onMouseEnter={() => setHoveredRow(rowIndex)} onMouseLeave={() => setHoveredRow(null)} >
+                    {dataOnPage.map((row, rowIndex) => (
+                        <TableRowBody
+                            key={rowIndex}
+                            $selectable={selectable}
+                        >
                             {columns.map((column, columnIndex) => (
-                                <TableCell key={columnIndex}>
-                                    {
-                                        Array.isArray(row[column.value])
-                                            ?
-                                            <ChipContainer>
-                                                {row[column.value].map((item: string, index: number) => (
-                                                    <Chip
-                                                        key={index} text={item}
-                                                        color={rowIndex === hoveredRow 
-                                                            ? { background: theme.colors.white, text: theme.colors.primary } 
-                                                            : { background: theme.colors.primary, text: theme.colors.white }
-                                                        }
-                                                        // color={{ background: theme.colors.greyLight, text: 'black'}}
-                                                    />
-                                                ))}
-                                            </ChipContainer>
-                                            : row[column.value]
-                                    }
-                                </TableCell>
+                                <DataTableCell
+                                    key={columnIndex}
+                                    row={row}
+                                    column={column}
+                                    columnIndex={columnIndex}
+                                />
                             ))}
                         </TableRowBody>
                     ))}
                 </tbody>
             </Table>
+            <TableActions>
+                <span>Lignes totales : {dataNumber}</span>
+                <span>Résultats par page : {rowsPerPage}</span>
+                <PageChanger>
+                    {page != 1 ? <VscChevronLeft className={'changePage'} onClick={() => setPage(page => Math.max(page - 1, 1))} />
+                        : <VscBlank />}
+                    <span>Page {page} sur {maxPageNumber}</span>
+                    { page != maxPageNumber ? <VscChevronRight className={'changePage'} onClick={() => setPage(page => Math.min(page + 1, maxPageNumber))} />
+                        : <VscBlank />}
+                </PageChanger>
+            </TableActions>
         </Container>
 
     );
 };
 
-const ChipContainer = styled.div`
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 5px;
-`;
-
 const Container = styled.div`
+    padding: 10px 20px;
     width: 100%;
     height: 100%;
     overflow: auto;
@@ -118,7 +119,6 @@ const Table = styled.table`
     margin: auto;
     border-collapse: collapse;
     border-radius: ${theme.materialDesign.borderRadius.rounded};
-    overflow: auto;
 `;
 
 const TableHeader = styled.th<{ $sort: boolean, $sortable: boolean }>`
@@ -131,6 +131,7 @@ const TableHeader = styled.th<{ $sort: boolean, $sortable: boolean }>`
     z-index: 1;
     user-select: none;
     cursor: default;
+    transition: all 250ms;
     ${({ $sortable }): false | RuleSet<object> => $sortable && css`
         &:hover {
             background-color: ${theme.colors.white};
@@ -160,18 +161,20 @@ const ColumnTitle = styled.div<{ $sort: boolean, $sortDirection: boolean }>`
 
 const TableRow = styled.tr<TableRowProps>`
     transition: all 250ms;
+    background-color: white;
     &:nth-child(even) {
         background-color: #f5f5f5;
     }
 `;
 
 const TableRowBody = styled(TableRow) <{ $selectable: boolean }>`
+    transition: all 250ms;
+    outline: 1px solid ${theme.colors.transparent};
     ${({ $selectable }): false | RuleSet<object> =>
         $selectable &&
         css`
             &:hover {
-                color: ${theme.colors.white};
-                background-color: ${theme.colors.primary};
+                outline: 1px solid ${theme.colors.primary};
                 cursor: pointer;
             }
         `}
@@ -182,8 +185,30 @@ const TableRowHeader = styled(TableRow)`
     font-size: ${theme.fonts.size.P2};
 `;
 
-const TableCell = styled.td<TableCellProps>`
-    padding: 8px;
-    min-width: 50px;
-    border-bottom: 1px solid #f5f5f5;
+const TableActions = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    gap: 40px;
+    padding: 10px 0;
+    font-size: ${theme.fonts.size.P0};
+`;
+
+const PageChanger = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    span{
+        font-size: ${theme.fonts.size.P0};
+    }
+    .changePage{
+        font-size: ${theme.fonts.size.P0};
+        cursor: pointer;
+        &:hover{
+            color: ${theme.colors.primary};
+        }
+    }
 `;
