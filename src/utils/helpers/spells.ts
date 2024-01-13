@@ -69,3 +69,17 @@ export const sortBy = <T>(array: T[], key: keyof T | null, asc: boolean | null):
   }
   return array;
 };
+
+
+/**
+ * Returns an array of elements between the specified start and end indexes (inclusive).
+ *
+ * @template T - The type of elements in the array.
+ * @param {T[]} array - The array from which to extract elements.
+ * @param {number} startIndex - The starting index.
+ * @param {number} endIndex - The ending index.
+ * @returns {T[]} - The array of elements between the start and end indexes.
+ */
+export const extractBetween = <T>(array: T[], startIndex: number, endIndex: number): T[] => {
+  return array.slice(startIndex, endIndex);
+};
