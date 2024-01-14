@@ -83,3 +83,16 @@ export const sortBy = <T>(array: T[], key: keyof T | null, asc: boolean | null):
 export const extractBetween = <T>(array: T[], startIndex: number, endIndex: number): T[] => {
   return array.slice(startIndex, endIndex);
 };
+
+/**
+ * Returns the first X elements of an array.
+ *
+ * @template T - The type of elements in the array.
+ * @param {T[]} array - The array from which to extract elements.
+ * @param {number} count - The number of elements to return.
+ * @returns {T[]} - The array of the first X elements.
+ */
+export const limit = <T>(array: T[], count: number): T[] => {
+  return array.slice(0, count);
+};
+
