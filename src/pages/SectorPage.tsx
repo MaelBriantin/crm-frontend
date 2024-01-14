@@ -15,7 +15,7 @@ export const SectorPage: React.FC = () => {
 
     const fetchSectors = async (): Promise<SectorType[] | []> => {
         try {
-            const response = await fetchAPI<null, SectorType[]>('/api/sectors');
+            const response = await fetchAPI<null, SectorType[]>('/api/sectorsWithPostcodes');
 
             handleAPIResponse<SectorType>(
                 response,
@@ -37,18 +37,20 @@ export const SectorPage: React.FC = () => {
         {
             text: 'Identifiant',
             value: 'id',
-            sortable: true
+            sortable: true,
         },
         {
             text: 'Nom du secteur',
             value: 'name',
-            sortable: true
+            sortable: true,
+            color: [
+                { value: 'aut', text: 'red' }
+            ]
         },
         {
-            text: 'Codes postaux associés',
-            value: 'postcodes',
-            sortable: false,
-            type: 'chips'
+            text: 'Nombre de codes postaux associés',
+            value: 'postcodes_count',
+            sortable: true,
         },
     ];
 
