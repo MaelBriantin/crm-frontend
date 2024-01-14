@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 type ChipProps = {
     text: string;
-    color?: {background: string, text: string};
-}
+    color?: { background: string | undefined; text: string | undefined; } | undefined;
+};
 
 export const Chip: React.FC<ChipProps> = ({ text, color }) => {
     return (
