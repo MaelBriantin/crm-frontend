@@ -31,7 +31,7 @@ export const Toast = () => {
 
     useEffect(() => {
         resetTimeout();
-    }, [show, timer]);
+    });
 
     return (
         <ToastStyle
@@ -67,7 +67,7 @@ const typeTitleColor = (type: string): { toastTitle: string, toastColor: string 
             toastTitle = 'Information';
             toastColor = theme.colors.blue;
             break;
-    };
+    }
     return {
         toastTitle,
         toastColor

@@ -1,4 +1,5 @@
 import { getCookie } from "../../utils/helpers/getCookie";
+import { APIResponseError, APIResponseFormat, FetchAPIOptions } from "../../types/FetchTypes";
 
 /**
  * Makes an HTTP request using the Fetch API and processes the response.

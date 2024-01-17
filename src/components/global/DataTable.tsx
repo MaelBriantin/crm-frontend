@@ -4,8 +4,13 @@ import { theme } from '../../assets/themes';
 import { sortBy, extractBetween } from '../../utils/helpers/spells';
 import { VscChevronUp, VscBlank, VscChevronLeft, VscChevronRight } from "react-icons/vsc";
 import { DataTableCell } from './DataTableCell';
+import { ColumnType, RowType } from '../../types/DataTableTypes';
 
-type DataTableProps<T> = {
+type IData = {
+    [key: string]: string | number | string[] | number[] | undefined | null;
+};
+
+type DataTableProps<T extends IData> = {
     data: T[];
     columns: ColumnProps[];
     selectable?: boolean;
@@ -26,7 +31,7 @@ type TableRowProps = {
     even?: boolean;
 };
 
-export const DataTable: React.FC<DataTableProps<any>> = ({ data, columns, selectable = false, rowsPerPage = 10 }) => {
+export const DataTable = <T extends IData>({ data, columns, selectable = false, rowsPerPage = 10 }: DataTableProps<T>): React.ReactElement => {
 
     const [sort, setSort] = React.useState<string | null>(null);
     const [sortDirection, setSortDirection] = React.useState<boolean>(true);
@@ -37,7 +42,7 @@ export const DataTable: React.FC<DataTableProps<any>> = ({ data, columns, select
 
     if (maxPageNumber < page) {
         setPage(maxPageNumber);
-    };
+    }
 
     const sortedData = sortBy(data, sort, sortDirection);
     const dataOnPage = extractBetween(sortedData, (page - 1) * rowsPerPage, page * rowsPerPage);
@@ -142,10 +147,10 @@ export const DataTable: React.FC<DataTableProps<any>> = ({ data, columns, select
                             {columns.map((column, columnIndex) => (
                                 <DataTableCell
                                     key={columnIndex}
-                                    row={row}
-                                    column={column}
+                                    row={row as RowType}
+                                    column={column as ColumnType}
                                     columnIndex={columnIndex}
-                                    color={getColor(column.color, row[column.value])}
+                                    color={getColor(column.color, String(row[column.value]))}
                                 />
                             ))}
                         </TableRowBody>

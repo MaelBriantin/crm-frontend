@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { fetchAPI } from "../../services/api/fetchApi.config"; 
 import { useAuth } from "../../contexts/auth/AuthContext";
 import { firstOf, isEmpty } from "../../utils/helpers/spells";
+import { AuthUser } from "../../types/AuthTypes";
+import { APIResponseFormat } from "../../types/FetchTypes";
 
 /**
  * Custom hook to check user authentication status and update the authentication context.
@@ -44,5 +46,5 @@ export const useCheckAuth = (): void => {
         };
         checkLoggedIn()
             .then(r => r);
-    }, []);
+    });
 }
