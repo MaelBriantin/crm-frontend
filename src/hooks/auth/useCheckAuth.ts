@@ -46,5 +46,5 @@ export const useCheckAuth = (): void => {
         };
         checkLoggedIn()
             .then(r => r);
-    });
+    }, [setUser, setIsAuthenticated, setLoading]);
 }
