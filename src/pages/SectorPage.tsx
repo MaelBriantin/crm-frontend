@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { isEmpty } from '../utils/helpers/spells.ts';
 import { Loader } from '../components/global/Loader.tsx';
 import { fetchAPI, handleAPIResponse } from '../services/api/fetchApi.config.ts';
-import { DataTable } from '../components/global/DataTable.tsx';
+import { DataTable } from '../components/DataTable';
 import { SectorType } from '../types/DataTypes.ts';
 
 export const SectorPage: React.FC = () => {
@@ -39,20 +39,26 @@ export const SectorPage: React.FC = () => {
             value: 'id',
             sortable: true,
             type: 'number',
+            // color: [
+            //     { value: '*<10', text: 'blue' }
+            // ]
         },
         {
             text: 'Nom du secteur',
             value: 'name',
             sortable: true,
-            color: [
-                { value: 'aut', text: 'red' }
-            ]
+            // color: [
+            //     { value: 'et', text: 'red' }
+            // ]
         },
         {
             text: 'Nombre de communes',
             value: 'postcodes_count',
             sortable: true,
             type: 'number',
+            // color: [
+            //     { value: '*', text: 'green' }
+            // ]
         },
     ];
 

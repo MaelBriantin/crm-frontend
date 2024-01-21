@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Chip } from './Chip.tsx';
+import { Chip } from '../global/Chip.tsx';
 import { filterOut, limit } from '../../utils/helpers/spells.ts';
 import { DataTableCellProps, TableCellProps, dataTableTypeList } from '../../types/DataTableTypes.ts';
 
