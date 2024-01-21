@@ -1,15 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { isEmpty } from '../utils/helpers/spells.ts';
+import { firstOf, isEmpty } from '../utils/helpers/spells.ts';
 import { Loader } from '../components/global/Loader.tsx';
 import { DataTable } from '../components/DataTable';
-import { useFetchSectors } from '../hooks/useSectors.ts';
 import { RowDataType } from '../types/DataTableTypes.ts';
 import { RowType } from '../types/DataTableTypes.ts';
+import { SectorType } from '../types/DataTypes.ts';
+import { fetchAllSectors, fetchSectors } from '../services/api/sectors';
 
 export const SectorPage: React.FC = () => {
+    
+    const [sectors, setSectors] = React.useState<SectorType[]>([]);
 
-    const sectors = useFetchSectors('withPostcodes');
+    useEffect(() => {
+        const fetchSectors = async () => {
+            const sectors = await fetchAllSectors();
+            setSectors(sectors as SectorType[]);
+        };
+        fetchSectors();
+    }, []);
 
     const columns = [
         {
@@ -44,15 +53,16 @@ export const SectorPage: React.FC = () => {
     //     console.log('click', row);
     // };
 
-    const handleDoubleClick = (row: RowType) => {
-        console.log('doubleClick', row);
+    const handleDoubleClick = async (row: RowType) => {
+        const sector = await fetchSectors(row.id as SectorType['id'], 'withPostcodes');
+        console.log('sector', firstOf(sector)); 
     };
 
     return (
         <Container>
             {isEmpty(sectors) && <Loader />}
             {!isEmpty(sectors) &&
-                <DataTable data={sectors as RowDataType[]} columns={columns} onDoubleClickOnRow={handleDoubleClick} />
+                <DataTable data={sectors as unknown as RowDataType[]} columns={columns} onDoubleClickOnRow={handleDoubleClick} />
             }
         </Container>
     );
