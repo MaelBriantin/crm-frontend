@@ -4,12 +4,12 @@ import { Chip } from '../global/Chip.tsx';
 import { filterOut, limit } from '../../utils/helpers/spells.ts';
 import { DataTableCellProps, TableCellProps, dataTableTypeList } from '../../types/DataTableTypes.ts';
 
-export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, columnIndex, color, onClick }) => {
+export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, columnIndex, color }) => {
     if (Array.isArray(row[column.value])) {
         row[column.value] = limit(Array.from([String(row[column.value])]), 5);
     }
     return (
-        <TableCell key={columnIndex} onClick={onClick}>
+        <TableCell key={columnIndex} >
             {(column.type === 'chips' && !Array.isArray(row[column.value])) && (
                 <Chip
                     text={String(row[column.value])}

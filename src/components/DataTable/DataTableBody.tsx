@@ -6,16 +6,22 @@ import { getColor } from '../../utils/dataTableUtils';
 type DataTableBodyProps = {
     data: RowType[];
     columns: ColumnProps[];
+    onClickOnRow?: (row: RowType) => void;
+    onDoubleClickOnRow?: (row: RowType) => void;
     selectable: boolean;
+    hoverable: boolean;
 };
 
-export const DataTableBody = ({ data, columns, selectable }: DataTableBodyProps) => {
+export const DataTableBody = ({ data, columns, onClickOnRow, onDoubleClickOnRow, selectable, hoverable }: DataTableBodyProps) => {
     return (
         <tbody>
             {data.map((row, rowIndex) => (
                 <TableRowBody
                     key={rowIndex}
                     $selectable={selectable}
+                    $hoverable={hoverable}
+                    onClick={() => onClickOnRow && onClickOnRow(row)}
+                    onDoubleClick={() => onDoubleClickOnRow && onDoubleClickOnRow(row)}
                 >
                     {columns.map((column, columnIndex) => (
                         <DataTableCell
@@ -24,7 +30,6 @@ export const DataTableBody = ({ data, columns, selectable }: DataTableBodyProps)
                             column={column as ColumnType}
                             columnIndex={columnIndex}
                             color={getColor(column.color, String(row[column.value]))}
-                            onClick={() => { }}
                         />
                     ))}
                 </TableRowBody>
@@ -33,19 +38,25 @@ export const DataTableBody = ({ data, columns, selectable }: DataTableBodyProps)
     );
 };
 
-const TableRowBody = styled.tr <{ $selectable: boolean }>`
+const TableRowBody = styled.tr <{ $selectable: boolean, $hoverable: boolean }>`
     transition: all 250ms;
     background-color: white;
     height: 40px;
     overflow: hidden;
     width: 100%;
-    ${({ $selectable }): false | RuleSet<object> =>
+    &:hover {
+        ${({ $hoverable }): false | RuleSet<object> =>
+        $hoverable &&
+        css`
+            background-color: #f9f9f9;
+        `}
+        ${({ $selectable }): false | RuleSet<object> =>
         $selectable &&
         css`
-            &:hover {
-                cursor: pointer;
-                background-color: #f9f9f9;
-            }
+            cursor: pointer;
+            user-select: none;
+            background-color: #f9f9f9;
         `}
+    }
 `;
 

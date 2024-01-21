@@ -16,7 +16,6 @@ export type DataTableCellProps = {
   column: ColumnType;
   columnIndex: number;
   color?: { background: string | undefined, text: string | undefined } | undefined;
-  onClick?: () => void | undefined;
 };
 
 export type TableCellProps = {
@@ -40,8 +39,10 @@ export type RowDataType = {
 export type DataTableProps<T extends RowDataType> = {
   data: T[];
   columns: ColumnProps[];
-  selectable?: boolean;
   rowsPerPage?: number;
+  onClickOnRow?: (row: RowType) => void;
+  onDoubleClickOnRow?: (row: RowType) => void;
+  hoverable?: boolean;
 };
 
 export type TableRowProps = {

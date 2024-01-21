@@ -7,7 +7,7 @@ import { SectorType } from '../types/DataTypes.ts';
  * @param options - The options for fetching sectors ('withPostCodes').
  * @returns An array of sectors.
  */
-export const useSectors = (options: string) => {
+export const useFetchSectors = (options: string) => {
     const withPostCodes = options === 'withPostCodes';
     const [sectors, setSectors] = useState<SectorType[]>([]);
 

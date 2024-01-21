@@ -8,7 +8,10 @@ import { DataTableHeader } from './DataTableHeader';
 import { DataTableBody } from './DataTableBody';
 import { DataTableActions } from './DataTableActions';
 
-export const DataTable = <T extends RowDataType>({ data, columns, selectable = false, rowsPerPage = 10 }: DataTableProps<T>): React.ReactElement => {
+export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, onDoubleClickOnRow, hoverable = false }: DataTableProps<T>): React.ReactElement => {
+
+    const selectable = onClickOnRow !== undefined || onDoubleClickOnRow !== undefined;
+    const rowsPerPage = 15;
 
     const [sort, setSort] = React.useState<string | null>(null);
     const [sortDirection, setSortDirection] = React.useState<boolean>(true);
@@ -39,7 +42,7 @@ export const DataTable = <T extends RowDataType>({ data, columns, selectable = f
         <Container>
             <Table>
                 <DataTableHeader columns={columns} sort={sort} sortDirection={sortDirection} handleSort={handleSort} />
-                <DataTableBody data={dataOnPage as RowType[]} columns={columns} selectable={selectable} />
+                <DataTableBody data={dataOnPage as RowType[]} columns={columns} onClickOnRow={onClickOnRow} onDoubleClickOnRow={onDoubleClickOnRow} selectable={selectable} hoverable={hoverable} />
             </Table>
             <DataTableActions page={page} setPage={setPage} dataNumber={dataNumber} rowsPerPage={rowsPerPage} maxPageNumber={maxPageNumber} />
         </Container>

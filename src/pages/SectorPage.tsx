@@ -3,12 +3,13 @@ import styled from 'styled-components';
 import { isEmpty } from '../utils/helpers/spells.ts';
 import { Loader } from '../components/global/Loader.tsx';
 import { DataTable } from '../components/DataTable';
-import { useSectors } from '../hooks/useSectors.ts';
+import { useFetchSectors } from '../hooks/useSectors.ts';
 import { RowDataType } from '../types/DataTableTypes.ts';
+import { RowType } from '../types/DataTableTypes.ts';
 
 export const SectorPage: React.FC = () => {
 
-    const sectors = useSectors('withPostcodes');
+    const sectors = useFetchSectors('withPostcodes');
 
     const columns = [
         {
@@ -39,11 +40,19 @@ export const SectorPage: React.FC = () => {
         },
     ];
 
+    // const handleClick = (row: RowType) => {
+    //     console.log('click', row);
+    // };
+
+    const handleDoubleClick = (row: RowType) => {
+        console.log('doubleClick', row);
+    };
+
     return (
         <Container>
             {isEmpty(sectors) && <Loader />}
             {!isEmpty(sectors) &&
-                <DataTable data={sectors as RowDataType[]} columns={columns} selectable />
+                <DataTable data={sectors as RowDataType[]} columns={columns} onDoubleClickOnRow={handleDoubleClick} />
             }
         </Container>
     );
