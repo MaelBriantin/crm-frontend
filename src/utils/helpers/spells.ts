@@ -12,7 +12,7 @@
  * const nonEmptyArray = isEmpty(['item']); // false
  * const nonEmptyObject = isEmpty({ key: 'value' }); // false
  */
-export const isEmpty = (element: Array<String | Number> | Object): boolean => {
+export const isEmpty = (element: Array<string | number> | object): boolean => {
   if (Array.isArray(element)) {
     return element.length === 0;
   } else if (typeof element === 'object' && element !== null) {
@@ -96,3 +96,15 @@ export const limit = <T>(array: T[], count: number): T[] => {
   return array.slice(0, count);
 };
 
+/**
+ * Exclude elements from an array based on given values.
+ *
+ * @template T - The type of elements in the array.
+ * @param {T | T[]} elements - The element or array of elements to exclude from the array.
+ * @param {T[]} from - The array from which to exclude the elements.
+ * @returns {T[]} - The array without the excluded elements.
+ */
+export const filterOut = <T>(elements: T | T[], from: T[]): T[] => {
+  const elementsArray = Array.isArray(elements) ? elements : [elements];
+  return from.filter((element) => !elementsArray.includes(element));
+};
