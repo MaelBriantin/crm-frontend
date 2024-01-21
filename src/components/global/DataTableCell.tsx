@@ -1,15 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Chip } from './Chip.tsx';
-import { limit } from '../../utils/helpers/spells.ts';
-import { DataTableCellProps, TableCellProps } from '../../types/DataTableTypes.ts';
+import { filterOut, limit } from '../../utils/helpers/spells.ts';
+import { DataTableCellProps, TableCellProps, dataTableTypeList } from '../../types/DataTableTypes.ts';
 
-export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, columnIndex, color }) => {
+export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, columnIndex, color, onClick }) => {
     if (Array.isArray(row[column.value])) {
         row[column.value] = limit(Array.from([String(row[column.value])]), 5);
     }
     return (
-        <TableCell key={columnIndex}>
+        <TableCell key={columnIndex} onClick={onClick}>
             {(column.type === 'chips' && !Array.isArray(row[column.value])) && (
                 <Chip
                     text={String(row[column.value])}
@@ -27,7 +27,7 @@ export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, colum
                     ))}
                 </ChipContainer>
             )}
-            {(!column.type || column.type === 'text') && (
+            {(!column.type || filterOut(['chips', 'link'], dataTableTypeList).includes(column.type)) && (
                 <TableCellValue $color={{ background: color?.background || '', color: color?.text || '' }}>{row[column.value]}</TableCellValue>
             )}
         </TableCell>

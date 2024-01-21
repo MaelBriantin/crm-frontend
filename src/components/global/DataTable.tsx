@@ -2,9 +2,12 @@ import React from 'react';
 import { styled, css, RuleSet } from 'styled-components';
 import { theme } from '../../assets/themes';
 import { sortBy, extractBetween } from '../../utils/helpers/spells';
-import { VscChevronUp, VscBlank, VscChevronLeft, VscChevronRight } from "react-icons/vsc";
+import { VscBlank, VscChevronLeft, VscChevronRight } from "react-icons/vsc";
+import { LiaSortAlphaUpSolid, LiaSortAlphaDownSolid, LiaSortNumericUpSolid, LiaSortNumericDownSolid } from "react-icons/lia";
 import { DataTableCell } from './DataTableCell';
 import { ColumnType, RowType } from '../../types/DataTableTypes';
+import { filterOut } from '../../utils/helpers/spells';
+import { dataTableTypeList } from '../../types/DataTableTypes';
 
 type IData = {
     [key: string]: string | number | string[] | number[] | undefined | null;
@@ -126,13 +129,21 @@ export const DataTable = <T extends IData>({ data, columns, selectable = false, 
                                 $sort={sort === column.value}
                                 $sortable={column.sortable}
                             >
-                                <ColumnTitle $sort={sort === column.value} $sortDirection={sortDirection}>
+                                <ColumnTitle $sort={sort === column.value}>
                                     <span className={'columnTitle'}>{column.text}</span>
-                                    <span className={'sortIcon'}>
-                                        {(column.sortable && column.value) === sort
-                                            ? <VscChevronUp />
-                                            : <VscBlank />}
-                                    </span>
+                                    {(column.sortable && column.value === sort) &&
+                                        (column.type && filterOut(['chips', 'link', 'text', 'boolean'], dataTableTypeList).includes(column.type)
+                                            ? <span className={'sortIcon'}> {sortDirection ? <LiaSortNumericDownSolid /> : <LiaSortNumericUpSolid />} </span>
+                                            : <span className={'sortIcon'}> {sortDirection ? <LiaSortAlphaDownSolid /> : <LiaSortAlphaUpSolid />} </span>)
+                                    }
+                                    {(column.sortable && column.value !== sort) &&
+                                        (column.type && filterOut(['chips', 'link', 'text', 'boolean'], dataTableTypeList).includes(column.type)
+                                            ? <span className={'sortIndication'}><LiaSortNumericDownSolid /></span>
+                                            : <span className={'sortIndication'}><LiaSortAlphaDownSolid /></span>)
+                                    }
+                                    {(!column.sortable && column.value !== sort) &&
+                                        <span className={'sortIndication'}><VscBlank /></span>
+                                    }
                                 </ColumnTitle>
                             </TableHeader>
                         ))}
@@ -151,6 +162,7 @@ export const DataTable = <T extends IData>({ data, columns, selectable = false, 
                                     column={column as ColumnType}
                                     columnIndex={columnIndex}
                                     color={getColor(column.color, String(row[column.value]))}
+                                    onClick={() => { }}
                                 />
                             ))}
                         </TableRowBody>
@@ -204,22 +216,24 @@ const TableHeader = styled.th<{ $sort: boolean, $sortable: boolean }>`
     transition: all 250ms;
     ${({ $sortable }): false | RuleSet<object> => $sortable && css`
         &:hover {
-            background-color: ${theme.colors.white};
             cursor: pointer;
-            box-shadow: inset ${theme.shadows.default};
+            background: #f9f9f9;
         }
     `}
+    &:hover .sortIndication{ 
+        opacity: 0.5;
+    }
 `;
 
-const ColumnTitle = styled.div<{ $sort: boolean, $sortDirection: boolean }>`
+const ColumnTitle = styled.div<{ $sort: boolean }>`
     display: flex;
-    justify-content:space-between;
+    justify-content:flex-start;
     align-items: center;
     gap: 5px;
     min-width: 50px;
     .sortIcon{
         ${({ $sort }): false | RuleSet<object> => $sort && css`color: ${theme.colors.primary};`}
-        font-size: ${theme.fonts.size.P0};
+        font-size: ${theme.fonts.size.P1};
         transition: all 250ms;
         display: flex;
         justify-content: center;
@@ -227,8 +241,18 @@ const ColumnTitle = styled.div<{ $sort: boolean, $sortDirection: boolean }>`
         height: 100%;
         margin: 0;
         padding: 0;
-        transform: rotate(0);
-        ${({ $sortDirection }): false | RuleSet<object> => $sortDirection && css`transform: rotate(-180deg);`}
+    }
+    .sortIndication{
+        opacity: 0;
+        font-size: ${theme.fonts.size.P1};
+        transition: all 250ms;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        color: black;
     }
 `;
 
@@ -238,22 +262,22 @@ const TableRow = styled.tr<TableRowProps>`
     height: 40px;
     overflow: hidden;
     width: 100%;
-    &:nth-child(even) {
+    /* &:nth-child(even) {
         background-color: #f5f5f5;
-    }
+    } */
 `;
 
 const TableRowBody = styled(TableRow) <{ $selectable: boolean }>`
     transition: all 250ms;
-    outline: 1px solid ${theme.colors.transparent};
     ${({ $selectable }): false | RuleSet<object> =>
         $selectable &&
         css`
             &:hover {
-                transform: scale(1.01);
-                box-shadow: ${theme.shadows.default};
+                //transform: scale(1.005);
+                //box-shadow: ${theme.shadows.default};
                 cursor: pointer;
-                border-radius: ${theme.materialDesign.borderRadius.rounded};
+                background-color: #f9f9f9;
+                //border-radius: ${theme.materialDesign.borderRadius.rounded};
             }
         `}
 `;

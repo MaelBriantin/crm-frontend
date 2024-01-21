@@ -38,6 +38,7 @@ export const SectorPage: React.FC = () => {
             text: 'Identifiant',
             value: 'id',
             sortable: true,
+            type: 'number',
         },
         {
             text: 'Nom du secteur',
@@ -48,9 +49,10 @@ export const SectorPage: React.FC = () => {
             ]
         },
         {
-            text: 'Nombre de codes postaux associés',
+            text: 'Nombre de communes',
             value: 'postcodes_count',
             sortable: true,
+            type: 'number',
         },
     ];
 
