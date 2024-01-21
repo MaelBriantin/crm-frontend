@@ -7,21 +7,30 @@ type DataTableActionsProps = {
     setPage: React.Dispatch<React.SetStateAction<number>>,
     dataNumber: number,
     rowsPerPage: number,
-    maxPageNumber: number
+    setRowsPerPage: React.Dispatch<React.SetStateAction<number>>,
+    maxPageNumber?: number
 };
 
-export const DataTableActions = ({page, setPage, dataNumber, rowsPerPage, maxPageNumber}: DataTableActionsProps) => {
+export const DataTableActions = ({ page, setPage, dataNumber, rowsPerPage, setRowsPerPage, maxPageNumber }: DataTableActionsProps) => {
     return (
         <TableActions>
-            <span>Lignes totales : {dataNumber}</span>
-            <span>Résultats par page : {rowsPerPage}</span>
-            <PageChanger>
-                {page != 1 ? <VscChevronLeft className={'changePage'} onClick={() => setPage(page => Math.max(page - 1, 1))} />
-                    : <VscBlank />}
-                <span>Page {page} sur {maxPageNumber}</span>
-                {page != maxPageNumber ? <VscChevronRight className={'changePage'} onClick={() => setPage(page => Math.min(page + 1, maxPageNumber))} />
-                    : <VscBlank />}
-            </PageChanger>
+            <span>Résultats : {dataNumber}</span>
+            <span>Résultats par page :
+                <select defaultValue={rowsPerPage} name="rowsPerPage" id="rowsPerPage" onChange={(e) => setRowsPerPage(Number(e.target.value))}>
+                    <option value="10" >10</option>
+                    <option value="15" >15</option>
+                    <option value="20" >20</option>
+                    <option value="Infinity" >Tous</option>
+                </select>
+            </span>
+            {maxPageNumber &&
+                <PageChanger>
+                    {page != 1 ? <VscChevronLeft className={'changePage'} onClick={() => setPage(page => Math.max(page - 1, 1))} />
+                        : <VscBlank />}
+                    <span>Page {page} sur {maxPageNumber}</span>
+                    {page != maxPageNumber ? <VscChevronRight className={'changePage'} onClick={() => setPage(page => Math.min(page + 1, maxPageNumber))} />
+                        : <VscBlank />}
+                </PageChanger>}
         </TableActions>
     );
 };

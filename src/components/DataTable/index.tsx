@@ -11,21 +11,27 @@ import { DataTableActions } from './DataTableActions';
 export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, onDoubleClickOnRow, hoverable = false }: DataTableProps<T>): React.ReactElement => {
 
     const selectable = onClickOnRow !== undefined || onDoubleClickOnRow !== undefined;
-    const rowsPerPage = 15;
 
     const [sort, setSort] = React.useState<string | null>(null);
     const [sortDirection, setSortDirection] = React.useState<boolean>(true);
     const [page, setPage] = React.useState<number>(1);
+    const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
 
     const dataNumber = data.length;
-    const maxPageNumber = Math.ceil(dataNumber / rowsPerPage);
-
-    if (maxPageNumber < page) {
-        setPage(maxPageNumber);
-    }
-
     const sortedData = sortBy(data, sort, sortDirection);
-    const dataOnPage = extractBetween(sortedData, (page - 1) * rowsPerPage, page * rowsPerPage);
+
+    let dataOnPage = sortedData;
+    let maxPageNumber: number | undefined = undefined;
+
+    if (rowsPerPage !== Infinity) {
+        maxPageNumber = Math.ceil(dataNumber / rowsPerPage);
+        if (maxPageNumber < page) {
+            setPage(maxPageNumber);
+        }
+        dataOnPage = extractBetween(sortedData, (page - 1) * rowsPerPage, page * rowsPerPage);
+    } else {
+        maxPageNumber = 1;
+    }
 
     const handleSort = (column: ColumnProps) => {
         if (column.sortable) {
@@ -41,10 +47,29 @@ export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, 
     return (
         <Container>
             <Table>
-                <DataTableHeader columns={columns} sort={sort} sortDirection={sortDirection} handleSort={handleSort} />
-                <DataTableBody data={dataOnPage as RowType[]} columns={columns} onClickOnRow={onClickOnRow} onDoubleClickOnRow={onDoubleClickOnRow} selectable={selectable} hoverable={hoverable} />
+                <DataTableHeader
+                    columns={columns}
+                    sort={sort}
+                    sortDirection={sortDirection}
+                    handleSort={handleSort}
+                />
+                <DataTableBody
+                    data={dataOnPage as RowType[]}
+                    columns={columns}
+                    onClickOnRow={onClickOnRow}
+                    onDoubleClickOnRow={onDoubleClickOnRow}
+                    selectable={selectable}
+                    hoverable={hoverable}
+                />
             </Table>
-            <DataTableActions page={page} setPage={setPage} dataNumber={dataNumber} rowsPerPage={rowsPerPage} maxPageNumber={maxPageNumber} />
+            <DataTableActions
+                page={page}
+                setPage={setPage}
+                dataNumber={dataNumber}
+                rowsPerPage={rowsPerPage}
+                setRowsPerPage={setRowsPerPage}
+                maxPageNumber={maxPageNumber ? maxPageNumber : undefined}
+            />
         </Container>
 
     );
