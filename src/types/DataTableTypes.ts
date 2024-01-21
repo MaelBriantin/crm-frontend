@@ -33,11 +33,11 @@ export type ColumnProps = {
   color?: ColumnColorProps[] | undefined;
 };
 
-export type IData = {
+export type RowDataType = {
   [key: string]: string | number | string[] | number[] | undefined | null;
 };
 
-export type DataTableProps<T extends IData> = {
+export type DataTableProps<T extends RowDataType> = {
   data: T[];
   columns: ColumnProps[];
   selectable?: boolean;

@@ -3,12 +3,12 @@ import { styled } from 'styled-components';
 import { theme } from '../../assets/themes';
 import { sortBy, extractBetween } from '../../utils/helpers/spells';
 import { RowType } from '../../types/DataTableTypes';
-import { IData, ColumnProps, DataTableProps } from '../../types/DataTableTypes';
+import { RowDataType, ColumnProps, DataTableProps } from '../../types/DataTableTypes';
 import { DataTableHeader } from './DataTableHeader';
 import { DataTableBody } from './DataTableBody';
 import { DataTableActions } from './DataTableActions';
 
-export const DataTable = <T extends IData>({ data, columns, selectable = false, rowsPerPage = 10 }: DataTableProps<T>): React.ReactElement => {
+export const DataTable = <T extends RowDataType>({ data, columns, selectable = false, rowsPerPage = 10 }: DataTableProps<T>): React.ReactElement => {
 
     const [sort, setSort] = React.useState<string | null>(null);
     const [sortDirection, setSortDirection] = React.useState<boolean>(true);
