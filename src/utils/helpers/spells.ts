@@ -43,7 +43,7 @@ export const firstOf = <T>(array: T[]): T | null => {
  * @param {boolean} asc - The direction to sort the objects in (true for ascending, false for descending).
  * @returns {T[]} - The sorted array.
  */
-export const sortBy = <T>(array: T[], key: keyof T | null, asc: boolean | null): T[] => {
+export const sortBy = <T>(array: T[], key: keyof T | null, asc: boolean | null = true): T[] => {
   if (key) {
     return array.sort((a: T, b: T) => {
       if (asc) {
