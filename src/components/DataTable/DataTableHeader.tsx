@@ -54,8 +54,10 @@ transition: all 250ms;
     height: 40px;
     overflow: hidden;
     width: 100%;
-    font-family: ${theme.fonts.family.dancing};
-    font-size: ${theme.fonts.size.P2};
+    font-family: ${theme.fonts.family.source};
+    color: ${theme.colors.greyDark};
+    font-weight: bold;
+    font-size: ${theme.fonts.size.P0};
 `;
 
 const ColumnTitle = styled.div<{ $sort: boolean }>`
