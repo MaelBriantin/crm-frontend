@@ -3,7 +3,7 @@ import { theme } from "../../assets/themes";
 import { VscLoading } from "react-icons/vsc";
 import React, { RefObject, useEffect, useRef, useState } from "react";
 
-export const Button = (props: { value: string, onClick: (e: React.MouseEvent<HTMLDivElement>) => {} | void, loading?: boolean | null }) => {
+export const Button = (props: { value: string, onClick: (e: React.MouseEvent<HTMLDivElement>) => object | void, loading?: boolean | null }) => {
     const { value, onClick, loading } = props
     const textRef: RefObject<HTMLInputElement> = useRef(null);
     const [width, setWidth] = useState(0);
