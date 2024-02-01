@@ -42,7 +42,7 @@ export const Input = (
         if (type === 'password' && !isFocused) {
             setHidden(true)
         }
-    }, [isFocused, setIsFocused]);
+    }, [isFocused, setIsFocused, type]);
 
     return (
         <InputStyle $width={width} $password={type === 'password'} $icon={!!icon}>
