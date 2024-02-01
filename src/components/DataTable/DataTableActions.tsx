@@ -25,6 +25,7 @@ export const DataTableActions = ({ page, setPage, dataNumber, setRowsPerPage, de
             <ResultPerPage>Résultats par page :
                 <Dropdown
                     handleSelectChange={(e) => { setRowsPerPage(e === 'Infinity' ? Infinity : parseInt(e)) }}
+                    variant='mini'
                     openOnTop
                     defaultValue={defaultRowsPerPage}
                     options={rowsPerPageOptions}
