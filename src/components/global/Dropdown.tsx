@@ -2,22 +2,33 @@ import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { VscChevronDown } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
+import { getVariantStyle } from '../../utils/dropdownUtils';
 
 type DropdownProps = {
     options: DropdownOptions[];
+    variant?: 'default' | 'mini';
     handleSelectChange: (selected: string) => void;
     defaultValue?: string | number | null;
     width?: number;
     openOnTop?: boolean;
     openOnBottom?: boolean;
-}
+};
 
 type DropdownOptions = {
     value: string;
     label: string;
 };
 
-export const Dropdown: React.FC<DropdownProps> = ({ options, handleSelectChange, defaultValue, width = 200, openOnTop = false, openOnBottom = false }) => {
+type VariantStyleType = {
+    padding: number;
+    paddingPlus: number;
+    fontSize: string;
+    borderSize: number;
+    height: string;
+};
+
+export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'default', handleSelectChange, defaultValue, width = 200, openOnTop = false, openOnBottom = false }) => {
+
     if (openOnBottom) {
         openOnTop = false;
     }
@@ -55,17 +66,19 @@ export const Dropdown: React.FC<DropdownProps> = ({ options, handleSelectChange,
         };
     }, []);
 
+    const variantStyle = getVariantStyle(variant) as VariantStyleType;
+    
     return (
-        <DropdownContainer $width={width} ref={dropdownRef}>
-            <DropdownHeader onClick={toggling} $isOpen={isOpen} $openOnBottom={openOnBottom} $openOnTop={openOnTop} >
+        <DropdownContainer $width={width} ref={dropdownRef} $variantStyle={variantStyle} >
+            <DropdownHeader onClick={toggling} $isOpen={isOpen} $openOnBottom={openOnBottom} $openOnTop={openOnTop} $variantStyle={variantStyle} >
                 {selectedOption || "Select..."}
                 <VscChevronDown className={'dropdownIcon'} />
             </DropdownHeader>
             {isOpen && (
-                <DropdownListContainer $openOnTop={openOnTop} $openOnBottom={openOnBottom}>
+                <DropdownListContainer $openOnTop={openOnTop} $openOnBottom={openOnBottom} $variantStyle={variantStyle} >
                     <DropdownList>
                         {options.map(option => (
-                            <ListItem onClick={onOptionClicked(option)} key={Math.random()}>
+                            <ListItem onClick={onOptionClicked(option)} key={Math.random()} $variantStyle={variantStyle} >
                                 {option.label}
                             </ListItem>
                         ))}
@@ -76,18 +89,19 @@ export const Dropdown: React.FC<DropdownProps> = ({ options, handleSelectChange,
     );
 };
 
-const DropdownContainer = styled.div<{ $width: number }>`
+const DropdownContainer = styled.div<{ $width: number, $variantStyle: VariantStyleType }>`
+    font-size: ${({ $variantStyle }) => $variantStyle.fontSize}; // variant dependent
     width: ${({ $width }) => $width}px;
     user-select: none;
     position: relative;
 `;
 
-const DropdownHeader = styled.div<{ $isOpen: boolean, $openOnTop: boolean, $openOnBottom: boolean }>`
+const DropdownHeader = styled.div<{ $isOpen: boolean, $openOnTop: boolean, $openOnBottom: boolean, $variantStyle: VariantStyleType }>`
+    padding: ${({ $variantStyle }) => $variantStyle.padding}px; // variant dependent
+    height: calc(${({ $variantStyle }) => $variantStyle.height} - ${({ $variantStyle }) => $variantStyle.padding * 2}px); // variant dependent
+    border: solid ${({ $variantStyle }) => $variantStyle.borderSize}px ${({ $isOpen }) => $isOpen ? theme.colors.primary : theme.colors.greyMedium}; // variant dependent
     transition: all 0.1s ease-in-out;
-    padding: 10px;
     width: 100%;
-    height: calc(${theme.materialDesign.height.default} - 20px); // 20px to cover the padding of the DropdownHeader
-    border: solid 2px ${({ $isOpen }) => $isOpen ? theme.colors.primary : theme.colors.greyMedium};
     border-radius: ${theme.materialDesign.borderRadius.rounded};
     border-radius: ${({ $isOpen, $openOnTop }) => ($openOnTop && $isOpen) && `0 0 ${theme.materialDesign.borderRadius.rounded} ${theme.materialDesign.borderRadius.rounded}`};
     border-radius: ${({ $isOpen, $openOnBottom }) => ($openOnBottom && $isOpen) && `${theme.materialDesign.borderRadius.rounded} ${theme.materialDesign.borderRadius.rounded} 0 0`};
@@ -105,16 +119,16 @@ const DropdownHeader = styled.div<{ $isOpen: boolean, $openOnTop: boolean, $open
     }
 `;
 
-const DropdownListContainer = styled.div<{ $openOnTop: boolean, $openOnBottom: boolean }>`
-    position: absolute;
+const DropdownListContainer = styled.div<{ $openOnTop: boolean, $openOnBottom: boolean, $variantStyle: VariantStyleType }>`
+    width: calc(100% + ${({ $variantStyle }) => $variantStyle.padding * 2}px); // variant dependent
+    border: solid ${({ $variantStyle }) => $variantStyle.borderSize}px ${theme.colors.greyMedium}; // variant dependent
+    border-top: ${({ $openOnBottom, $variantStyle }: { $openOnBottom: boolean, $variantStyle: VariantStyleType }) => $openOnBottom ? 'none' : `${$variantStyle.borderSize}px solid ${theme.colors.greyMedium}`}; // variant dependent
+    border-bottom: ${({ $openOnTop, $variantStyle }: { $openOnTop: boolean, $variantStyle: VariantStyleType }) => $openOnTop ? 'none' : `${$variantStyle.borderSize}px solid ${theme.colors.greyMedium}`}; // variant dependent
+    position: absolute; 
     z-index: 99;
     top: ${({ $openOnTop }) => $openOnTop ? 'auto' : '100%'};
     bottom: ${({ $openOnBottom }) => $openOnBottom ? 'auto' : '100%'};
-    width: calc(100% + 20px); // 100% plus 20px to cover the padding of the DropdownList
     background-color: #fff;
-    border: solid 2px ${theme.colors.greyMedium};
-    border-top: ${({ $openOnBottom }) => $openOnBottom ? 'none' : `2px solid ${theme.colors.greyMedium}`};
-    border-bottom: ${({ $openOnTop }) => $openOnTop ? 'none' : `2px solid ${theme.colors.greyMedium}`};
     border-radius: ${theme.materialDesign.borderRadius.rounded};
     border-radius: ${({ $openOnTop }) => $openOnTop && `${theme.materialDesign.borderRadius.rounded} ${theme.materialDesign.borderRadius.rounded} 0 0`};
     border-radius: ${({ $openOnBottom }) => $openOnBottom && `0 0 ${theme.materialDesign.borderRadius.rounded} ${theme.materialDesign.borderRadius.rounded}`};
@@ -126,8 +140,8 @@ const DropdownList = styled.ul`
     list-style-type: none;
 `;
 
-const ListItem = styled.li`
-    padding: 10px;
+const ListItem = styled.li<{ $variantStyle: VariantStyleType }>`
+    padding: ${({ $variantStyle }) => $variantStyle.padding}px; // variant dependent
     cursor: pointer;
     &:hover {
         background-color: #f0f0f0;
