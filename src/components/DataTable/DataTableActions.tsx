@@ -1,28 +1,36 @@
 import styled from 'styled-components';
 import { VscChevronLeft, VscChevronRight, VscBlank } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
+import { Dropdown } from '../global/Dropdown';
 
 type DataTableActionsProps = {
     page: number,
     setPage: React.Dispatch<React.SetStateAction<number>>,
     dataNumber: number,
-    rowsPerPage: number,
     setRowsPerPage: React.Dispatch<React.SetStateAction<number>>,
+    defaultRowsPerPage: number,
     maxPageNumber?: number
 };
 
-export const DataTableActions = ({ page, setPage, dataNumber, rowsPerPage, setRowsPerPage, maxPageNumber }: DataTableActionsProps) => {
+export const DataTableActions = ({ page, setPage, dataNumber, setRowsPerPage, defaultRowsPerPage, maxPageNumber }: DataTableActionsProps) => {
+    const rowsPerPageOptions = [
+        { value: '5', label: '5' },
+        { value: '10', label: '10' },
+        { value: '15', label: '15' },
+        { value: 'Infinity', label: 'Tous' }
+    ];
     return (
         <TableActions>
             <span>Résultats : {dataNumber}</span>
-            <span>Résultats par page :
-                <select defaultValue={rowsPerPage} name="rowsPerPage" id="rowsPerPage" onChange={(e) => setRowsPerPage(Number(e.target.value))}>
-                    <option value="10" >10</option>
-                    <option value="15" >15</option>
-                    <option value="20" >20</option>
-                    <option value="Infinity" >Tous</option>
-                </select>
-            </span>
+            <ResultPerPage>Résultats par page :
+                <Dropdown
+                    handleSelectChange={(e) => { setRowsPerPage(e === 'Infinity' ? Infinity : parseInt(e)) }}
+                    openOnTop
+                    defaultValue={defaultRowsPerPage}
+                    options={rowsPerPageOptions}
+                    width={60}
+                />
+            </ResultPerPage>
             {maxPageNumber &&
                 <PageChanger>
                     {page != 1 ? <VscChevronLeft className={'changePage'} onClick={() => setPage(page => Math.max(page - 1, 1))} />
@@ -43,6 +51,13 @@ const TableActions = styled.div`
     gap: 40px;
     padding: 10px 0;
     font-size: ${theme.fonts.size.P0};
+`;
+
+const ResultPerPage = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
 `;
 
 const PageChanger = styled.div`

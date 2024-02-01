@@ -66,8 +66,8 @@ export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, 
                 page={page}
                 setPage={setPage}
                 dataNumber={dataNumber}
-                rowsPerPage={rowsPerPage}
                 setRowsPerPage={setRowsPerPage}
+                defaultRowsPerPage={rowsPerPage}
                 maxPageNumber={maxPageNumber ? maxPageNumber : undefined}
             />
         </Container>
