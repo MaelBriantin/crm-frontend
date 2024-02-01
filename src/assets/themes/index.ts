@@ -66,7 +66,8 @@ const fonts= {
 };
 const materialDesign = {
     height: {
-        default: '36px'
+        default: '36px',
+        mini: '24px',
     },
     padding: {
         dense: '16px',
