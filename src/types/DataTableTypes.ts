@@ -33,8 +33,10 @@ export type ColumnProps = {
 };
 
 export type RowDataType = {
-  [key: string]: string | number | string[] | number[] | undefined | null;
+  [key: string]: RowDataValueTypes;
 };
+
+export type RowDataValueTypes = string | number | string[] | number[] | undefined | null;
 
 export type DataTableProps<T extends RowDataType> = {
   data: T[];
@@ -47,4 +49,10 @@ export type DataTableProps<T extends RowDataType> = {
 
 export type TableRowProps = {
   even?: boolean;
+};
+
+export type DataTableSearchProps<T extends RowDataType> = {
+  onSearch: (search: string) => void;
+  data: T[];
+
 };
