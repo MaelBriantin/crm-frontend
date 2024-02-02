@@ -31,8 +31,8 @@ export const LoginForm = () => {
         <LoginFormStyle>
             <div className={'welcome'}>Bonjour !</div>
             <div className={'input'}>
-                <Input placeholder={'Email'} icon={<MdAlternateEmail />} width={300} type={'email'} value={email} onInput={(handleChangeEmail)} />
-                <Input placeholder={'Mot de passe'} icon={<RiLockPasswordFill />} width={300} type={'password'} value={password} onInput={handleChangePassword} />
+                <Input variant="large" textColor={theme.colors.greyDark} placeholder={'Email'} icon={<MdAlternateEmail />} width={300} type={'email'} value={email} onInput={(handleChangeEmail)} />
+                <Input variant="large" textColor={theme.colors.greyDark} placeholder={'Mot de passe'} icon={<RiLockPasswordFill />} width={300} type={'password'} value={password} onInput={handleChangePassword} />
             </div>
             <div className={'button'}>
                 <Button value={'Connexion'} onClick={login} loading={loading} />

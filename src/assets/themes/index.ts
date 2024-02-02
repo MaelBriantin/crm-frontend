@@ -67,6 +67,7 @@ const fonts= {
 const materialDesign = {
     height: {
         default: '36px',
+        medium: '32px',
         mini: '24px',
     },
     padding: {
