@@ -5,7 +5,7 @@ import { theme } from '../assets/themes';
  * @param variant - The variant of the style ('default' or 'mini').
  * @returns The variant style object.
  */
-export const getVariantStyle = (variant: 'default' | 'mini') => {
+export const getVariantStyle = (variant: 'large' | 'regular' | 'small') => {
     const variantStyle = {
         padding: 0,
         paddingPlus: 0,
@@ -16,14 +16,21 @@ export const getVariantStyle = (variant: 'default' | 'mini') => {
 
     switch (variant) {
         default:
-        case 'default':
+        case 'large':
             variantStyle.padding = 10;
             variantStyle.paddingPlus = 20;
             variantStyle.fontSize = theme.fonts.size.P1;
             variantStyle.borderSize = 2;
             variantStyle.height = theme.materialDesign.height.default;
             break;
-        case 'mini':
+        case 'regular':
+            variantStyle.padding = 10;
+            variantStyle.paddingPlus = 20;
+            variantStyle.fontSize = theme.fonts.size.P0;
+            variantStyle.borderSize = 2;
+            variantStyle.height = theme.materialDesign.height.medium;
+            break;
+        case 'small':
             variantStyle.padding = 5;
             variantStyle.paddingPlus = 10;
             variantStyle.fontSize = theme.fonts.size.P0;

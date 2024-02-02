@@ -6,7 +6,7 @@ import { getVariantStyle } from '../../utils/dropdownUtils';
 
 type DropdownProps = {
     options: DropdownOptions[];
-    variant?: 'default' | 'mini';
+    variant?: 'large' | 'regular' | 'small';
     handleSelectChange: (selected: string) => void;
     defaultValue?: string | number | null;
     width?: number;
@@ -27,7 +27,7 @@ type VariantStyleType = {
     height: string;
 };
 
-export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'default', handleSelectChange, defaultValue, width = 200, openOnTop = false, openOnBottom = false }) => {
+export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular', handleSelectChange, defaultValue, width = 200, openOnTop = false, openOnBottom = false }) => {
 
     if (openOnBottom) {
         openOnTop = false;
@@ -94,6 +94,7 @@ const DropdownContainer = styled.div<{ $width: number, $variantStyle: VariantSty
     width: ${({ $width }) => $width}px;
     user-select: none;
     position: relative;
+    color: ${theme.colors.dark};
 `;
 
 const DropdownHeader = styled.div<{ $isOpen: boolean, $openOnTop: boolean, $openOnBottom: boolean, $variantStyle: VariantStyleType }>`
