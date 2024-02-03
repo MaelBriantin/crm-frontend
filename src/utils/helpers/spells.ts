@@ -108,3 +108,14 @@ export const filterOut = <T>(elements: T | T[], from: T[]): T[] => {
   const elementsArray = Array.isArray(elements) ? elements : [elements];
   return from.filter((element) => !elementsArray.includes(element));
 };
+
+
+/**
+ * Creates a deep copy of the given object.
+ * 
+ * @param value - The object to be deep copied.
+ * @returns A deep copy of the given object.
+ */
+export const deep = (value: object) => {
+  return JSON.parse(JSON.stringify(value));
+}
