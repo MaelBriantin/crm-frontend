@@ -9,7 +9,7 @@ import { DataTableBody } from './DataTableBody';
 import { DataTableActions } from './DataTableActions';
 import { DataTableSearch } from './DataTableSearch';
 
-export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, onDoubleClickOnRow, hoverable = false, searchbar = false }: DataTableProps<T>): React.ReactElement => {
+export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, onDoubleClickOnRow, hoverable = false, searchbar = false, emptyMessage }: DataTableProps<T>): React.ReactElement => {
 
     const selectable = onClickOnRow !== undefined || onDoubleClickOnRow !== undefined;
 
@@ -22,12 +22,12 @@ export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, 
 
     let dataNumber = data.length;
 
-    if(searchResults.length > 0) {
+    if (searchResults.length > 0) {
         dataNumber = searchResults.length;
     }
 
-    const sortedData = searchbar 
-        ? sortBy(searchResults, sort, sortDirection) 
+    const sortedData = searchbar
+        ? sortBy(searchResults, sort, sortDirection)
         : sortBy(data, sort, sortDirection);
 
     let dataOnPage = sortedData;
@@ -80,14 +80,26 @@ export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, 
                     hoverable={hoverable}
                 />
             </Table>
-            <DataTableActions
-                page={page}
-                setPage={setPage}
-                dataNumber={dataNumber}
-                setRowsPerPage={setRowsPerPage}
-                defaultRowsPerPage={rowsPerPage}
-                maxPageNumber={maxPageNumber ? maxPageNumber : undefined}
-            />
+            {sortedData.length > 0 &&
+                <DataTableActions
+                    page={page}
+                    setPage={setPage}
+                    dataNumber={dataNumber}
+                    setRowsPerPage={setRowsPerPage}
+                    defaultRowsPerPage={rowsPerPage}
+                    maxPageNumber={maxPageNumber ? maxPageNumber : undefined}
+                />
+            }
+            {(sortedData.length === 0 && searchedValue === '') &&
+                <div style={{ textAlign: 'center', padding: '20px' }}>
+                    {emptyMessage ? emptyMessage : 'Aucun résultat trouvé'}
+                </div>
+            }
+            {(sortedData.length === 0 && searchedValue !== '') &&
+                <div style={{ textAlign: 'center', padding: '20px' }}>
+                    {'Aucun résultat trouvé pour cette recherche'}
+                </div>
+            }
         </Container>
 
     );

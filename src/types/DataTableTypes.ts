@@ -51,6 +51,7 @@ export type DataTableProps<T extends RowDataType> = {
   onDoubleClickOnRow?: (row: RowType) => void;
   hoverable?: boolean;
   searchbar?: boolean;
+  emptyMessage?: string;
 };
 
 export type TableRowProps = {

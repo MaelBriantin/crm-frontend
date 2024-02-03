@@ -86,6 +86,7 @@ export const SectorPage: React.FC = () => {
                     columns={columns}
                     onDoubleClickOnRow={handleDoubleClick}
                     data={deep(sectorsWithPostcodes) as unknown as RowDataType[]}
+                    emptyMessage={'Aucun secteur trouvé'}
                 />
             }
         </Container>
