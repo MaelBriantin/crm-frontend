@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export const dataTableTypeList = ['chips', 'text', 'number', 'boolean', 'date', 'currency', 'percentage', 'link'];
 
 export type DataTableType = typeof dataTableTypeList[number];
@@ -16,6 +18,8 @@ export type DataTableCellProps = {
   column: ColumnType;
   columnIndex: number;
   color?: { background: string | undefined, text: string | undefined } | undefined;
+  searchedValue?: string | number;
+  arrayLimit?: number;
 };
 
 export type TableCellProps = {
@@ -36,7 +40,7 @@ export type RowDataType = {
   [key: string]: RowDataValueTypes;
 };
 
-export type RowDataValueTypes = string | number | string[] | number[] | undefined | null;
+export type RowDataValueTypes = string | number | string[] | number[] | object | undefined | null;
 
 export type DataTableProps<T extends RowDataType> = {
   data: T[];
@@ -45,6 +49,7 @@ export type DataTableProps<T extends RowDataType> = {
   onClickOnRow?: (row: RowType) => void;
   onDoubleClickOnRow?: (row: RowType) => void;
   hoverable?: boolean;
+  searchbar?: boolean;
 };
 
 export type TableRowProps = {
@@ -52,7 +57,7 @@ export type TableRowProps = {
 };
 
 export type DataTableSearchProps<T extends RowDataType> = {
-  onSearch: (search: string) => void;
+  searchedValue: Dispatch<SetStateAction<string | number>>;
+  onSearch: Dispatch<SetStateAction<T[]>>;
   data: T[];
-
 };

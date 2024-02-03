@@ -10,9 +10,10 @@ type DataTableBodyProps = {
     onDoubleClickOnRow?: (row: RowType) => void;
     selectable: boolean;
     hoverable: boolean;
+    searchedValue?: string | number;
 };
 
-export const DataTableBody = ({ data, columns, onClickOnRow, onDoubleClickOnRow, selectable, hoverable }: DataTableBodyProps) => {
+export const DataTableBody = ({ data, columns, onClickOnRow, onDoubleClickOnRow, selectable, hoverable, searchedValue }: DataTableBodyProps) => {
     return (
         <tbody>
             {data.map((row, rowIndex) => (
@@ -25,6 +26,7 @@ export const DataTableBody = ({ data, columns, onClickOnRow, onDoubleClickOnRow,
                 >
                     {columns.map((column, columnIndex) => (
                         <DataTableCell
+                            searchedValue={searchedValue}
                             key={columnIndex}
                             row={row as RowType}
                             column={column as ColumnType}

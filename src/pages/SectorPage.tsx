@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { firstOf, isEmpty } from '../utils/helpers/spells.ts';
+import { deep, firstOf, isEmpty } from '../utils/helpers/spells.ts';
 import { Loader } from '../components/global/Loader.tsx';
 import { DataTable } from '../components/DataTable';
 import { RowDataType } from '../types/DataTableTypes.ts';
@@ -9,15 +9,15 @@ import { SectorType } from '../types/DataTypes.ts';
 import { fetchAllSectors, fetchSectors } from '../services/api/sectors';
 
 export const SectorPage: React.FC = () => {
-    
+
     const [sectors, setSectors] = React.useState<SectorType[]>([]);
 
     useEffect(() => {
-        const fetchSectors = async () => {
-            const sectors = await fetchAllSectors();
+        const fetchSectors = async (option: string) => {
+            const sectors = await fetchAllSectors(option);
             setSectors(sectors as SectorType[]);
         };
-        fetchSectors();
+        fetchSectors('withPostcodes');
     }, []);
 
     const columns = [
@@ -27,7 +27,7 @@ export const SectorPage: React.FC = () => {
             sortable: true,
             type: 'number',
             // color: [
-            //     { value: '*<10', text: 'blue' }
+            //     { value: '*<5', text: 'blue' }
             // ]
         },
         {
@@ -35,19 +35,37 @@ export const SectorPage: React.FC = () => {
             value: 'name',
             sortable: true,
             // color: [
-            //     { value: 'et', text: 'red' }
+            //     { value: 'et', text: 'blue' },
+            //     { value: 'quasi', text: 'red' },
+            //     { value: 'et', text: 'green' }
             // ]
         },
         {
             text: 'Nombre de communes',
             value: 'postcodes_count',
             sortable: true,
-            type: 'number',
+            type: 'chips',
             // color: [
-            //     { value: '*', text: 'green' }
+            //     { value: '10', text: 'white', background: 'purple' }
+            // ]
+        },
+        {
+            text: 'Codes postaux',
+            value: 'postcodes',
+            sortable: false,
+            type: 'chips',
+            // color: [
+            //     { value: '*', text: 'white', background: `${theme.colors.primary}` }
             // ]
         },
     ];
+
+    const sectorsWithPostcodes = sectors.map(sector => {
+        return {
+            ...sector,
+            postcodes: sector.postcodes.map(postcode => postcode.postcode)
+        }
+    });
 
     // const handleClick = (row: RowType) => {
     //     console.log('click', row);
@@ -55,14 +73,19 @@ export const SectorPage: React.FC = () => {
 
     const handleDoubleClick = async (row: RowType) => {
         const sector = await fetchSectors(row.id as SectorType['id'], 'withPostcodes');
-        console.log('sector', firstOf(sector)); 
+        console.log('sector', firstOf(sector));
     };
 
     return (
         <Container>
             {isEmpty(sectors) && <Loader />}
             {!isEmpty(sectors) &&
-                <DataTable data={sectors as unknown as RowDataType[]} columns={columns} onDoubleClickOnRow={handleDoubleClick} />
+                <DataTable
+                    searchbar
+                    columns={columns}
+                    onDoubleClickOnRow={handleDoubleClick}
+                    data={deep(sectorsWithPostcodes) as unknown as RowDataType[]}
+                />
             }
         </Container>
     );

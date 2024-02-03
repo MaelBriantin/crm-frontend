@@ -7,8 +7,9 @@ import { RowDataType, ColumnProps, DataTableProps } from '../../types/DataTableT
 import { DataTableHeader } from './DataTableHeader';
 import { DataTableBody } from './DataTableBody';
 import { DataTableActions } from './DataTableActions';
+import { DataTableSearch } from './DataTableSearch';
 
-export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, onDoubleClickOnRow, hoverable = false }: DataTableProps<T>): React.ReactElement => {
+export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, onDoubleClickOnRow, hoverable = false, searchbar = false }: DataTableProps<T>): React.ReactElement => {
 
     const selectable = onClickOnRow !== undefined || onDoubleClickOnRow !== undefined;
 
@@ -16,9 +17,18 @@ export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, 
     const [sortDirection, setSortDirection] = React.useState<boolean>(true);
     const [page, setPage] = React.useState<number>(1);
     const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
+    const [searchResults, setSearchResults] = React.useState<T[]>([]);
+    const [searchedValue, setSearchedValue] = React.useState<string | number>('');
 
-    const dataNumber = data.length;
-    const sortedData = sortBy(data, sort, sortDirection);
+    let dataNumber = data.length;
+
+    if(searchResults.length > 0) {
+        dataNumber = searchResults.length;
+    }
+
+    const sortedData = searchbar 
+        ? sortBy(searchResults, sort, sortDirection) 
+        : sortBy(data, sort, sortDirection);
 
     let dataOnPage = sortedData;
     let maxPageNumber: number | undefined = undefined;
@@ -46,6 +56,13 @@ export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, 
 
     return (
         <Container>
+            {searchbar &&
+                <DataTableSearch
+                    searchedValue={setSearchedValue}
+                    onSearch={setSearchResults}
+                    data={data as T[]}
+                />
+            }
             <Table>
                 <DataTableHeader
                     columns={columns}
@@ -54,6 +71,7 @@ export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, 
                     handleSort={handleSort}
                 />
                 <DataTableBody
+                    searchedValue={searchedValue}
                     data={dataOnPage as RowType[]}
                     columns={columns}
                     onClickOnRow={onClickOnRow}
