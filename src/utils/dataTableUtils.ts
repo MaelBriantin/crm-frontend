@@ -55,3 +55,22 @@ export const getColor = (columnColor: ColumnColorProps[] | undefined, value: str
     }
     return undefined;
 };
+
+
+/**
+ * Highlights the searched value in a given value by wrapping it with <span> tags.
+ * If the value is not a string or number, it returns the value as is.
+ * 
+ * @param searchedValue - The value to be searched for.
+ * @param value - The value to be highlighted.
+ * @returns The highlighted value.
+ */
+export const highlightSearchedValue = (searchedValue: string | number | undefined, value: string | number | boolean | string[]): string | number | boolean | string[] => {
+    if (typeof value === 'string' || typeof value === 'number') {
+        const isSearched = searchedValue && String(value).toLowerCase().includes(String(searchedValue).toLowerCase());
+        if (isSearched) {
+            return String(value).replace(new RegExp(String(searchedValue), 'gi'), (match: string) => `<span>${match}</span>`);
+        }
+    }
+    return value;
+}
