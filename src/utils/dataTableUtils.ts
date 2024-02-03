@@ -1,4 +1,5 @@
 import { ColumnColorProps } from '../types/DataTableTypes';
+import { limit } from './helpers/spells';
 
 /**
      * Get the color based on the columnColor array and the specified value.
@@ -74,3 +75,38 @@ export const highlightSearchedValue = (searchedValue: string | number | undefine
     }
     return value;
 }
+
+/**
+ * Get the value of a row and highlights the searched value.
+ * 
+ * @param searched - The value being searched for.
+ * @param row - The row containing the value.
+ * @param arrayLimit - The maximum number of values in the row if value is an array.
+ * @returns An object containing the row value and the values to highlight.
+ */
+export const getRowValueAndHighlight = (searched: string | number | undefined, row: string | number | boolean | string[], arrayLimit: number) => {
+    
+    let rowValue = highlightSearchedValue(searched, row);
+    const highlight = [searched];
+        
+    if (Array.isArray(rowValue)) {
+        if (rowValue.length > arrayLimit) {
+            if(searched) {
+                let index = null;
+                rowValue.map((item, i) => {
+                    if(item.includes(String(searched).toLowerCase())) {
+                        index = i;
+                    }
+                });
+                if (index !== null && index > (arrayLimit - 1)) {
+                    highlight.push("...");
+                }
+            }
+            rowValue = [...limit(rowValue, arrayLimit), '...']
+        } else {
+            rowValue = limit(rowValue, arrayLimit);
+        }
+    }
+
+    return { rowValue, highlight };
+};
