@@ -33,6 +33,7 @@ export type ColumnProps = {
   value: string;
   sortable: boolean;
   type?: string;
+  limit?: number;
   color?: ColumnColorProps[] | undefined;
 };
 

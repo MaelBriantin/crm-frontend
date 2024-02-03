@@ -54,6 +54,7 @@ export const SectorPage: React.FC = () => {
             value: 'postcodes',
             sortable: false,
             type: 'chips',
+            limit: 5, // limit the number of chips displayed if the value is an array
             // color: [
             //     { value: '*', text: 'white', background: `${theme.colors.primary}` }
             // ]
