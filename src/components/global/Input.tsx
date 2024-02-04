@@ -1,6 +1,7 @@
 import { theme } from "../../assets/themes";
 import { RefObject, useEffect, useRef, useState, ReactNode, ChangeEvent } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { VscChromeClose } from "react-icons/vsc";
 import styled from "styled-components";
 import { getVariantStyle } from "../../utils/inputUtils";
 
@@ -13,10 +14,11 @@ type VariantStyleType = {
 
 export const Input = (
     props: {
+        clearable?: boolean,
         placeholder: string,
         icon?: ReactNode,
         width: number,
-        type?: string,
+        type?: 'text' | 'password' | 'email' | 'search',
         value: string | number,
         variant?: 'large' | 'regular' | 'small',
         textColor?: string,
@@ -24,6 +26,7 @@ export const Input = (
     }) => {
     const {
         placeholder,
+        clearable = false,
         icon,
         width,
         type = 'text',
@@ -59,8 +62,8 @@ export const Input = (
     const variantStyle = getVariantStyle(variant, textColor);
 
     return (
-        <InputStyle $width={width} $password={type === 'password'} $icon={!!icon} $variantStyle={variantStyle}>
-            {icon && <span>{icon}</span>}
+        <InputStyle $width={width} $password={type === 'password'} $icon={!!icon} $variantStyle={variantStyle} $clearable={clearable}>
+            {icon && <span className="icon">{icon}</span>}
             {
                 (type === 'password' && hidden)
                 && <Hide onMouseDown={(e) => seeHidden(e)}><FaEye /></Hide>
@@ -68,6 +71,10 @@ export const Input = (
             {
                 (type === 'password' && !hidden)
                 && <Hide onMouseDown={(e) => seeHidden(e)}><FaEyeSlash /></Hide>
+            }
+            {
+                (clearable && value)
+                && <ClearButton onClick={() => onInput({ target: { value: '' } } as ChangeEvent<HTMLInputElement>)}><VscChromeClose /></ClearButton>
             }
             <input
                 ref={passwordRef}
@@ -83,7 +90,7 @@ export const Input = (
     )
 }
 
-const InputStyle = styled.div<{ $width: number, $password: boolean, $icon: boolean, $variantStyle: VariantStyleType }>`
+const InputStyle = styled.div<{ $width: number, $password: boolean, $icon: boolean, $variantStyle: VariantStyleType, $clearable: boolean }>`
     height: ${({ $variantStyle }) => $variantStyle.height};
     font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
     border-radius: ${theme.materialDesign.borderRadius.rounded};
@@ -106,12 +113,12 @@ const InputStyle = styled.div<{ $width: number, $password: boolean, $icon: boole
         width: 100%;
         height: 100%;
         font-family: 'Source Sans 3', sans-serif;
-        padding-right: ${({ $password }): string => $password ? ' 35px' : '10px'};
+        padding-right: ${({ $password, $clearable }): string => $password || $clearable ? ' 35px' : '10px'};
         border-radius: ${theme.materialDesign.borderRadius.default};
         background: ${theme.colors.transparent};
     }
 
-    span {
+    .icon {
         color: ${theme.colors.greyDark};
         font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
         position: absolute;
@@ -133,3 +140,24 @@ const Hide = styled.div`
     transform: translateY(-45%);
     right: 10px;
 `
+
+const ClearButton = styled.div`
+    color: ${theme.colors.greyDark};
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: ${theme.colors.greyLight};
+    transition: all 250ms;
+    &:hover {
+        background-color: ${theme.colors.error};
+        color: ${theme.colors.white};
+    }
+`;
