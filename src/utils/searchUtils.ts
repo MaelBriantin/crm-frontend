@@ -9,15 +9,12 @@ import { RowDataValueTypes } from '../types/DataTableTypes';
  * @returns True if the value matches the search criteria, false otherwise.
  */
 export const wildcardSearch = (search: string | number, value: RowDataValueTypes, columnText: string) => {
-    console.log('columnText', columnText);
     if (typeof search === 'string' && search.charAt(0) === '*') {
         const searchQuery = search.slice(1);
         const operators = ['<', '>', '='];
         const operator = operators.find(op => searchQuery.includes(op));
         if (operator) {
             const [searchValue, searchKey] = searchQuery.split(operator)[1].split(':');
-            console.log('operator', operator);
-            console.log('searchValue', searchValue);
             if (searchKey && !columnText.toLowerCase().includes(searchKey.toLowerCase())) {
                 return false;
             }
