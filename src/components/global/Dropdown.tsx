@@ -7,11 +7,17 @@ import { getVariantStyle } from '../../utils/dropdownUtils';
 type DropdownProps = {
     options: DropdownOptions[];
     variant?: 'large' | 'regular' | 'small';
-    handleSelectChange: (selected: string) => void;
-    defaultValue?: string | number | null;
+    handleSelectChange: (selected: DropdownValueType) => void;
+    defaultValue?: DropdownValueType;
     width?: number;
     openOnTop?: boolean;
     openOnBottom?: boolean;
+    label?: string;
+};
+
+type DropdownValueType = {
+    value: string | number;
+    label: string;
 };
 
 type DropdownOptions = {
@@ -27,7 +33,7 @@ type VariantStyleType = {
     height: string;
 };
 
-export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular', handleSelectChange, defaultValue, width = 200, openOnTop = false, openOnBottom = false }) => {
+export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular', handleSelectChange, defaultValue, width = 200, openOnTop = false, openOnBottom = false, label }) => {
 
     if (openOnBottom) {
         openOnTop = false;
@@ -40,18 +46,18 @@ export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular'
     }
 
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedOption, setSelectedOption] = useState<string | number | null>(defaultValue || null);
+    const [selectedOption, setSelectedOption] = useState<DropdownValueType>(defaultValue || options[0]);
     const dropdownRef = useRef(null);
 
     const toggling = () => setIsOpen(!isOpen);
 
     const onOptionClicked = (selectedElement: DropdownOptions) => () => {
-        setSelectedOption(selectedElement.label);
+        setSelectedOption(selectedElement as DropdownValueType);
         setIsOpen(false);
 
-        handleSelectChange(selectedElement.value);
+        handleSelectChange(selectedElement as DropdownValueType);
     };
-
+    
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !(dropdownRef.current as HTMLElement).contains(event.target as Node)) {
@@ -67,25 +73,25 @@ export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular'
     }, []);
 
     const variantStyle = getVariantStyle(variant) as VariantStyleType;
-    
+
     return (
         <DropdownContainer $width={width} ref={dropdownRef} $variantStyle={variantStyle} >
             <DropdownHeader onClick={toggling} $isOpen={isOpen} $openOnBottom={openOnBottom} $openOnTop={openOnTop} $variantStyle={variantStyle} >
-                {selectedOption || "Select..."}
-                <VscChevronDown className={'dropdownIcon'} />
-            </DropdownHeader>
-            {isOpen && (
-                <DropdownListContainer $openOnTop={openOnTop} $openOnBottom={openOnBottom} $variantStyle={variantStyle} >
-                    <DropdownList>
-                        {options.map(option => (
-                            <ListItem onClick={onOptionClicked(option)} key={Math.random()} $variantStyle={variantStyle} >
-                                {option.label}
-                            </ListItem>
-                        ))}
-                    </DropdownList>
-                </DropdownListContainer>
-            )}
-        </DropdownContainer>
+                    { selectedOption && selectedOption.label || label || "Select..." }
+                    <VscChevronDown className={'dropdownIcon'} />
+                </DropdownHeader>
+                {isOpen && (
+                    <DropdownListContainer $openOnTop={openOnTop} $openOnBottom={openOnBottom} $variantStyle={variantStyle} >
+                        <DropdownList>
+                            {options.map(option => (
+                                <ListItem onClick={onOptionClicked(option)} key={Math.random()} $variantStyle={variantStyle} >
+                                    {option.label}
+                                </ListItem>
+                            ))}
+                        </DropdownList>
+                    </DropdownListContainer>
+                )}
+            </DropdownContainer>
     );
 };
 
@@ -95,9 +101,12 @@ const DropdownContainer = styled.div<{ $width: number, $variantStyle: VariantSty
     user-select: none;
     position: relative;
     color: ${theme.colors.dark};
+    background-color: ${theme.colors.white};
+    margin-right: calc(${({ $variantStyle }) => $variantStyle.padding * 2}px + ${({ $variantStyle }) => $variantStyle.borderSize * 2}px); // variant dependent
 `;
 
 const DropdownHeader = styled.div<{ $isOpen: boolean, $openOnTop: boolean, $openOnBottom: boolean, $variantStyle: VariantStyleType }>`
+    background-color: ${theme.colors.white};
     padding: ${({ $variantStyle }) => $variantStyle.padding}px; // variant dependent
     height: calc(${({ $variantStyle }) => $variantStyle.height} - ${({ $variantStyle }) => $variantStyle.padding * 2}px); // variant dependent
     border: solid ${({ $variantStyle }) => $variantStyle.borderSize}px ${({ $isOpen }) => $isOpen ? theme.colors.primary : theme.colors.greyMedium}; // variant dependent
