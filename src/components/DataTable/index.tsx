@@ -59,8 +59,9 @@ export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, 
             {searchbar &&
                 <DataTableSearch
                     searchedValue={setSearchedValue}
-                    onSearch={setSearchResults}
                     data={data as T[]}
+                    columns={columns}
+                    onSearch={setSearchResults}
                 />
             }
             <Table>

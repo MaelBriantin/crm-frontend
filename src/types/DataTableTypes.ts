@@ -62,4 +62,6 @@ export type DataTableSearchProps<T extends RowDataType> = {
   searchedValue: Dispatch<SetStateAction<string | number>>;
   onSearch: Dispatch<SetStateAction<T[]>>;
   data: T[];
+  columns: ColumnProps[];
+  clearable?: boolean;
 };
