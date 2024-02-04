@@ -71,7 +71,7 @@ const materialDesign = {
         mini: '24px',
     },
     padding: {
-        dense: '16px',
+        dense: '12px',
         default: '16px'
     },
     fontSize: {
