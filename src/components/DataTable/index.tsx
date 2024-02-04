@@ -7,7 +7,7 @@ import { RowDataType, ColumnProps, DataTableProps } from '../../types/DataTableT
 import { DataTableHeader } from './DataTableHeader';
 import { DataTableBody } from './DataTableBody';
 import { DataTableActions } from './DataTableActions';
-import { DataTableSearch } from './DataTableSearch';
+import { DataTableTopBar } from './DataTableTopBar';
 
 export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, onDoubleClickOnRow, hoverable = false, searchbar = false, emptyMessage }: DataTableProps<T>): React.ReactElement => {
 
@@ -57,11 +57,13 @@ export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, 
     return (
         <Container>
             {searchbar &&
-                <DataTableSearch
-                    searchedValue={setSearchedValue}
+                <DataTableTopBar
+                    withAdvancedSearch
+                    setSearchedValue={setSearchedValue}
                     data={data as T[]}
                     columns={columns}
                     onSearch={setSearchResults}
+                    onClick={() => { }}
                 />
             }
             <Table>

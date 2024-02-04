@@ -44,7 +44,7 @@ export const SectorPage: React.FC = () => {
             text: 'Nombre de communes',
             value: 'postcodes_count',
             sortable: true,
-            type: 'chips',
+            type: 'number',
             // color: [
             //     { value: '10', text: 'white', background: 'purple' }
             // ]

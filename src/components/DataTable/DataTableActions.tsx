@@ -19,15 +19,16 @@ export const DataTableActions = ({ page, setPage, dataNumber, setRowsPerPage, de
         { value: '15', label: '15' },
         { value: 'Infinity', label: 'Tous' }
     ];
+    const matchingOptions = rowsPerPageOptions.find(option => option.value === defaultRowsPerPage.toString());
     return (
         <TableActions>
             <span>Résultats : {dataNumber}</span>
             <ResultPerPage>Résultats par page :
                 <Dropdown
-                    handleSelectChange={(e) => { setRowsPerPage(e === 'Infinity' ? Infinity : parseInt(e)) }}
+                    handleSelectChange={(e) => { setRowsPerPage(e.value === 'Infinity' ? Infinity : parseInt(String(e.value))) }}
                     variant='small'
                     openOnTop
-                    defaultValue={defaultRowsPerPage}
+                    defaultValue={matchingOptions}
                     options={rowsPerPageOptions}
                     width={60}
                 />
