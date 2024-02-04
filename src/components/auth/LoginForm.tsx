@@ -35,7 +35,7 @@ export const LoginForm = () => {
                 <Input variant="large" textColor={theme.colors.greyDark} placeholder={'Mot de passe'} icon={<RiLockPasswordFill />} width={300} type={'password'} value={password} onInput={handleChangePassword} />
             </div>
             <div className={'button'}>
-                <Button value={'Connexion'} onClick={login} loading={loading} />
+                <Button variant="large" value={'Connexion'} onClick={login} loading={loading} />
             </div>
         </LoginFormStyle>
     );
