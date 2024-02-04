@@ -64,4 +64,5 @@ export type DataTableSearchProps<T extends RowDataType> = {
   data: T[];
   columns: ColumnProps[];
   clearable?: boolean;
+  advancedSearch?: boolean;
 };
