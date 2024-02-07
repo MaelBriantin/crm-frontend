@@ -116,6 +116,26 @@ export const filterOut = <T>(elements: T | T[], from: T[]): T[] => {
  * @param value - The object to be deep copied.
  * @returns A deep copy of the given object.
  */
-export const deep = (value: object) => {
+export const deepCopy = (value: object) => {
   return JSON.parse(JSON.stringify(value));
 }
+
+
+/**
+ * Removes specified keys from an object or an array of objects.
+ *
+ * @param {object | object[]} obj - The object or array of objects from which to remove keys.
+ * @param {string[]} keysToRemove - The array of keys to remove.
+ * @returns {object | object[]} - The object or array of objects without the specified keys.
+ */
+export const removeKeys = (obj: object | object[], keysToRemove: string[]): object | object[] => {
+  if (Array.isArray(obj)) {
+    return obj.map(item => removeKeys(item, keysToRemove));
+  } else {
+    const newObj: { [key: string]: unknown } = { ...obj };
+    keysToRemove.forEach(key => {
+      delete newObj[key];
+    });
+    return newObj;
+  }
+};
