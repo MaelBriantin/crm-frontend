@@ -6,7 +6,7 @@ import { PiButterflyThin } from "react-icons/pi";
 import { LiaMapMarkedAltSolid } from "react-icons/lia";
 import { useLogoutService } from "../../hooks/auth/useLogout";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 
 type NavbarProps = {
     showNavbar: boolean;
@@ -37,6 +37,23 @@ export const Navbar = (props: NavbarProps) => {
         e.preventDefault();
         logoutService(navigate);
     };
+
+    // shortcut to show/hide navbar
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            // set showNavbar to true when ctrl + alt + s is pressed
+            if (event.ctrlKey && event.altKey && event.key === 's') {
+                setShowNavbar(prevShowNavbar => !prevShowNavbar);
+            }
+        };
+        // add event listener when component mounts
+        window.addEventListener('keydown', handleKeyDown);
+        
+        return () => {
+            // remove event listener when component unmounts
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [setShowNavbar]);
 
     const links: NavbarGroups[] = [
         {
@@ -92,7 +109,7 @@ export const Navbar = (props: NavbarProps) => {
             <NavListContainer $showNavbar={showNavbar}>
 
                 <AppName>
-                    <PiButterflyThin className="logo" onClick={() => { setShowNavbar(!showNavbar) }} />
+                    <PiButterflyThin className="logo" onClick={() => {}} />
                 </AppName>
 
                 <NavLinks>
@@ -132,7 +149,7 @@ const NavbarContainer = styled.div<{ $showNavbar: boolean }>`
     ${({ $showNavbar }): false | RuleSet<object> | undefined => $showNavbar
         ? css`
         //opacity: 1;
-        width: 350px;
+        width: 300px;
         transform: translateX(0);
         `
         : css`
@@ -147,6 +164,7 @@ const NavbarContainer = styled.div<{ $showNavbar: boolean }>`
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    margin-right: ${({ $showNavbar }): string => $showNavbar ? '-0.5vw' : '0'};
 `
 
 const NavListContainer = styled.div<{ $showNavbar: boolean }>`
@@ -176,7 +194,7 @@ const AppName = styled.div`
     align-items: center;
     gap: 10px;
     .logo{
-        cursor: pointer;
+        // cursor: pointer;
         font-size: ${theme.fonts.size.P5};
         transition: all 450ms;
         opacity: 0.25;
@@ -221,7 +239,7 @@ const NavGroupName = styled.div`
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    width: 80%;
+    width: 85%;
     padding: 5px 10px;
     opacity: 0.5;
     font-size: ${theme.fonts.size.P1};

@@ -64,7 +64,7 @@ const NavbarItemStyle = styled.div<{ $selected: boolean, $disconnect?: boolean }
     overflow: hidden;
     font-size: ${theme.fonts.size.P0};
     user-select: none;
-    width: 80%;
+    width: 85%;
     height: 25px;
     display: flex;
     justify-content: flex-start;
