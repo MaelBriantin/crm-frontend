@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { Outlet } from "react-router-dom";
 import { Toast } from "../components/global/Toast";
-import { Navbar } from "../components/global/Navbar";
+import { Navbar } from "../components/NavBar";
 import { theme } from "../assets/themes";
-import { ShowNavbarButton } from "../components/global/ShowNavbarButton";
+import { ShowNavbarButton } from "../components/NavBar/ShowNavbarButton";
 import { useState } from "react";
 
 export const AuthenticatedLayout = () => {
@@ -35,9 +35,9 @@ const OutletContainer = styled.div`
     position: relative;
     transition: all 250ms;
     z-index: 99;
-    height: 98%;
-    width: 100%;
-    margin: 0 0.5%;
+    height: 98vh;
+    width: 100vw;
+    margin: 0 0.5vw;
     overflow: hidden;
     display: flex;
     justify-content: center;
