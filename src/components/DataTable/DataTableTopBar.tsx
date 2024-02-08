@@ -4,7 +4,7 @@ import { ColumnProps, RowDataType } from "../../types/DataTableTypes";
 import { SetStateAction } from "react";
 import { Dispatch } from "react";
 import { Button } from "../global/Button";
-import { VscAdd } from "react-icons/vsc";
+import { LiaMapMarkedAltSolid } from "react-icons/lia";
 
 type DataTableTopBarProps<T> = {
     withSearch?: boolean;
@@ -30,7 +30,7 @@ export const DataTableTopBar = <T extends RowDataType>({ withSearch = false, wit
             <Button
                 variant='regular'
                 onClick={onClick}
-                icon={<VscAdd />}
+                icon={<LiaMapMarkedAltSolid />}
             />
         </Container>
     );
