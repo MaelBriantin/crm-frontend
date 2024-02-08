@@ -15,7 +15,7 @@ type DropdownProps = {
     label?: string;
 };
 
-type DropdownValueType = {
+export type DropdownValueType = {
     value: string | number;
     label: string;
 };
@@ -57,7 +57,7 @@ export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular'
 
         handleSelectChange(selectedElement as DropdownValueType);
     };
-    
+
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !(dropdownRef.current as HTMLElement).contains(event.target as Node)) {
