@@ -74,7 +74,7 @@ export const Navbar = (props: NavbarProps) => {
                 },
                 {
                     text: 'Secteurs',
-                    path: '/areas',
+                    path: '/sectors',
                     icon: <LiaMapMarkedAltSolid />,
                 },
                 {

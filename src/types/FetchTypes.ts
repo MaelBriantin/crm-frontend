@@ -1,4 +1,4 @@
-type FetchAPIOptions = {
+export type FetchAPIOptions = {
     method: string;
     headers: {
         "Accept": string;
@@ -9,12 +9,12 @@ type FetchAPIOptions = {
     body?: string | null;
 }
 
-type APIResponseError = {
+export type APIResponseError = {
     message: string;
     errors: object;
 }
 
-type APIResponseFormat<T> = {
+export type APIResponseFormat<T> = {
     data: T[] | null;
     error: APIResponseError | null;
 }

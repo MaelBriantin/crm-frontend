@@ -10,11 +10,11 @@ interface ToastContextValue {
     message: string;
     setMessage: Dispatch<SetStateAction<string>>;
     callToast: (type: string, message: string, duration?: number) => void;
-};
+}
 
 export interface ToastProviderProps {
     children: React.ReactNode;
-};
+}
 
 
 export const ToastContext = createContext<ToastContextValue>({
@@ -71,4 +71,5 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useToast = () => useContext(ToastContext);

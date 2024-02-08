@@ -4,6 +4,7 @@ import { firstOf } from "../../utils/helpers/spells";
 import { AuthContext } from "../../contexts/auth/AuthContext";
 import { NavigateFunction } from "react-router-dom";
 import { ToastContext } from "../../contexts/global/ToastContext";
+import { AuthUser } from "../../types/AuthTypes";
 
 export const useLoginService = () => {
   const { setUser, setIsAuthenticated } = useContext(AuthContext);

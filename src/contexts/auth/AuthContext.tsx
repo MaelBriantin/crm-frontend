@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, Dispatch, SetStateAction } from 'react';
+import { AuthUser } from '../../types/AuthTypes.ts';
 
 interface AuthContextValue {
     user: AuthUser | null;
@@ -43,4 +44,5 @@ interface AuthContextValue {
     );
   };
   
+  // eslint-disable-next-line react-refresh/only-export-components
   export const useAuth = () => useContext(AuthContext);

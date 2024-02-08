@@ -4,7 +4,7 @@ import { theme } from "../../assets/themes";
 
 type NavbarItemPropsType = {
     value: string,
-    onClick: (e: React.MouseEvent<HTMLDivElement>) => {} | void,
+    onClick: (e: React.MouseEvent<HTMLDivElement>) => object | void,
     color?: string,
     icon: ReactNode,
     selected: boolean,

@@ -1,10 +1,27 @@
 import { styled, keyframes } from "styled-components";
 import { theme } from "../../assets/themes";
 import { VscLoading } from "react-icons/vsc";
+import { getVariantStyle } from "../../utils/buttonUtils";
 import React, { RefObject, useEffect, useRef, useState } from "react";
 
-export const Button = (props: { value: string, onClick: (e: React.MouseEvent<HTMLDivElement>) => {} | void, loading?: boolean | null }) => {
-    const { value, onClick, loading } = props
+type VariantStyleType = {
+    fontSize: string;
+    borderSize: number;
+    height: string;
+    textColor: string;
+    backgroundColor: string;
+    padding: string;
+};
+
+type ButtonProps = {
+    value?: string;
+    onClick: (e: React.MouseEvent<HTMLDivElement>) => object | void;
+    loading?: boolean | null;
+    variant?: 'regular' | 'large' | 'small';
+    icon?: React.ReactNode;
+};
+
+export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant = 'regular', icon }) => {
     const textRef: RefObject<HTMLInputElement> = useRef(null);
     const [width, setWidth] = useState(0);
     useEffect(() => {
@@ -18,16 +35,23 @@ export const Button = (props: { value: string, onClick: (e: React.MouseEvent<HTM
         }
     }, [value, loading]);
 
+    const variantStyle = getVariantStyle(variant, theme.colors.white, theme.colors.primary);
+
     return (
         <ButtonStyle
+            $variantStyle={variantStyle}
             $loading={loading}
             onClick={!loading ? ((e: React.MouseEvent<HTMLDivElement>) => onClick(e)) : () => { }}
         >
             <button hidden={true} />
-            {!loading
-                && <span ref={textRef}>{value}</span>}
-            {loading
-                && <span style={{ width }}><VscLoading className={'loading'} /></span>}
+            {(!loading && !icon && value) &&
+                <span className="textContent" ref={textRef}>{value}</span>}
+            {(!loading && icon && value) &&
+                <span className="textContent">{icon}{value}</span>}
+            {(!loading && icon && !value) &&
+                <span className="textContent iconSolo">{icon}</span>} 
+            {loading && 
+                <span className="textContent" style={{ width }}><VscLoading className={'loading'} /></span>}
         </ButtonStyle>
     )
 
@@ -38,30 +62,42 @@ const LoadingKeyframe = keyframes`
         transform: rotate(360deg);
     }
 `
-const ButtonStyle = styled.div<{ $loading?: boolean | null }>`
+const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: VariantStyleType }>`
     user-select: none;
-    height: ${theme.materialDesign.height.default};
+    height: ${({ $variantStyle }) => $variantStyle.height};
+    font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
     background: ${theme.colors.primary};
-    border: 2px solid ${theme.colors.primary};
+    border: ${({ $variantStyle }) => $variantStyle.borderSize}px solid ${theme.colors.primary};
     /* padding: 0 ${theme.materialDesign.padding.dense}; */
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: ${theme.materialDesign.borderRadius.default};
-    ${({ $loading }): string => !$loading ? `cursor: pointer;` : 'cursor: not-allowed;'};
+    white-space: nowrap;
+    border-radius: ${theme.materialDesign.borderRadius.rounded};
+    ${({ $loading }): string => !$loading ? `cursor: pointer;` : 'cursor: wait;'};
     color: ${theme.colors.white};
     transition: all 250ms;
 
-    span {
+    .textContent {
         padding: 0;
         //width: 100%;
         height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
-        margin: 0 ${theme.materialDesign.padding.dense};
-        font-size: ${theme.materialDesign.fontSize.dense};
+        gap: 10px;
+        margin: 0 ${({ $variantStyle }) => $variantStyle.padding};
+        font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
         text-transform: uppercase;
+        color: ${theme.colors.white};
+    }
+
+    .iconSolo {
+        font-size: ${theme.fonts.size.P3};
+    }
+
+    &:hover .textContent{
+        color: ${({ $loading }): string | false => !$loading && `${theme.colors.primary};`};
     }
 
     &:hover {

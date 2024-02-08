@@ -4,7 +4,7 @@ import { ToastProvider } from "./global/ToastContext";
 
 interface GlobalContextProviderProps {
     children: React.ReactNode;
-};
+}
 
 export const GlobalContextProvider: React.FC<GlobalContextProviderProps> = ({children}) => {
     return (

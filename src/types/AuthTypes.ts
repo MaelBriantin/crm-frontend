@@ -1,4 +1,4 @@
-type AuthContextProps = {
+export type AuthContextProps = {
     user: AuthUser | null;
     setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>;
     loading: boolean;
@@ -7,7 +7,7 @@ type AuthContextProps = {
     setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
 }
 
-type AuthUser = {
+export type AuthUser = {
     id: number;
     firstname: string;
     lastname: string;
