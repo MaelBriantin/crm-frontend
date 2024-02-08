@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { deep, firstOf, isEmpty } from '../utils/helpers/spells.ts';
+import { deepCopy, firstOf, isEmpty } from '../utils/helpers/spells.ts';
 import { Loader } from '../components/global/Loader.tsx';
 import { DataTable } from '../components/DataTable';
 import { RowDataType } from '../types/DataTableTypes.ts';
@@ -49,24 +49,24 @@ export const SectorPage: React.FC = () => {
             //     { value: '10', text: 'white', background: 'purple' }
             // ]
         },
-        {
-            text: 'Codes postaux',
-            value: 'postcodes',
-            sortable: false,
-            type: 'chips',
-            limit: 5, // limit the number of chips displayed if the value is an array
-            // color: [
-            //     { value: '*', text: 'white', background: `${theme.colors.primary}` }
-            // ]
-        },
+        // {
+        //     text: 'Codes postaux',
+        //     value: 'postcodes',
+        //     sortable: false,
+        //     type: 'chips',
+        //     limit: 5, // limit the number of chips displayed if the value is an array
+        //     // color: [
+        //     //     { value: '*', text: 'white', background: `${theme.colors.primary}` }
+        //     // ]
+        // },
     ];
 
-    const sectorsWithPostcodes = sectors.map(sector => {
-        return {
-            ...sector,
-            postcodes: sector.postcodes.map(postcode => postcode.postcode)
-        }
-    });
+    // const sectorsWithPostcodes = sectors.map(sector => {
+    //     return {
+    //         ...sector,
+    //         postcodes: sector.postcodes.map(postcode => postcode.postcode)
+    //     };
+    // });
 
     // const handleClick = (row: RowType) => {
     //     console.log('click', row);
@@ -85,7 +85,7 @@ export const SectorPage: React.FC = () => {
                     searchbar
                     columns={columns}
                     onDoubleClickOnRow={handleDoubleClick}
-                    data={deep(sectorsWithPostcodes) as unknown as RowDataType[]}
+                    data={deepCopy(sectors) as unknown as RowDataType[]}
                     emptyMessage={'Aucun secteur trouvé'}
                 />
             }
