@@ -31,7 +31,22 @@ export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, colum
                     ))}
                 </ChipContainer>
             )}
-            {(!column.type || filterOut(['chips', 'link'], dataTableTypeList).includes(column.type)) && (
+            {(column.type !== 'chips' && Array.isArray(rowValue)) && (
+                rowValue.map((item: string, index: number) => (
+                    item !== '...' ?
+                        <TableCellValue
+                            key={index}
+                            $color={{ background: color?.background || '', color: color?.text || '' }}
+                            dangerouslySetInnerHTML={{ __html: item + ' / ' }}
+                        />
+                        : <TableCellValue
+                            key={index}
+                            $color={{ background: color?.background || '', color: color?.text || '' }}
+                            dangerouslySetInnerHTML={{ __html: item }}
+                        />
+                ))
+            )}
+            {(!column.type || filterOut(['chips', 'link'], dataTableTypeList).includes(column.type) && !Array.isArray(rowValue)) && (
                 <TableCellValue
                     $color={{ background: color?.background || '', color: color?.text || '' }}
                     dangerouslySetInnerHTML={{ __html: rowValue }}
