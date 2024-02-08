@@ -49,7 +49,7 @@ export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant
             {(!loading && icon && value) &&
                 <span className="textContent">{icon}{value}</span>}
             {(!loading && icon && !value) &&
-                <span className="textContent">{icon}</span>} 
+                <span className="textContent iconSolo">{icon}</span>} 
             {loading && 
                 <span className="textContent" style={{ width }}><VscLoading className={'loading'} /></span>}
         </ButtonStyle>
@@ -90,6 +90,10 @@ const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: Varia
         font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
         text-transform: uppercase;
         color: ${theme.colors.white};
+    }
+
+    .iconSolo {
+        font-size: ${theme.fonts.size.P3};
     }
 
     &:hover .textContent{
