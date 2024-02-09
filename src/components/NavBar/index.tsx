@@ -145,7 +145,7 @@ export const Navbar = (props: NavbarProps) => {
 }
 
 const NavbarContainer = styled.div<{ $showNavbar: boolean }>`
-    transition: all 450ms ease-in-out;
+    transition: all 250ms ease-in-out;
     ${({ $showNavbar }): false | RuleSet<object> | undefined => $showNavbar
         ? css`
         //opacity: 1;
@@ -168,7 +168,7 @@ const NavbarContainer = styled.div<{ $showNavbar: boolean }>`
 `
 
 const NavListContainer = styled.div<{ $showNavbar: boolean }>`
-    transition: all 650ms ease-in-out;
+    transition: all 250ms ease-in-out;
     ${({ $showNavbar }): false | RuleSet<object> | undefined => $showNavbar
         ? css`
         opacity: 1;
