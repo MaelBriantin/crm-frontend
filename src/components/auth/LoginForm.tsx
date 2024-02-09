@@ -1,8 +1,7 @@
 import styled from "styled-components";
-import { Input } from "../global/Input.tsx";
 import { MdAlternateEmail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
-import { Button } from "../global/Button.tsx";
+import { Button, Input } from "../global";
 import { useState, ChangeEvent } from "react";
 import { theme } from "../../assets/themes/index.ts";
 import { useNavigate } from "react-router-dom";

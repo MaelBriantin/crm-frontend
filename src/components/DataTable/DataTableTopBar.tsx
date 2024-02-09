@@ -3,7 +3,7 @@ import { DataTableSearch } from "./DataTableSearch";
 import { ColumnProps, RowDataType } from "../../types/DataTableTypes";
 import { SetStateAction } from "react";
 import { Dispatch } from "react";
-import { Button } from "../global/Button";
+import { Button } from "../global";
 import { LiaMapMarkedAltSolid } from "react-icons/lia";
 
 type DataTableTopBarProps<T> = {

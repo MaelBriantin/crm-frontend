@@ -1,12 +1,10 @@
 import React, { ChangeEvent, useState, useEffect } from 'react';
 import styled, { keyframes, css } from 'styled-components';
-import { Input } from '../global/Input';
 import { RowDataType, DataTableSearchProps } from '../../types/DataTableTypes';
 import { advancedFilter } from '../../utils/searchUtils';
 import { VscSearch } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
-import { Dropdown } from '../global/Dropdown';
-import { Switch } from '../global/Switch';
+import { Dropdown, Switch, Input } from '../global';
 import { DropdownValueType } from '../global/Dropdown';
 
 export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searchedValue, columns, clearable = true, advancedSearch = false }: DataTableSearchProps<T>): React.ReactElement => {

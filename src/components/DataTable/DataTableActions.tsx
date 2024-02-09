@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { VscChevronLeft, VscChevronRight, VscBlank } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
-import { Dropdown } from '../global/Dropdown';
+import { Dropdown } from '../global';
 
 type DataTableActionsProps = {
     page: number,
