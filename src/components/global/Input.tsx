@@ -17,12 +17,12 @@ export const Input = (
         clearable?: boolean,
         placeholder: string,
         icon?: ReactNode,
-        width: number,
+        width: string,
         type?: 'text' | 'password' | 'email' | 'search',
         value: string | number,
         variant?: 'large' | 'regular' | 'small',
         textColor?: string,
-        onInput: (e: ChangeEvent<HTMLInputElement>) => void;
+        onChange: (e: ChangeEvent<HTMLInputElement>) => void;
     }) => {
     const {
         placeholder,
@@ -33,7 +33,7 @@ export const Input = (
         value,
         variant = 'regular',
         textColor = theme.colors.dark,
-        onInput,
+        onChange,
     } = props
 
     const passwordRef: RefObject<HTMLInputElement> = useRef(null);
@@ -74,13 +74,13 @@ export const Input = (
             }
             {
                 (clearable && value)
-                && <ClearButton onClick={() => onInput({ target: { value: '' } } as ChangeEvent<HTMLInputElement>)}><VscChromeClose /></ClearButton>
+                && <ClearButton onClick={() => onChange({ target: { value: '' } } as ChangeEvent<HTMLInputElement>)}><VscChromeClose /></ClearButton>
             }
             <input
                 ref={passwordRef}
                 placeholder={placeholder}
                 type={(type === 'password' && hidden) ? type : 'text'}
-                onInput={(e: ChangeEvent<HTMLInputElement>) => onInput(e as ChangeEvent<HTMLInputElement>)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e as ChangeEvent<HTMLInputElement>)}
                 value={value}
                 onBlur={handleBlur}
                 onFocus={handleFocus}
@@ -90,11 +90,11 @@ export const Input = (
     )
 }
 
-const InputStyle = styled.div<{ $width: number, $password: boolean, $icon: boolean, $variantStyle: VariantStyleType, $clearable: boolean }>`
+const InputStyle = styled.div<{ $width: string, $password: boolean, $icon: boolean, $variantStyle: VariantStyleType, $clearable: boolean }>`
     height: ${({ $variantStyle }) => $variantStyle.height};
     font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
     border-radius: ${theme.materialDesign.borderRadius.rounded};
-    width: ${({ $width }) => $width}px;
+    width: ${({ $width }) => $width};
     display: flex;
     justify-content: center;
     align-items: center;

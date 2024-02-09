@@ -51,9 +51,9 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
                 textColor={`${theme.colors.dark}`}
                 placeholder="Rechercher"
                 clearable={clearable}
-                width={400}
+                width={'400px'}
                 value={search}
-                onInput={(e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
                 icon={<VscSearch />}
             />
             {advancedSearch &&
@@ -69,8 +69,7 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
                         variant='regular'
                         options={operatorFilter}
                         width={125}
-                        handleSelectChange={(e: DropdownValueType) => setSearchedOperator((String(e.value)))}
-                        label='Opérateur'
+                        onChange={(e: DropdownValueType) => setSearchedOperator((String(e.value)))}
                     />}
                 {/* {activeAdvancedSearch && <span className='label'>Colonne :</span>} */}
                 {activeAdvancedSearch &&
@@ -79,7 +78,7 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
                         options={columnFilter}
                         defaultValue={columnFilter[0]}
                         width={225}
-                        handleSelectChange={(e: DropdownValueType) => setSearchedColumn((String(e.value)))}
+                        onChange={(e: DropdownValueType) => setSearchedColumn((String(e.value)))}
                     />}
             </AdvancedSearchContainer>
         </SearchbarContainer>

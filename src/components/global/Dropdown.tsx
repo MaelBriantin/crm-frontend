@@ -7,12 +7,11 @@ import { getVariantStyle } from '../../utils/dropdownUtils';
 type DropdownProps = {
     options: DropdownOptions[];
     variant?: 'large' | 'regular' | 'small';
-    handleSelectChange: (selected: DropdownValueType) => void;
+    onChange: (selected: DropdownValueType) => void;
     defaultValue?: DropdownValueType;
     width?: number;
     openOnTop?: boolean;
     openOnBottom?: boolean;
-    label?: string;
 };
 
 export type DropdownValueType = {
@@ -33,7 +32,7 @@ type VariantStyleType = {
     height: string;
 };
 
-export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular', handleSelectChange, defaultValue, width = 200, openOnTop = false, openOnBottom = false, label }) => {
+export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular', onChange, defaultValue, width = 200, openOnTop = false, openOnBottom = false }) => {
 
     if (openOnBottom) {
         openOnTop = false;
@@ -55,7 +54,7 @@ export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular'
         setSelectedOption(selectedElement as DropdownValueType);
         setIsOpen(false);
 
-        handleSelectChange(selectedElement as DropdownValueType);
+        onChange(selectedElement as DropdownValueType);
     };
 
     useEffect(() => {
@@ -77,7 +76,7 @@ export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular'
     return (
         <DropdownContainer $width={width} ref={dropdownRef} $variantStyle={variantStyle} >
             <DropdownHeader onClick={toggling} $isOpen={isOpen} $openOnBottom={openOnBottom} $openOnTop={openOnTop} $variantStyle={variantStyle} >
-                    { selectedOption && selectedOption.label || label || "Select..." }
+                    { selectedOption && selectedOption.label || "Select..." }
                     <VscChevronDown className={'dropdownIcon'} />
                 </DropdownHeader>
                 {isOpen && (
