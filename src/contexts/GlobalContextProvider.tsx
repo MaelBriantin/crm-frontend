@@ -1,6 +1,7 @@
 import React from "react";
 import { AuthProvider } from "./auth/AuthContext";
 import { ToastProvider } from "./global/ToastContext";
+import { ModalProvider } from "./global/ModalContext";
 
 interface GlobalContextProviderProps {
     children: React.ReactNode;
@@ -10,7 +11,9 @@ export const GlobalContextProvider: React.FC<GlobalContextProviderProps> = ({chi
     return (
         <AuthProvider>
             <ToastProvider>
-                {children}
+                <ModalProvider>
+                    {children}
+                </ModalProvider>
             </ToastProvider>
         </AuthProvider>
     );
