@@ -19,6 +19,9 @@ export const Input = (
         icon?: ReactNode,
         width: string,
         type?: 'text' | 'password' | 'email' | 'search' | 'number',
+        noNegativeNumber?: boolean,
+        maxLength?: number,
+        max?: number,
         value: string | number,
         variant?: 'large' | 'regular' | 'small',
         textColor?: string,
@@ -30,6 +33,9 @@ export const Input = (
         icon,
         width,
         type = 'text',
+        noNegativeNumber,
+        maxLength,
+        max,
         value,
         variant = 'regular',
         textColor = theme.colors.dark,
@@ -76,6 +82,7 @@ export const Input = (
     };
 
     const handleCount = (operator: 'plus' | 'minus') => {
+        if (noNegativeNumber && operator === 'minus' && count === 0) return;
         operator === 'plus' ? setCount(prevCount => prevCount + 1) : setCount(prevCount => prevCount - 1);
         inputRef.current && inputRef.current.focus();
     };
@@ -100,7 +107,7 @@ export const Input = (
             }
             {
                 (clearable && value)
-                && <ClearButton onClick={handleClear}><VscChromeClose  /></ClearButton>
+                && <ClearButton onClick={handleClear}><VscChromeClose /></ClearButton>
             }
             {
                 (type === 'number')
@@ -113,6 +120,8 @@ export const Input = (
             }
             <input
                 ref={inputRef}
+                maxLength={maxLength}
+                max={type === 'number' ? max : undefined}
                 placeholder={placeholder}
                 type={(type === 'password' && hidden) ? type : 'text'}
                 onChange={handleChange}
