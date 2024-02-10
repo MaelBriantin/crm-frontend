@@ -1,10 +1,9 @@
 import { theme } from "../../assets/themes";
 import { RefObject, useEffect, useRef, useState, ReactNode, ChangeEvent, useCallback } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { VscChromeClose } from "react-icons/vsc";
 import styled from "styled-components";
 import { getVariantStyle } from "../../utils/inputUtils";
-import { VscChevronDown, VscChevronUp } from "react-icons/vsc";
+import { VscChevronDown, VscChevronUp, VscChromeClose } from "react-icons/vsc";
 
 type VariantStyleType = {
     fontSize: string;
@@ -101,7 +100,7 @@ export const Input = (
             }
             {
                 (clearable && value)
-                && <ClearButton onClick={handleClear}><VscChromeClose /></ClearButton>
+                && <ClearButton onClick={handleClear}><VscChromeClose  /></ClearButton>
             }
             {
                 (type === 'number')
@@ -190,11 +189,11 @@ const ClearButton = styled.div`
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background-color: ${theme.colors.greyLight};
+    /* background-color: ${theme.colors.greyLight}; */
     transition: all 250ms;
     &:hover {
-        background-color: ${theme.colors.error};
-        color: ${theme.colors.white};
+        /* background-color: ${theme.colors.error}; */
+        color: ${theme.colors.error};
     }
 `;
 

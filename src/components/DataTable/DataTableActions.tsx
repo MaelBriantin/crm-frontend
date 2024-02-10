@@ -30,7 +30,7 @@ export const DataTableActions = ({ page, setPage, dataNumber, setRowsPerPage, de
                     openOnTop
                     defaultValue={matchingOptions}
                     options={rowsPerPageOptions}
-                    width={60}
+                    width={'60px'}
                 />
             </ResultPerPage>
             {maxPageNumber &&
@@ -46,6 +46,7 @@ export const DataTableActions = ({ page, setPage, dataNumber, setRowsPerPage, de
 };
 
 const TableActions = styled.div`
+    user-select: none;
     display: flex;
     justify-content: flex-end;
     align-items: center;

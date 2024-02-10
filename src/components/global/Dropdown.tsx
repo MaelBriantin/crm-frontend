@@ -9,7 +9,7 @@ type DropdownProps = {
     variant?: 'large' | 'regular' | 'small';
     onChange: (selected: DropdownValueType) => void;
     defaultValue?: DropdownValueType;
-    width?: number;
+    width?: string;
     openOnTop?: boolean;
     openOnBottom?: boolean;
 };
@@ -19,7 +19,7 @@ export type DropdownValueType = {
     label: string;
 };
 
-type DropdownOptions = {
+export type DropdownOptions = {
     value: string;
     label: string;
 };
@@ -32,7 +32,7 @@ type VariantStyleType = {
     height: string;
 };
 
-export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular', onChange, defaultValue, width = 200, openOnTop = false, openOnBottom = false }) => {
+export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular', onChange, defaultValue, width = '200px', openOnTop = false, openOnBottom = false }) => {
 
     if (openOnBottom) {
         openOnTop = false;
@@ -94,9 +94,9 @@ export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular'
     );
 };
 
-const DropdownContainer = styled.div<{ $width: number, $variantStyle: VariantStyleType }>`
+const DropdownContainer = styled.div<{ $width: string, $variantStyle: VariantStyleType }>`
     font-size: ${({ $variantStyle }) => $variantStyle.fontSize}; // variant dependent
-    width: ${({ $width }) => $width}px;
+    width: ${({ $width }) => $width};
     user-select: none;
     position: relative;
     color: ${theme.colors.dark};

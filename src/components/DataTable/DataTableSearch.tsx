@@ -6,6 +6,7 @@ import { VscSearch } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
 import { Dropdown, Switch, Input } from '../global';
 import { DropdownValueType } from '../global/Dropdown';
+import { firstOf } from '../../utils/helpers/spells';
 
 export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searchedValue, columns, clearable = true, advancedSearch = false }: DataTableSearchProps<T>): React.ReactElement => {
 
@@ -66,7 +67,7 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
                     <Dropdown
                         variant='regular'
                         options={operatorFilter}
-                        width={125}
+                        width={'125px'}
                         onChange={(e: DropdownValueType) => setSearchedOperator((String(e.value)))}
                     />}
                 {/* {activeAdvancedSearch && <span className='label'>Colonne :</span>} */}
@@ -74,8 +75,8 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
                     <Dropdown
                         variant='regular'
                         options={columnFilter}
-                        defaultValue={columnFilter[0]}
-                        width={225}
+                        defaultValue={firstOf(columnFilter) as DropdownValueType}
+                        width={'225px'}
                         onChange={(e: DropdownValueType) => setSearchedColumn((String(e.value)))}
                     />}
             </AdvancedSearchContainer>
