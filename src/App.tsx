@@ -1,12 +1,12 @@
 import { Router } from "./routes/Router";
-import { GlobalContextProvider } from "./contexts/GlobalContextProvider";
+import { ContextProvider } from "./contexts";
 
 function App() {
 
   return (
-    <GlobalContextProvider>
+    <ContextProvider>
       <Router />
-    </GlobalContextProvider>
+    </ContextProvider>
   )
 }
 
