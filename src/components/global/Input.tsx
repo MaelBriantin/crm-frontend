@@ -54,6 +54,8 @@ export const Input = (
         setIsFocused(false);
     }, []);
     const seeHidden = useCallback((e: React.MouseEvent<HTMLDivElement>): void => {
+        console.log('seeHidden');
+        console.log(hidden);
         e.preventDefault();
         setHidden(!hidden)
         if (inputRef.current) {
@@ -73,7 +75,6 @@ export const Input = (
         }
     }, [type, value]);
 
-
     const variantStyle = getVariantStyle(variant, textColor);
 
     const handleClear = () => {
@@ -83,27 +84,39 @@ export const Input = (
 
     const handleCount = (operator: 'plus' | 'minus') => {
         if (noNegativeNumber && operator === 'minus' && count === 0) return;
+        if (String(count) === '' || count === undefined) setCount(0);
         operator === 'plus' ? setCount(prevCount => prevCount + 1) : setCount(prevCount => prevCount - 1);
         inputRef.current && inputRef.current.focus();
     };
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (type === 'number') {
-            !isNaN(Number(e.target.value)) && setCount(Number(e.target.value));
+            if (!isNaN(Number(e.target.value))) {
+                if (maxLength && e.target.value.length <= maxLength) {
+                    setCount(Number(e.target.value));
+                }
+            }
         }
         onChange(e as ChangeEvent<HTMLInputElement>);
+    };
+
+    const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
+        if (maxLength && e.currentTarget.value.length > maxLength) {
+            e.currentTarget.value = e.currentTarget.value.slice(0, maxLength);
+        }
     };
 
     return (
         <InputStyle $width={width} $type={type} $icon={!!icon} $variantStyle={variantStyle} $clearable={clearable}>
             {icon && <span className="icon">{icon}</span>}
             {
-                (type === 'password' && hidden)
-                && <Hide onMouseDown={(e) => seeHidden(e)}><FaEye /></Hide>
-            }
-            {
-                (type === 'password' && !hidden)
-                && <Hide onMouseDown={(e) => seeHidden(e)}><FaEyeSlash /></Hide>
+                (type === 'password')
+                &&
+                <Hide onMouseDown={(e) => seeHidden(e)}>
+                    {hidden
+                        ? <FaEye />
+                        : <FaEyeSlash />}
+                </Hide>
             }
             {
                 (clearable && value)
@@ -123,18 +136,33 @@ export const Input = (
                 maxLength={maxLength}
                 max={type === 'number' ? max : undefined}
                 placeholder={placeholder}
-                type={(type === 'password' && hidden) ? type : 'text'}
+                type={hidden ? type : 'text'}
                 onChange={handleChange}
                 value={type === 'number' ? count : value}
                 onBlur={handleBlur}
                 onFocus={handleFocus}
                 required={true}
+                onInput={handleInput}
             />
         </InputStyle>
     )
 }
 
 const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $variantStyle: VariantStyleType, $clearable: boolean }>`
+
+    // Remove arrows from input number
+    // Chrome
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number']::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    // Firefox
+    input[type='number'] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
+
     height: ${({ $variantStyle }) => $variantStyle.height};
     font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
     border-radius: ${theme.materialDesign.borderRadius.rounded};
