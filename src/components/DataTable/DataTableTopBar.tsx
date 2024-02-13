@@ -30,6 +30,7 @@ export const DataTableTopBar = <T extends RowDataType>({ withSearch = false, wit
             <Button
                 variant='regular'
                 onClick={onClick}
+                bigIcon
                 icon={<LiaMapMarkedAltSolid />}
             />
         </Container>

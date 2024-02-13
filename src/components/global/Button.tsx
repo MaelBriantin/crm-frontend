@@ -19,9 +19,10 @@ type ButtonProps = {
     loading?: boolean | null;
     variant?: 'regular' | 'large' | 'small';
     icon?: React.ReactNode;
+    bigIcon?: boolean;
 };
 
-export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant = 'regular', icon }) => {
+export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant = 'regular', icon, bigIcon }) => {
     const textRef: RefObject<HTMLInputElement> = useRef(null);
     const [width, setWidth] = useState(0);
     useEffect(() => {
@@ -49,7 +50,7 @@ export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant
             {(!loading && icon && value) &&
                 <span className="textContent">{icon}{value}</span>}
             {(!loading && icon && !value) &&
-                <span className="textContent iconSolo">{icon}</span>} 
+                <span className={`textContent ${bigIcon && 'bigIcon'}`}>{icon}</span>} 
             {loading && 
                 <span className="textContent" style={{ width }}><VscLoading className={'loading'} /></span>}
         </ButtonStyle>
@@ -92,7 +93,7 @@ const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: Varia
         color: ${theme.colors.white};
     }
 
-    .iconSolo {
+    .bigIcon {
         font-size: ${theme.fonts.size.P3};
     }
 
