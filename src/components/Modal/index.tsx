@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { useModal } from '../../contexts/global/ModalContext';
 import { theme } from '../../assets/themes';
-import { Button } from '../global';
 import { VscChromeClose } from "react-icons/vsc";
 
 type ModalProps = {
@@ -10,38 +9,34 @@ type ModalProps = {
     width?: string;
     title: string;
     onClose: () => void;
-    onSave: () => void;
     children: React.ReactNode;
   }
 
-  export const Modal: React.FC<ModalProps> = ({ height, width, title, onClose, onSave, children }) => {
-    const { isOpen, closeModal } = useModal();
-    const [closeModalAnimation, setCloseModalAnimation] = useState(false);
+  export const Modal: React.FC<ModalProps> = ({ height, width, title, children }) => {
 
-    const closeModalHandler = (option: 'close' | 'save') => {
-        setCloseModalAnimation(true);
-        setTimeout(() => {
-            isOpen && closeModal();
-            option === 'close' ? onClose() : onSave();
-            setCloseModalAnimation(false);
-        }, 425);
+    const { isOpen, closeModal, startCloseAnimation, setStartCloseAnimation } = useModal();
+
+    useEffect(() => {
+        if (startCloseAnimation) {
+            setTimeout(() => {
+                setStartCloseAnimation(false);
+            }, 425);
+        }
     }
+    , [startCloseAnimation, setStartCloseAnimation]);
 
     return (
-        <Container $closeModalAnimation={closeModalAnimation} $isOpen={isOpen}>
-            <ModalStructure $closeModalAnimation={closeModalAnimation} $style={{ height, width }}>
+        <Container $closeModalAnimation={startCloseAnimation} $isOpen={isOpen}>
+            <ModalStructure $closeModalAnimation={startCloseAnimation} $style={{ height, width }}>
                 <ModalTitle>
                     <span className='title'>{ title }</span>
-                    <CloseButton onClick={() => closeModalHandler('close')} >
+                    <CloseButton onClick={closeModal} >
                         <VscChromeClose/>
                     </CloseButton>
                 </ModalTitle>
                 <ModalContent>
                     { children }
                 </ModalContent>
-                <ModalActions>
-                    <Button value='enregistrer' onClick={() => closeModalHandler('save')} />
-                </ModalActions>
             </ModalStructure>
         </Container>
     );
@@ -152,13 +147,4 @@ const ModalContent = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-`;
-
-const ModalActions = styled.div`
-    width: 100%;
-    height: 10%;
-    display: flex;
-    margin-top: 20px;
-    justify-content: flex-end;
-    align-items: flex-end;
 `;
