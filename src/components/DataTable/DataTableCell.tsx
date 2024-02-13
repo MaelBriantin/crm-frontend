@@ -14,6 +14,7 @@ export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, colum
         <TableCell key={columnIndex} >
             {(column.type === 'chips' && !Array.isArray(rowValue)) && (
                 <Chip
+                    variant='small'
                     highlight={highlight}
                     text={String(rowValue)}
                     color={color}
@@ -23,6 +24,7 @@ export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, colum
                 <ChipContainer>
                     {Array.isArray(rowValue) && (rowValue as string[]).map((item: string, index: number) => (
                         <Chip
+                            variant='small'
                             highlight={highlight}
                             key={index}
                             text={item}
