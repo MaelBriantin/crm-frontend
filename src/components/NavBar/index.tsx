@@ -42,7 +42,8 @@ export const Navbar = (props: NavbarProps) => {
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             // set showNavbar to true when ctrl + alt + s is pressed
-            if (event.ctrlKey && event.altKey && event.key === 's') {
+            // if (event.ctrlKey && event.altKey && event.key === 's') {
+            if (event.ctrlKey && event.key === 'q') {
                 setShowNavbar(prevShowNavbar => !prevShowNavbar);
             }
         };
