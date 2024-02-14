@@ -54,8 +54,6 @@ export const Input = (
         setIsFocused(false);
     }, []);
     const seeHidden = useCallback((e: React.MouseEvent<HTMLDivElement>): void => {
-        console.log('seeHidden');
-        console.log(hidden);
         e.preventDefault();
         setHidden(!hidden)
         if (inputRef.current) {
