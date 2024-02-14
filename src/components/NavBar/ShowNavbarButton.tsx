@@ -33,29 +33,29 @@ const NavbarButtonStyle = styled.div<{ $showNavbar: boolean }>`
     justify-content: center;
     align-items: center;
     .top, .bottom {
-        width: 6px;
+        width: 4px;
         border-radius: ${theme.borderRadius.round};;
         height: 50%;
-        transition: all 450ms;
+        transition: all 150ms;
         background-color: ${theme.colors.greyLight};	
     }
     .top {
-        transform: translateY(5px);
+        transform: translateY(2px);
     }
     .bottom {
-        transform: translateY(-5px);
+        transform: translateY(-2px);
     }
     &:hover {
         cursor: pointer;
     }
     &:hover .top {
         background: ${theme.colors.primary};
-        transform: ${({ $showNavbar }): string => $showNavbar ? 'rotate(45deg) translateY(5px)' : 'rotate(-45deg) translateY(5px)'};
+        transform: ${({ $showNavbar }): string => $showNavbar ? 'rotate(45deg) translateY(4.5px)' : 'rotate(-45deg) translateY(4.5px)'};
         //margin-bottom: 5px;
     }
     &:hover .bottom {
         background: ${theme.colors.primary};
-        transform: ${({ $showNavbar }): string => $showNavbar ? 'rotate(-45deg) translateY(-5px)' : 'rotate(45deg) translateY(-5px)'};
+        transform: ${({ $showNavbar }): string => $showNavbar ? 'rotate(-45deg) translateY(-4.5px)' : 'rotate(45deg) translateY(-4.5px)'};
         //margin-top: 5px;
     }
 `;

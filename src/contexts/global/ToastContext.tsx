@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, Dispatch, SetStateAction, } from "react";
+import { Toast } from "../../components/global";
 
 interface ToastContextValue {
     show: boolean;
@@ -67,6 +68,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     return (
         <ToastContext.Provider value={toastContextValue}>
             {children}
+            <Toast />
         </ToastContext.Provider>
     );
 };

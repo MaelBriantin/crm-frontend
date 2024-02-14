@@ -1,4 +1,4 @@
-import { styled, keyframes } from "styled-components";
+import { styled, keyframes, css } from "styled-components";
 import { theme } from "../../assets/themes";
 import { VscLoading } from "react-icons/vsc";
 import { getVariantStyle } from "../../utils/buttonUtils";
@@ -11,6 +11,7 @@ type VariantStyleType = {
     textColor: string;
     backgroundColor: string;
     padding: string;
+    disabled: boolean;
 };
 
 type ButtonProps = {
@@ -19,9 +20,11 @@ type ButtonProps = {
     loading?: boolean | null;
     variant?: 'regular' | 'large' | 'small';
     icon?: React.ReactNode;
+    bigIcon?: boolean;
+    disabled?: boolean;
 };
 
-export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant = 'regular', icon }) => {
+export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant = 'regular', icon, bigIcon, disabled }) => {
     const textRef: RefObject<HTMLInputElement> = useRef(null);
     const [width, setWidth] = useState(0);
     useEffect(() => {
@@ -39,7 +42,8 @@ export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant
 
     return (
         <ButtonStyle
-            $variantStyle={variantStyle}
+            $disabled={disabled}
+            $variantStyle={variantStyle as VariantStyleType}
             $loading={loading}
             onClick={!loading ? ((e: React.MouseEvent<HTMLDivElement>) => onClick(e)) : () => { }}
         >
@@ -49,8 +53,8 @@ export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant
             {(!loading && icon && value) &&
                 <span className="textContent">{icon}{value}</span>}
             {(!loading && icon && !value) &&
-                <span className="textContent iconSolo">{icon}</span>} 
-            {loading && 
+                <span className={`textContent ${bigIcon && 'bigIcon'}`}>{icon}</span>}
+            {loading &&
                 <span className="textContent" style={{ width }}><VscLoading className={'loading'} /></span>}
         </ButtonStyle>
     )
@@ -62,7 +66,8 @@ const LoadingKeyframe = keyframes`
         transform: rotate(360deg);
     }
 `
-const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: VariantStyleType }>`
+const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: VariantStyleType, $disabled: boolean | undefined }>`
+    ${({ $disabled }) => $disabled && css`opacity: 0.5;`};
     user-select: none;
     height: ${({ $variantStyle }) => $variantStyle.height};
     font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
@@ -92,17 +97,23 @@ const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: Varia
         color: ${theme.colors.white};
     }
 
-    .iconSolo {
+    .bigIcon {
         font-size: ${theme.fonts.size.P3};
     }
 
     &:hover .textContent{
-        color: ${({ $loading }): string | false => !$loading && `${theme.colors.primary};`};
+        color: ${({ $loading, $disabled }): string | false => (!$loading && !$disabled) && `${theme.colors.primary};`};
     }
 
     &:hover {
-        color: ${({ $loading }): string | false => !$loading && `${theme.colors.primary};`};
-        background: ${({ $loading }): string | false => !$loading && `${theme.colors.white};`};
+        ${({ $disabled, $loading }) => $disabled
+        ? css`cursor: none;`
+        : css`
+            color: ${!$loading && `${theme.colors.primary};`};
+            background: ${!$loading && `${theme.colors.white};`};
+        `};
+        /* color: ${({ $loading }): string | false => !$loading && `${theme.colors.primary};`};
+        background: ${({ $loading }): string | false => !$loading && `${theme.colors.white};`}; */
     }
 
     .loading {

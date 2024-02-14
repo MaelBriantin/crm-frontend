@@ -2,18 +2,18 @@ import styled from "styled-components";
 import { theme } from "../../assets/themes";
 import { IoMdClose } from "react-icons/io";
 import { useToast } from "../../contexts/global/ToastContext";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 export const Toast = () => {
     const { show, setShow, timer, type, message } = useToast();
     const { toastTitle, toastColor } = typeTitleColor(type);
     const timeoutRef = useRef<number | null>(null);
 
-    const resetToastContext = () => {
+    const resetToastContext = useCallback(() => {
         setShow(false);
-    };
+    }, [setShow]);
 
-    const resetTimeout = () => {
+    const resetTimeout = useCallback(() => {
         // If the toast is currently visible and there is an existing timeout,
         // clear the existing timeout to prevent it from hiding the toast.
         if (show && timeoutRef.current) {
@@ -27,7 +27,7 @@ export const Toast = () => {
                 resetToastContext();
             }, timer);
         }
-    };
+    }, [show, timer, resetToastContext]);
 
     useEffect(() => {
         resetTimeout();

@@ -1,13 +1,12 @@
 import React, { ChangeEvent, useState, useEffect } from 'react';
 import styled, { keyframes, css } from 'styled-components';
-import { Input } from '../global/Input';
 import { RowDataType, DataTableSearchProps } from '../../types/DataTableTypes';
 import { advancedFilter } from '../../utils/searchUtils';
 import { VscSearch } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
-import { Dropdown } from '../global/Dropdown';
-import { Switch } from '../global/Switch';
+import { Dropdown, Switch, Input } from '../global';
 import { DropdownValueType } from '../global/Dropdown';
+import { firstOf } from '../../utils/helpers/spells';
 
 export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searchedValue, columns, clearable = true, advancedSearch = false }: DataTableSearchProps<T>): React.ReactElement => {
 
@@ -51,9 +50,9 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
                 textColor={`${theme.colors.dark}`}
                 placeholder="Rechercher"
                 clearable={clearable}
-                width={400}
+                width={'400px'}
                 value={search}
-                onInput={(e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
                 icon={<VscSearch />}
             />
             {advancedSearch &&
@@ -68,18 +67,17 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
                     <Dropdown
                         variant='regular'
                         options={operatorFilter}
-                        width={125}
-                        handleSelectChange={(e: DropdownValueType) => setSearchedOperator((String(e.value)))}
-                        label='Opérateur'
+                        width={'125px'}
+                        onChange={(e: DropdownValueType) => setSearchedOperator((String(e.value)))}
                     />}
                 {/* {activeAdvancedSearch && <span className='label'>Colonne :</span>} */}
                 {activeAdvancedSearch &&
                     <Dropdown
                         variant='regular'
                         options={columnFilter}
-                        defaultValue={columnFilter[0]}
-                        width={225}
-                        handleSelectChange={(e: DropdownValueType) => setSearchedColumn((String(e.value)))}
+                        defaultValue={firstOf(columnFilter) as DropdownValueType}
+                        width={'225px'}
+                        onChange={(e: DropdownValueType) => setSearchedColumn((String(e.value)))}
                     />}
             </AdvancedSearchContainer>
         </SearchbarContainer>

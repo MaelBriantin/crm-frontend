@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { VscChevronLeft, VscChevronRight, VscBlank } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
-import { Dropdown } from '../global/Dropdown';
+import { Dropdown } from '../global';
 
 type DataTableActionsProps = {
     page: number,
@@ -25,12 +25,12 @@ export const DataTableActions = ({ page, setPage, dataNumber, setRowsPerPage, de
             <span>Résultats : {dataNumber}</span>
             <ResultPerPage>Résultats par page :
                 <Dropdown
-                    handleSelectChange={(e) => { setRowsPerPage(e.value === 'Infinity' ? Infinity : parseInt(String(e.value))) }}
+                    onChange={(e) => { setRowsPerPage(e.value === 'Infinity' ? Infinity : parseInt(String(e.value))) }}
                     variant='small'
                     openOnTop
                     defaultValue={matchingOptions}
                     options={rowsPerPageOptions}
-                    width={60}
+                    width={'60px'}
                 />
             </ResultPerPage>
             {maxPageNumber &&
@@ -46,6 +46,7 @@ export const DataTableActions = ({ page, setPage, dataNumber, setRowsPerPage, de
 };
 
 const TableActions = styled.div`
+    user-select: none;
     display: flex;
     justify-content: flex-end;
     align-items: center;

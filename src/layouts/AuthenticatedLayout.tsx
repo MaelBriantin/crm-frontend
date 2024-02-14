@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { Outlet } from "react-router-dom";
-import { Toast } from "../components/global/Toast";
 import { Navbar } from "../components/NavBar";
 import { theme } from "../assets/themes";
 import { ShowNavbarButton } from "../components/NavBar/ShowNavbarButton";
@@ -8,6 +7,7 @@ import { useState } from "react";
 
 export const AuthenticatedLayout = () => {
     const [showNavbar, setShowNavbar] = useState(true);
+    
     return (
         <AuthenticatedLayoutStyle>
             <Navbar showNavbar={showNavbar} setShowNavbar={setShowNavbar} />
@@ -15,7 +15,6 @@ export const AuthenticatedLayout = () => {
                 <Outlet />
                 <ShowNavbarButton showNavbar={showNavbar} setShowNavbar={setShowNavbar} />
             </OutletContainer>
-            <Toast />
         </AuthenticatedLayoutStyle>
     );
 };

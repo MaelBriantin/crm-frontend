@@ -1,9 +1,9 @@
 import { theme } from "../../assets/themes";
-import { RefObject, useEffect, useRef, useState, ReactNode, ChangeEvent } from "react";
+import { RefObject, useEffect, useRef, useState, ReactNode, ChangeEvent, useCallback } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { VscChromeClose } from "react-icons/vsc";
 import styled from "styled-components";
 import { getVariantStyle } from "../../utils/inputUtils";
+import { VscChevronDown, VscChevronUp, VscChromeClose } from "react-icons/vsc";
 
 type VariantStyleType = {
     fontSize: string;
@@ -17,12 +17,15 @@ export const Input = (
         clearable?: boolean,
         placeholder: string,
         icon?: ReactNode,
-        width: number,
-        type?: 'text' | 'password' | 'email' | 'search',
+        width: string,
+        type?: 'text' | 'password' | 'email' | 'search' | 'number',
+        noNegativeNumber?: boolean,
+        maxLength?: number,
+        max?: number,
         value: string | number,
         variant?: 'large' | 'regular' | 'small',
         textColor?: string,
-        onInput: (e: ChangeEvent<HTMLInputElement>) => void;
+        onChange: (e: ChangeEvent<HTMLInputElement>) => void;
     }) => {
     const {
         placeholder,
@@ -30,71 +33,138 @@ export const Input = (
         icon,
         width,
         type = 'text',
+        noNegativeNumber,
+        maxLength,
+        max,
         value,
         variant = 'regular',
         textColor = theme.colors.dark,
-        onInput,
+        onChange,
     } = props
 
-    const passwordRef: RefObject<HTMLInputElement> = useRef(null);
+    const inputRef: RefObject<HTMLInputElement> = useRef(null);
     const [hidden, setHidden] = useState(true)
     const [isFocused, setIsFocused] = useState(false);
+    const [count, setCount] = useState(0);
 
-    const handleFocus = () => {
+    const handleFocus = useCallback(() => {
         setIsFocused(true);
-    };
-    const handleBlur = () => {
+    }, []);
+    const handleBlur = useCallback(() => {
         setIsFocused(false);
-    };
-    const seeHidden = (e: React.MouseEvent<HTMLDivElement>): void => {
+    }, []);
+    const seeHidden = useCallback((e: React.MouseEvent<HTMLDivElement>): void => {
         e.preventDefault();
         setHidden(!hidden)
-        if (passwordRef.current) {
-            passwordRef.current.focus();
+        if (inputRef.current) {
+            inputRef.current.focus();
         }
-    }
+    }, [hidden, inputRef]);
+
     useEffect(() => {
         if (type === 'password' && !isFocused) {
             setHidden(true)
         }
     }, [isFocused, setIsFocused, type]);
 
+    useEffect(() => {
+        if (type === 'number') {
+            setCount(value as number);
+        }
+    }, [type, value]);
+
     const variantStyle = getVariantStyle(variant, textColor);
 
+    const handleClear = () => {
+        onChange({ target: { value: '' } } as ChangeEvent<HTMLInputElement>);
+        inputRef.current && inputRef.current.focus();
+    };
+
+    const handleCount = (operator: 'plus' | 'minus') => {
+        if (noNegativeNumber && operator === 'minus' && count === 0) return;
+        if (String(count) === '' || count === undefined) setCount(0);
+        operator === 'plus' ? setCount(prevCount => prevCount + 1) : setCount(prevCount => prevCount - 1);
+        inputRef.current && inputRef.current.focus();
+    };
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (type === 'number') {
+            if (!isNaN(Number(e.target.value))) {
+                if (maxLength && e.target.value.length <= maxLength) {
+                    setCount(Number(e.target.value));
+                }
+            }
+        }
+        onChange(e as ChangeEvent<HTMLInputElement>);
+    };
+
+    const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
+        if (maxLength && e.currentTarget.value.length > maxLength) {
+            e.currentTarget.value = e.currentTarget.value.slice(0, maxLength);
+        }
+    };
+
     return (
-        <InputStyle $width={width} $password={type === 'password'} $icon={!!icon} $variantStyle={variantStyle} $clearable={clearable}>
+        <InputStyle $width={width} $type={type} $icon={!!icon} $variantStyle={variantStyle} $clearable={clearable}>
             {icon && <span className="icon">{icon}</span>}
             {
-                (type === 'password' && hidden)
-                && <Hide onMouseDown={(e) => seeHidden(e)}><FaEye /></Hide>
-            }
-            {
-                (type === 'password' && !hidden)
-                && <Hide onMouseDown={(e) => seeHidden(e)}><FaEyeSlash /></Hide>
+                (type === 'password')
+                &&
+                <Hide onMouseDown={(e) => seeHidden(e)}>
+                    {hidden
+                        ? <FaEye />
+                        : <FaEyeSlash />}
+                </Hide>
             }
             {
                 (clearable && value)
-                && <ClearButton onClick={() => onInput({ target: { value: '' } } as ChangeEvent<HTMLInputElement>)}><VscChromeClose /></ClearButton>
+                && <ClearButton onClick={handleClear}><VscChromeClose /></ClearButton>
+            }
+            {
+                (type === 'number')
+                && (
+                    <CountButtons $variantStyle={variantStyle}>
+                        <VscChevronUp className="addButton" onClick={() => handleCount('plus')} />
+                        <VscChevronDown className="removeButton" onClick={() => handleCount('minus')} />
+                    </CountButtons>
+                )
             }
             <input
-                ref={passwordRef}
+                ref={inputRef}
+                maxLength={maxLength}
+                max={type === 'number' ? max : undefined}
                 placeholder={placeholder}
-                type={(type === 'password' && hidden) ? type : 'text'}
-                onInput={(e: ChangeEvent<HTMLInputElement>) => onInput(e as ChangeEvent<HTMLInputElement>)}
-                value={value}
+                type={hidden ? type : 'text'}
+                onChange={handleChange}
+                value={type === 'number' ? count : value}
                 onBlur={handleBlur}
                 onFocus={handleFocus}
                 required={true}
+                onInput={handleInput}
             />
         </InputStyle>
     )
 }
 
-const InputStyle = styled.div<{ $width: number, $password: boolean, $icon: boolean, $variantStyle: VariantStyleType, $clearable: boolean }>`
+const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $variantStyle: VariantStyleType, $clearable: boolean }>`
+
+    // Remove arrows from input number
+    // Chrome
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number']::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    // Firefox
+    input[type='number'] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
+
     height: ${({ $variantStyle }) => $variantStyle.height};
     font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
     border-radius: ${theme.materialDesign.borderRadius.rounded};
-    width: ${({ $width }) => $width}px;
+    width: ${({ $width }) => $width};
     display: flex;
     justify-content: center;
     align-items: center;
@@ -113,7 +183,7 @@ const InputStyle = styled.div<{ $width: number, $password: boolean, $icon: boole
         width: 100%;
         height: 100%;
         font-family: 'Source Sans 3', sans-serif;
-        padding-right: ${({ $password, $clearable }): string => $password || $clearable ? ' 35px' : '10px'};
+        padding-right: ${({ $type, $clearable }): string => $type === 'password' || $type === 'number' || $clearable ? ' 35px' : '10px'};
         border-radius: ${theme.materialDesign.borderRadius.default};
         background: ${theme.colors.transparent};
     }
@@ -154,10 +224,36 @@ const ClearButton = styled.div`
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background-color: ${theme.colors.greyLight};
+    /* background-color: ${theme.colors.greyLight}; */
     transition: all 250ms;
     &:hover {
-        background-color: ${theme.colors.error};
-        color: ${theme.colors.white};
+        /* background-color: ${theme.colors.error}; */
+        color: ${theme.colors.error};
     }
 `;
+
+const CountButtons = styled.div<{ $variantStyle: VariantStyleType }>`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10px;
+    color: ${theme.colors.greyDark};
+    font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
+    .addButton, .removeButton {
+        cursor: pointer;
+        transition: all 250ms;
+    }
+    .addButton {
+        margin-bottom: -2.5px;
+    }
+    .removeButton {
+        margin-top: -2.5px;
+    }
+    .addButton:hover, .removeButton:hover{
+        color: ${theme.colors.primary};
+    }
+`
