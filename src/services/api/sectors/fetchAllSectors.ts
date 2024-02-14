@@ -1,4 +1,4 @@
-import { SectorType } from '../../../types/DataTypes';
+import { SectorType } from '../../../types/SectorTypes.ts';
 import { fetchAPI, handleAPIResponse } from '../fetchApi.config.ts';
 
 export const fetchAllSectors = async (options: string | null = null) => {

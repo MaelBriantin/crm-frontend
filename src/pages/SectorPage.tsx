@@ -5,7 +5,7 @@ import { Loader } from '../components/global/Loader.tsx';
 import { DataTable } from '../components/DataTable';
 import { RowDataType } from '../types/DataTableTypes.ts';
 import { RowType } from '../types/DataTableTypes.ts';
-import { SectorType } from '../types/DataTypes.ts';
+import { SectorType } from '../types/SectorTypes.ts';
 import { fetchAllSectors, fetchSectors } from '../services/api/sectors';
 
 export const SectorPage: React.FC = () => {
