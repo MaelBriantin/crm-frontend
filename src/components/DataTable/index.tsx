@@ -9,6 +9,7 @@ import { DataTableBody } from './DataTableBody';
 import { DataTableActions } from './DataTableActions';
 import { DataTableTopBar } from './DataTableTopBar';
 import { useModal } from '../../contexts/global/ModalContext';
+import { SectorForm } from '../forms/SectorForm';
 
 export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, onDoubleClickOnRow, hoverable = false, searchbar = false, emptyMessage }: DataTableProps<T>): React.ReactElement => {
 
@@ -20,7 +21,14 @@ export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, 
     const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
     const [searchResults, setSearchResults] = React.useState<T[]>([]);
     const [searchedValue, setSearchedValue] = React.useState<string | number>('');
-    const { openModal } = useModal();
+
+    const { showModal } = useModal();
+
+    const openModal = () => {
+        showModal(<SectorForm />, 'Créer un secteur', () => {
+            // Handle save action here
+        });
+    };
 
     let dataNumber = data.length;
 
