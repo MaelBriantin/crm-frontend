@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, Dispatch, SetStateAction, } from "react";
+import { createContext, useContext, useState, Dispatch, SetStateAction } from "react";
 import { Toast } from "../../components/global";
 
 interface ToastContextValue {
@@ -17,6 +17,9 @@ export interface ToastProviderProps {
     children: React.ReactNode;
 }
 
+export type CallToastProps = { 
+    (type: string, message: string, duration?: number | undefined): void; 
+};
 
 export const ToastContext = createContext<ToastContextValue>({
     show: false,
@@ -44,7 +47,6 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
      * @param {number} duration - The duration of the toast display in milliseconds (default is 10,000 milliseconds).
      */
     const callToast = (type: string, message: string, duration?: number) => {
-        
         setShow(true);
         setType(type);
         setMessage(message);
