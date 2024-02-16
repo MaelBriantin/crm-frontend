@@ -11,12 +11,23 @@ import { DataTableTopBar } from './DataTableTopBar';
 import { useModal } from '../../contexts/global/ModalContext';
 import { SectorForm } from '../forms/SectorForm';
 
-export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, onDoubleClickOnRow, hoverable = false, searchbar = false, emptyMessage }: DataTableProps<T>): React.ReactElement => {
+export const DataTable = <T extends RowDataType>({ 
+    data, 
+    columns, 
+    onClickOnRow, 
+    onDoubleClickOnRow, 
+    hoverable = false, 
+    searchbar = false, 
+    emptyMessage,
+    sort,
+    setSort,
+    sortDirection,
+    setSortDirection }: DataTableProps<T>): React.ReactElement => {
 
     const selectable = onClickOnRow !== undefined || onDoubleClickOnRow !== undefined;
 
-    const [sort, setSort] = React.useState<string | null>(null);
-    const [sortDirection, setSortDirection] = React.useState<boolean>(true);
+    // const [sort, setSort] = React.useState<string | null>(null);
+    // const [sortDirection, setSortDirection] = React.useState<boolean>(true);
     const [page, setPage] = React.useState<number>(1);
     const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
     const [searchResults, setSearchResults] = React.useState<T[]>([]);
@@ -25,9 +36,7 @@ export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, 
     const { showModal } = useModal();
 
     const openModal = () => {
-        showModal(<SectorForm />, 'Créer un secteur', () => {
-            // Handle save action here
-        });
+        showModal(<SectorForm />, 'Créer un secteur');
     };
 
     let dataNumber = data.length;
@@ -80,7 +89,7 @@ export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, 
                 <DataTableHeader
                     columns={columns}
                     sort={sort}
-                    sortDirection={sortDirection}
+                    sortDirection={sortDirection || false}
                     handleSort={handleSort}
                 />
                 <DataTableBody

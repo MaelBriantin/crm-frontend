@@ -52,6 +52,10 @@ export type DataTableProps<T extends RowDataType> = {
   hoverable?: boolean;
   searchbar?: boolean;
   emptyMessage?: string;
+  sort: string | null;
+  setSort: Dispatch<SetStateAction<string | null>>;
+  sortDirection?: boolean;
+  setSortDirection: Dispatch<SetStateAction<boolean>>;
 };
 
 export type TableRowProps = {
