@@ -3,7 +3,7 @@ import { Modal } from '../../components/Modal';
 
 type ModalContextType = {
   isOpen: boolean;
-  showModal: (content: ReactNode, title: string, onSave: () => void) => void;
+  showModal: (content: ReactNode, title: string) => void;
   closeModal: () => void;
   startCloseAnimation: boolean;
   setStartCloseAnimation: (value: boolean) => void;
@@ -31,7 +31,7 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setStartCloseAnimation(true);
     setTimeout(() => {
       setIsOpen(false);
-    }, 425);
+    }, 225);
   };
 
   const showModal = (content: ReactNode, title: string) => {
@@ -40,7 +40,7 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setIsOpen(true);
   };
 
-  
+
 
   return (
     <ModalContext.Provider value={{ isOpen, closeModal, showModal, startCloseAnimation, setStartCloseAnimation }}>
