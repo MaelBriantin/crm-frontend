@@ -7,42 +7,62 @@ import { VscAdd, VscClose } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
 import { createSector } from '../../services/api/sectors';
 import { PostcodeType, SectorType } from '../../types/SectorTypes';
+import { useSectors } from '../../contexts';
+import { useToast } from '../../contexts';
+import { updateSector } from '../../services/api/sectors';
 
-export const SectorForm = () => {
-    const [sectorName, setSectorName] = useState('');
+type SectorFormProps = {
+    sector?: SectorType;
+};
+
+export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
+    const [sectorName, setSectorName] = useState(sector?.name || '');
     const [postcode, setPostcode] = useState({ postcode: '', city: '' });
-    const [allPostcodes, setAllPostcodes] = useState<PostcodeType[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [allPostcodes, setAllPostcodes] = useState<PostcodeType[]>(sector?.postcodes || []);
+    const [saving, setSaving] = useState(false);
+    const [ sectorToUpdate ] = useState<SectorType | null>(sector || null);
+
+    const { callToast } = useToast();
+
+    const { loadingSectors, refreshSectors } = useSectors();
 
     const { closeModal } = useModal();
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (sectorName !== '' && allPostcodes.length > 0) {
-            setLoading(true);
-            closeModal();
-            createSector({name: sectorName, postcodes: allPostcodes} as SectorType);
-            setLoading(false);
+            setSaving(true);
+            await createSector({ name: sectorName, postcodes: allPostcodes } as SectorType, callToast, refreshSectors, closeModal);
+            setSaving(false);
         }
     }
 
-    
+    const handleUpdate = async () => {
+        if (sectorToUpdate && allPostcodes.length > 0 && sectorName !== '') {
+            setSaving(true);
+            const sector = { id: sectorToUpdate.id, name: sectorName, postcodes: allPostcodes } as SectorType;
+            await updateSector(sector as SectorType, callToast, refreshSectors, closeModal);
+            setSaving(false);
+        }
+    }
+
     const handleAddPostcode = (e: React.FormEvent) => {
         e.preventDefault();
-        if(postcode.postcode !== '' && postcode.city !== '') {
-            const newPostcode: PostcodeType = {postcode: postcode.postcode, city: postcode.city};
+        if (postcode.postcode !== '' && postcode.city !== '') {
+            const newPostcode: PostcodeType = { postcode: postcode.postcode, city: postcode.city };
             if (allPostcodes.find(e => e.postcode === newPostcode.postcode)) {
                 return;
             }
             setAllPostcodes(prevPostcodes => [...prevPostcodes, newPostcode]);
-            setPostcode({postcode: '', city: ''});
-        }   
+            setPostcode({ postcode: '', city: '' });
+        }
     }
-    
+
     const removeFromPostcodes = (postcode: string) => {
         setAllPostcodes(prevPostcodes => prevPostcodes.filter(e => e.postcode !== postcode));
     }
-    
+
     const disableSave = sectorName === '' || allPostcodes.length === 0;
+    const disableAddPostcode = postcode.postcode === '' || postcode.city === '';
 
     return (
         <Form>
@@ -70,15 +90,19 @@ export const SectorForm = () => {
                         width='225px'
                         value={postcode.city}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setPostcode({ ...postcode, city: e.target.value })}
-                    />  
-                    <Button onClick={handleAddPostcode} icon={<VscAdd />} />
+                    />
+                    <Button
+                        disabled={disableAddPostcode}
+                        onClick={handleAddPostcode}
+                        icon={<VscAdd />}
+                    />
                 </CityForm>
                 <ChipContainer>
                     {allPostcodes.map((e) => (
-                        <Chip 
-                            key={e.postcode} 
-                            endIcon={<VscClose />} 
-                            iconColor={theme.colors.error} 
+                        <Chip
+                            key={e.postcode}
+                            endIcon={<VscClose />}
+                            iconColor={theme.colors.error}
                             text={`${e.postcode} - ${e.city}`}
                             onClickOnIcon={() => removeFromPostcodes(e.postcode)}
                         />
@@ -89,7 +113,12 @@ export const SectorForm = () => {
                 </PostcodesDisplay> */}
             </InputSection>
             <SaveAction>
-                <Button disabled={disableSave} loading={loading} value='enregistrer' onClick={handleSave} />
+                <Button
+                    disabled={disableSave}
+                    loading={loadingSectors || saving}
+                    value='enregistrer'
+                    onClick={sector ? handleUpdate : handleSave}
+                />
             </SaveAction>
         </Form >
     );

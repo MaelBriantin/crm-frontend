@@ -1,23 +1,26 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { deepCopy, firstOf, isEmpty } from '../utils/helpers/spells.ts';
+import { deepCopy, isEmpty, firstOf } from '../utils/helpers/spells.ts';
 import { Loader } from '../components/global/Loader.tsx';
 import { DataTable } from '../components/DataTable';
-import { RowDataType } from '../types/DataTableTypes.ts';
-import { RowType } from '../types/DataTableTypes.ts';
+import { RowDataType, RowType } from '../types/DataTableTypes.ts';
 import { SectorType } from '../types/SectorTypes.ts';
-import { fetchAllSectors, fetchSectors } from '../services/api/sectors';
+import { fetchSectors } from '../services/api/sectors';
+import { useSectors, useModal, useAppLoading } from '../contexts';
+import { SectorForm } from '../components/forms/SectorForm.tsx';
 
 export const SectorPage: React.FC = () => {
 
-    const [sectors, setSectors] = React.useState<SectorType[]>([]);
+    const [sort, setSort] = React.useState<string | null>(null);
+    const [sortDirection, setSortDirection] = React.useState<boolean>(true);
+
+    const { sectors, refreshSectors, loadingSectors } = useSectors();
+    const { showModal } = useModal();
+    const { setAppLoading } = useAppLoading();
 
     useEffect(() => {
-        const fetchSectors = async (option: string) => {
-            const sectors = await fetchAllSectors(option);
-            setSectors(sectors as SectorType[]);
-        };
-        fetchSectors('withPostcodes');
+        refreshSectors();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const columns = [
@@ -73,20 +76,26 @@ export const SectorPage: React.FC = () => {
     // };
 
     const handleDoubleClick = async (row: RowType) => {
+        setAppLoading(true);
         const sector = await fetchSectors(row.id as SectorType['id'], 'withPostcodes');
-        console.log('sector', firstOf(sector));
+        showModal(<SectorForm sector={firstOf(sector) as SectorType} />, `Modifier le secteur "${firstOf(sector)?.name}"`);
+        setAppLoading(false);
     };
 
     return (
         <Container>
-            {isEmpty(sectors) && <Loader />}
-            {!isEmpty(sectors) &&
+            {(isEmpty(sectors) || loadingSectors) && <Loader />}
+            {(!isEmpty(sectors) && !loadingSectors) &&
                 <DataTable
                     searchbar
                     columns={columns}
                     onDoubleClickOnRow={handleDoubleClick}
                     data={deepCopy(sectors) as unknown as RowDataType[]}
                     emptyMessage={'Aucun secteur trouvé'}
+                    sort={sort}
+                    setSort={setSort}
+                    sortDirection={sortDirection}
+                    setSortDirection={setSortDirection}
                 />
             }
         </Container>
