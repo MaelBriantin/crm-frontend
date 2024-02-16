@@ -20,7 +20,7 @@ type ModalProps = {
         if (startCloseAnimation) {
             setTimeout(() => {
                 setStartCloseAnimation(false);
-            }, 425);
+            }, 225);
         }
     }
     , [startCloseAnimation, setStartCloseAnimation]);
@@ -97,8 +97,8 @@ const Container = styled.div<{ $closeModalAnimation: boolean, $isOpen: boolean }
     background: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
-    animation: ${ContainerDisplayAnimation} 400ms;
-    ${({ $closeModalAnimation }) => $closeModalAnimation ? css`animation: ${ContainerCloseAnimation} 450ms;` : ''};    
+    animation: ${ContainerDisplayAnimation} 200ms;
+    ${({ $closeModalAnimation }) => $closeModalAnimation ? css`animation: ${ContainerCloseAnimation} 250ms;` : ''};    
 `;
 
 const ModalStructure = styled.div<{ $closeModalAnimation: boolean, $style: {height: string | undefined, width: string | undefined} }>`
@@ -113,8 +113,8 @@ const ModalStructure = styled.div<{ $closeModalAnimation: boolean, $style: {heig
     flex-direction: column;
     border-radius: ${theme.materialDesign.borderRadius.rounded};
     box-shadow: ${theme.shadows.default};
-    animation: ${ModalDisplayAnimation} 400ms;
-    ${({ $closeModalAnimation }) => $closeModalAnimation ? css`animation: ${ModalCloseAnimation} 450ms;` : ''};
+    animation: ${ModalDisplayAnimation} 200ms;
+    ${({ $closeModalAnimation }) => $closeModalAnimation ? css`animation: ${ModalCloseAnimation} 250ms;` : ''};
 `;
 
 const ModalTitle = styled.div`
