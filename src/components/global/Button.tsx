@@ -107,7 +107,7 @@ const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: Varia
 
     &:hover {
         ${({ $disabled, $loading }) => $disabled
-        ? css`cursor: none;`
+        ? css`cursor: default;`
         : css`
             color: ${!$loading && `${theme.colors.primary};`};
             background: ${!$loading && `${theme.colors.white};`};
