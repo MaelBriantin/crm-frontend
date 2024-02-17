@@ -18,8 +18,8 @@ export const createSector = async (newSector: SectorType, callToast: CallToastPr
             (sectors) => {
                 sectorsResponse = sectors as SectorType[];
                 refreshSectors();
-                closeModal();
                 callToast('success', `Le secteur "${newSector.name}" a été créé avec succès.`, 3000);
+                closeModal();
             },
             (error) => {
                 console.error(error.message);
