@@ -94,7 +94,7 @@ export const getRowValueAndHighlight = (searched: string | number | undefined, r
             if(searched) {
                 let index = null;
                 rowValue.map((item, i) => {
-                    if(item.includes(String(searched).toLowerCase())) {
+                    if(item.toLowerCase().includes(String(searched).toLowerCase())) {
                         index = i;
                     }
                 });
