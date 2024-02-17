@@ -61,8 +61,15 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         setAllPostcodes(prevPostcodes => prevPostcodes.filter(e => e.postcode !== postcode));
     }
 
-    const disableSave = sectorName === '' || allPostcodes.length === 0;
-    const disableAddPostcode = postcode.postcode === '' || postcode.city === '';
+    const disableSave = 
+        sectorName === '' 
+        || allPostcodes.length === 0;
+
+    const disableAddPostcode = 
+        postcode.postcode === '' 
+        || postcode.city === '' 
+        || allPostcodes.find(e => e.postcode === postcode.postcode) !== undefined
+        || postcode.postcode.length !== 5;
 
     return (
         <Form>

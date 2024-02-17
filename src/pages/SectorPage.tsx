@@ -20,19 +20,10 @@ export const SectorPage: React.FC = () => {
 
     useEffect(() => {
         refreshSectors();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const columns = [
-        {
-            text: 'Identifiant',
-            value: 'id',
-            sortable: true,
-            type: 'number',
-            // color: [
-            //     { value: '*<5', text: 'blue' }
-            // ]
-        },
         {
             text: 'Nom du secteur',
             value: 'name',
@@ -52,28 +43,14 @@ export const SectorPage: React.FC = () => {
             //     { value: '10', text: 'white', background: 'purple' }
             // ]
         },
-        // {
-        //     text: 'Codes postaux',
-        //     value: 'postcodes',
-        //     sortable: false,
-        //     type: 'chips',
-        //     limit: 5, // limit the number of chips displayed if the value is an array
-        //     // color: [
-        //     //     { value: '*', text: 'white', background: `${theme.colors.primary}` }
-        //     // ]
-        // },
+        {
+            text: 'Communes',
+            value: 'postcodes_list',
+            sortable: false,
+            type: 'chips',
+            limit: 5,
+        }
     ];
-
-    // const sectorsWithPostcodes = sectors.map(sector => {
-    //     return {
-    //         ...sector,
-    //         postcodes: sector.postcodes.map(postcode => postcode.postcode)
-    //     };
-    // });
-
-    // const handleClick = (row: RowType) => {
-    //     console.log('click', row);
-    // };
 
     const handleDoubleClick = async (row: RowType) => {
         setAppLoading(true);
