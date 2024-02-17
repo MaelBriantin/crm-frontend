@@ -26,10 +26,8 @@ export const DataTable = <T extends RowDataType>({
 
     const selectable = onClickOnRow !== undefined || onDoubleClickOnRow !== undefined;
 
-    // const [sort, setSort] = React.useState<string | null>(null);
-    // const [sortDirection, setSortDirection] = React.useState<boolean>(true);
     const [page, setPage] = React.useState<number>(1);
-    const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
+    const [rowsPerPage, setRowsPerPage] = React.useState<number>(15);
     const [searchResults, setSearchResults] = React.useState<T[]>([]);
     const [searchedValue, setSearchedValue] = React.useState<string | number>('');
 
