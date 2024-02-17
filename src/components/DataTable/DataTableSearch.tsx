@@ -18,7 +18,7 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
 
     useEffect(() => {
         onSearch(advancedFilter(data, searchedColumn, searchedOperator, search, columns) as T[]);
-        searchedValue(searchedOperator === '' ? search : ' ');
+        searchedValue(searchedOperator === '' ? search : '');
     }, [search, data, onSearch, searchedValue, columns, searchedColumn, searchedOperator]);
 
     const enableAdvancedSearch = () => {

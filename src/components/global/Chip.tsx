@@ -19,7 +19,7 @@ export const Chip: React.FC<ChipProps> = ({ text, color, highlight, startIcon, e
     const setHighlight = (text: string, highlight: (string | number | undefined)[] | undefined): boolean => {
         if (highlight) {
             for (let i = 0; i < highlight.length; i++) {
-                if (text.includes(String(highlight[i])) && highlight[i] !== '') {
+                if (text.toLowerCase().includes(String(highlight[i]).toLowerCase()) && highlight[i] !== '') {
                     return true;
                 }
             }
@@ -32,8 +32,8 @@ export const Chip: React.FC<ChipProps> = ({ text, color, highlight, startIcon, e
             $variant={variant}
             $background={color?.background ?? ''}
             $highlight={setHighlight(text, highlight)}
-        >   
-            {startIcon && 
+        >
+            {startIcon &&
                 <Icon onClick={onClickOnIcon} $iconColor={iconColor}>{startIcon}</Icon>}
             <ChipText $text={color?.text ?? ''} dangerouslySetInnerHTML={{ __html: text }} onClick={onClickOnChip} />
             {endIcon &&
