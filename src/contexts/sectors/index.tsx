@@ -28,7 +28,7 @@ export const SectorsProvider: React.FC<SectorProviderProps> = ({ children }) => 
 
     const refreshSectors = async () => {
         setLoadingSectors(true);
-        setSectors(await fetchAllSectors() as SectorType[]);
+        setSectors(await fetchAllSectors('withPostcodes') as SectorType[]);
         setLoadingSectors(false);
     };
 

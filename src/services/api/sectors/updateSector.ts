@@ -5,7 +5,6 @@ import { CallToastProps } from "../../../contexts/global/ToastContext";
 
 export const updateSector = async (sector: SectorType, callToast: CallToastProps, refreshSectors: { (): Promise<void>; (): void; }, closeModal: { (): void; (): void; }) => {
     let sectorsResponse: SectorType[] = []
-    console.log(sector);
     try {
         const response: APIResponseFormat<SectorType> = await fetchAPI(`/api/sectors/${sector.id}`, 'PUT', sector);
         handleAPIResponse<SectorType>(
@@ -13,8 +12,8 @@ export const updateSector = async (sector: SectorType, callToast: CallToastProps
             (sectors) => {
                 sectorsResponse = sectors as SectorType[];
                 refreshSectors();
-                closeModal();
                 callToast('success', `Le secteur "${sector.name}" a été modifié avec succès.`, 3000);
+                closeModal();
             },
             (error) => {
                 console.error(error.message);
