@@ -1,4 +1,4 @@
-import { BrandType } from "../../../types/BrandType";
+import { BrandType } from "../../../types/BrandTypes";
 import { handleAPIResponse } from "../fetchApi.config";
 import { fetchAPI } from "../fetchApi.config";
 
@@ -18,6 +18,5 @@ export const fetchAllBrands = async () => {
     } catch (error) {
         console.error(error);
     }
-    console.log(brandsResponse);
     return brandsResponse;
 }
