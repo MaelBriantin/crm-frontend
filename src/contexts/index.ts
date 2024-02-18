@@ -7,7 +7,10 @@ export { useAppLoading, AppLoadingProvider } from './global/AppLoadingContext';
 export { useAuth, AuthProvider } from './auth/AuthContext';
 
 // sector contexts
-export { useSectors, SectorsProvider } from './sectors';
+export { useSectors, SectorsProvider } from './data/sectors';
+
+// brand contexts
+export { useBrands, BrandsProvider } from './data/brands';
 
 // use all contexts
 export { ContextProvider } from './ContextProvider';
