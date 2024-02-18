@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Input } from '../global';
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import { Button, Chip } from '../global';
 import { useModal } from '../../contexts';
 import { VscAdd, VscClose } from "react-icons/vsc";
@@ -11,6 +11,8 @@ import { useSectors } from '../../contexts';
 import { useToast } from '../../contexts';
 import { updateSector } from '../../services/api/sectors';
 import { MdDeleteOutline } from "react-icons/md";
+import { deepCompare } from '../../utils/helpers/spells';
+import { DeleteAlert } from './DeleteAlert';
 
 type SectorFormProps = {
     sector?: SectorType;
@@ -18,16 +20,26 @@ type SectorFormProps = {
 
 export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     const [sectorName, setSectorName] = useState(sector?.name || '');
-    const [postcode, setPostcode] = useState({ postcode: '', city: '' });
     const [allPostcodes, setAllPostcodes] = useState<PostcodeType[]>(sector?.postcodes || []);
+    const [postcode, setPostcode] = useState({ postcode: '', city: '' });
     const [saving, setSaving] = useState(false);
-    const [ sectorToUpdate ] = useState<SectorType | null>(sector || null);
+    const [sectorToUpdate] = useState<SectorType | null>(sector || null);
+    const [deleteAlert, setDeleteAlert] = useState(false);
 
     const { callToast } = useToast();
 
     const { loadingSectors, refreshSectors } = useSectors();
 
-    const { closeModal } = useModal();
+    const { closeModal, setDisableClose } = useModal();
+
+    useEffect(() => {
+        if (deleteAlert) {
+            setDisableClose(true);
+        } 
+        if (!deleteAlert) {
+            setDisableClose(false);
+        }
+    }, [deleteAlert, setDisableClose]);
 
     const handleSave = async () => {
         if (sectorName !== '' && allPostcodes.length > 0) {
@@ -38,9 +50,10 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     }
 
     const handleDeleteSector = async () => {
+        setDeleteAlert(false);
         if (sectorToUpdate) {
             setSaving(true);
-            await deleteSector({id: sectorToUpdate.id, name: sectorName} as SectorType, callToast, refreshSectors, closeModal);
+            await deleteSector({ id: sectorToUpdate.id, name: sectorName } as SectorType, callToast, refreshSectors, closeModal);
             setSaving(false);
         }
     }
@@ -70,15 +83,25 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         setAllPostcodes(prevPostcodes => prevPostcodes.filter(e => e.postcode !== postcode));
     }
 
-    const disableSave = 
-        sectorName === '' 
-        || allPostcodes.length === 0;
+    const compareEditSectorAndSector = (sector: SectorType, sectorToUpdate: SectorType) => {
+        const keysToCompare = ['name', 'postcodes'];
+        return deepCompare(sector, sectorToUpdate, keysToCompare);
+    }
 
-    const disableAddPostcode = 
-        postcode.postcode === '' 
-        || postcode.city === '' 
+    const disableSave =
+        sectorName === ''
+        || allPostcodes.length === 0
+        || deleteAlert
+        || compareEditSectorAndSector({ name: sectorName, postcodes: allPostcodes } as SectorType, sectorToUpdate as SectorType);
+
+    const disableAddPostcode =
+        postcode.postcode === ''
+        || postcode.city === ''
         || allPostcodes.find(e => e.postcode === postcode.postcode) !== undefined
-        || postcode.postcode.length !== 5;
+        || postcode.postcode.length !== 5
+        || deleteAlert;
+
+    const disableDelete = deleteAlert;
 
     return (
         <Form>
@@ -116,6 +139,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
                 <ChipContainer>
                     {allPostcodes.map((e) => (
                         <Chip
+                            disabled={disableDelete}
                             key={e.postcode}
                             endIcon={<VscClose />}
                             iconColor={theme.colors.error}
@@ -130,10 +154,11 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
             </InputSection>
             <SaveAction $sector={sector !== undefined}>
                 {sector && <Button
+                    disabled={disableDelete}
                     color={theme.colors.error}
                     value='supprimer ce secteur'
                     icon={<MdDeleteOutline />}
-                    onClick={handleDeleteSector}
+                    onClick={() => setDeleteAlert(!deleteAlert)}
                 />}
                 <Button
                     disabled={disableSave}
@@ -142,6 +167,12 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
                     onClick={sector ? handleUpdate : handleSave}
                 />
             </SaveAction>
+            {deleteAlert &&
+                <DeleteAlert
+                    message='Êtes-vous sûr de vouloir supprimer ce secteur ? Cette action est irréversible.'
+                    confirmAction={handleDeleteSector}
+                    cancelAction={() => setDeleteAlert(false)}
+                />}
         </Form >
     );
 };
@@ -195,4 +226,6 @@ const ChipContainer = styled.div`
     flex-wrap: wrap;
     gap: 10px;
     width: 480px;
+    max-height: 400px;
+    overflow: scroll;
 `;
