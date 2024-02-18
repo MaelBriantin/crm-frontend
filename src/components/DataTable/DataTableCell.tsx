@@ -9,7 +9,6 @@ import { theme } from '../../assets/themes/index.ts';
 export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, columnWidth, columnIndex, color, searchedValue, arrayLimit = 4 }) => {
 
     const { rowValue, highlight } = getRowValueAndHighlight(searchedValue, row[column.value], arrayLimit);
-    console.log(column.value, columnWidth);
     return (
         <TableCell key={columnIndex} $columnWidth={columnWidth}>
             {(column.type === 'chips' && !Array.isArray(rowValue)) && (
