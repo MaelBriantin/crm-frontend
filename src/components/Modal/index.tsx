@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { useModal } from '../../contexts/global/ModalContext';
 import { theme } from '../../assets/themes';
@@ -10,9 +10,10 @@ type ModalProps = {
     title: string;
     onClose: () => void;
     children: React.ReactNode;
-  }
+    disableClose?: boolean;
+};
 
-  export const Modal: React.FC<ModalProps> = ({ height, width, title, children }) => {
+export const Modal: React.FC<ModalProps> = ({ height, width, title, children, disableClose }) => {
 
     const { isOpen, closeModal, startCloseAnimation, setStartCloseAnimation } = useModal();
 
@@ -23,19 +24,19 @@ type ModalProps = {
             }, 225);
         }
     }
-    , [startCloseAnimation, setStartCloseAnimation]);
+        , [startCloseAnimation, setStartCloseAnimation]);
 
     return (
         <Container $closeModalAnimation={startCloseAnimation} $isOpen={isOpen}>
             <ModalStructure $closeModalAnimation={startCloseAnimation} $style={{ height, width }}>
                 <ModalTitle>
-                    <span className='title'>{ title }</span>
-                    <CloseButton onClick={closeModal} >
-                        <VscChromeClose/>
+                    <span className='title'>{title}</span>
+                    <CloseButton $disableClose={disableClose} onClick={!disableClose ? closeModal : () => {}} >
+                        <VscChromeClose />
                     </CloseButton>
                 </ModalTitle>
                 <ModalContent>
-                    { children }
+                    {children}
                 </ModalContent>
             </ModalStructure>
         </Container>
@@ -87,6 +88,9 @@ const ModalCloseAnimation = keyframes`
 
 const Container = styled.div<{ $closeModalAnimation: boolean, $isOpen: boolean }>`
     display: ${({ $isOpen }) => $isOpen ? 'flex' : 'none'};
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     animation: all 250ms;
     position: absolute;
     top: 0;
@@ -101,14 +105,16 @@ const Container = styled.div<{ $closeModalAnimation: boolean, $isOpen: boolean }
     ${({ $closeModalAnimation }) => $closeModalAnimation ? css`animation: ${ContainerCloseAnimation} 250ms;` : ''};    
 `;
 
-const ModalStructure = styled.div<{ $closeModalAnimation: boolean, $style: {height: string | undefined, width: string | undefined} }>`
+const ModalStructure = styled.div<{ $closeModalAnimation: boolean, $style: { height: string | undefined, width: string | undefined } }>`
     padding: 20px;
     animation: all 250ms ease-out;
     width: ${({ $style }) => $style.width};
     height: ${({ $style }) => $style.height};
+    max-height: 80%;
+    overflow: auto;
     background: white;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     flex-direction: column;
     border-radius: ${theme.materialDesign.borderRadius.rounded};
@@ -119,32 +125,34 @@ const ModalStructure = styled.div<{ $closeModalAnimation: boolean, $style: {heig
 
 const ModalTitle = styled.div`
     width: 100%;
-    height: 10%;
     display: flex;
     justify-content: space-between;
-    gap: 10px;
     align-items: flex-start;
+    gap: 10px;
     margin-bottom: 10px;
     font-size: ${theme.fonts.size.P2};
     color: ${theme.colors.greyDark};
+    background: ${theme.colors.white};
     .title {
         ${theme.fonts.size.P3};
         text-transform: uppercase;
     }
 `;
 
-const CloseButton = styled.div`
+const CloseButton = styled.div<{ $disableClose: boolean | undefined }>`
     color: ${theme.colors.greyDark};
     font-size: ${theme.fonts.size.P2};
-    cursor: pointer;
+    ${({ $disableClose }) => !$disableClose && css`
     &:hover {
+        cursor: pointer;
         color: ${theme.colors.error};
     }
+    `};
 `;
 
 const ModalContent = styled.div`
     width: 100%;
-    height: 80%;
+    /* height: 90%; */
     display: flex;
     justify-content: center;
     align-items: center;
