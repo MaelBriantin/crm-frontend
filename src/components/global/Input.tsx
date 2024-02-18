@@ -140,6 +140,7 @@ export const Input = (
                 ref={inputRef}
                 maxLength={maxLength}
                 max={type === 'number' ? max : undefined}
+                min={noNegativeNumber ? 0 : undefined}
                 placeholder={placeholder}
                 type={hidden ? type : 'text'}
                 onChange={handleChange}
