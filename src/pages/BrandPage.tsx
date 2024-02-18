@@ -6,6 +6,7 @@ import { Loader } from '../components/global/Loader';
 import { RowDataType } from '../types/DataTableTypes';
 import styled from 'styled-components';
 import { deepCopy } from '../utils/helpers/spells';
+import { VscJersey } from "react-icons/vsc";
 
 export const BrandPage = () => {
 
@@ -36,14 +37,21 @@ export const BrandPage = () => {
             text: 'Email',
             value: 'contact_email',
             sortable: true,
-            width: '25%'
+            width: '20%'
         },
         {
             text: 'Téléphone',
             value: 'contact_phone',
             sortable: false,
-            width: '25%'
-        }
+            width: '20%'
+        },
+        {
+            text: 'Code SKU',
+            value: 'sku_code',
+            sortable: true,
+            width: '10%',
+            type: 'chips',
+        },
     ];
 
     return (
@@ -52,7 +60,10 @@ export const BrandPage = () => {
                 <Loader />}
             {!isEmpty(brands) &&
                 <DataTable
+                    topBar
                     searchbar
+                    iconTopBar={<VscJersey />}
+                    onClickTopBar={() => { }}
                     hoverable
                     columns={columns}
                     data={deepCopy(brands) as RowDataType[]}

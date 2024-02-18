@@ -8,6 +8,7 @@ import { SectorType } from '../types/SectorTypes.ts';
 import { fetchSectors } from '../services/api/sectors';
 import { useSectors, useModal, useAppLoading } from '../contexts';
 import { SectorForm } from '../components/forms/SectorForm.tsx';
+import { LiaMapMarkedAltSolid } from "react-icons/lia";
 
 export const SectorPage: React.FC = () => {
 
@@ -64,14 +65,22 @@ export const SectorPage: React.FC = () => {
         setAppLoading(false);
     };
 
+    const newSector = () => {
+        console.log('new sector');
+        showModal(<SectorForm />, 'Créer un nouveau secteur');
+    };
+
     return (
         <Container>
             {(isEmpty(sectors) || loadingSectors) && <Loader />}
             {(!isEmpty(sectors) && !loadingSectors) &&
                 <DataTable
+                    topBar
                     searchbar
+                    iconTopBar={<LiaMapMarkedAltSolid />}
                     columns={columns}
                     onDoubleClickOnRow={handleDoubleClick}
+                    onClickTopBar={newSector}
                     data={deepCopy(sectors) as unknown as RowDataType[]}
                     emptyMessage={'Aucun secteur trouvé'}
                     sort={sort}
