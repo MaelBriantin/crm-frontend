@@ -30,6 +30,7 @@ export const DataTableBody = ({ data, columns, onClickOnRow, onDoubleClickOnRow,
                             key={columnIndex}
                             row={row as RowType}
                             column={column as ColumnType}
+                            columnWidth={column?.width}
                             columnIndex={columnIndex}
                             color={getColor(column.color, String(row[column.value]))}
                             arrayLimit={column.limit}

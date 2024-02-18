@@ -17,6 +17,7 @@ export type DataTableCellProps = {
   row: RowType;
   column: ColumnType;
   columnIndex: number;
+  columnWidth?: string;
   color?: { background: string | undefined, text: string | undefined } | undefined;
   searchedValue?: string | number;
   arrayLimit?: number;
@@ -35,6 +36,7 @@ export type ColumnProps = {
   type?: string;
   limit?: number;
   color?: ColumnColorProps[] | undefined;
+  width?: string;
 };
 
 export type RowDataType = {

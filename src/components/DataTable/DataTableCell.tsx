@@ -2,16 +2,16 @@ import React from 'react';
 import styled from 'styled-components';
 import { Chip } from '../global/Chip.tsx';
 import { filterOut } from '../../utils/helpers/spells.ts';
-import { DataTableCellProps, TableCellProps, dataTableTypeList } from '../../types/DataTableTypes.ts';
+import { DataTableCellProps, dataTableTypeList } from '../../types/DataTableTypes.ts';
 import { getRowValueAndHighlight } from '../../utils/dataTableUtils.ts';
 import { theme } from '../../assets/themes/index.ts';
 
-export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, columnIndex, color, searchedValue, arrayLimit = 4 }) => {
+export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, columnWidth, columnIndex, color, searchedValue, arrayLimit = 4 }) => {
 
     const { rowValue, highlight } = getRowValueAndHighlight(searchedValue, row[column.value], arrayLimit);
-
+    console.log(column.value, columnWidth);
     return (
-        <TableCell key={columnIndex} >
+        <TableCell key={columnIndex} $columnWidth={columnWidth}>
             {(column.type === 'chips' && !Array.isArray(rowValue)) && (
                 <Chip
                     variant='small'
@@ -58,13 +58,14 @@ export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, colum
     );
 }
 
-const TableCell = styled.td<TableCellProps>`
+const TableCell = styled.td<{ $columnWidth: string | undefined }>`
     padding: 8px;
-    min-width: 50px;
+    width: ${(props) => props.$columnWidth || 'auto'};
     border-bottom: 1px solid #f9f9f9;
     vertical-align: middle;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 `;
 
 const ChipContainer = styled.div`

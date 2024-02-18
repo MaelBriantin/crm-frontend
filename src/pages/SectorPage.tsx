@@ -28,6 +28,9 @@ export const SectorPage: React.FC = () => {
             text: 'Nom du secteur',
             value: 'name',
             sortable: true,
+            // The first width must be huge and in a absolute unit to avoid the HTML table to be too small and apply the width of the other columns proportionally
+            // The real width for this column will be the rest of the table width if the other widths are in percentage
+            width: '1000px'
             // color: [
             //     { value: 'et', text: 'blue' },
             //     { value: 'quasi', text: 'red' },
@@ -39,6 +42,7 @@ export const SectorPage: React.FC = () => {
             value: 'postcodes_count',
             sortable: true,
             type: 'number',
+            width: '15%'
             // color: [
             //     { value: '10', text: 'white', background: 'purple' }
             // ]
@@ -49,6 +53,7 @@ export const SectorPage: React.FC = () => {
             sortable: false,
             type: 'chips',
             limit: 5,
+            width: '60%'
         }
     ];
 

@@ -129,11 +129,15 @@ const Container = styled.div`
     padding: 10px 20px;
     width: 100%;
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
 `;
 
 const Table = styled.table`
-    width: 100%;
+    display: block;
+    min-width: 100%;
+    table-layout: fixed;
+    height: 85%;
+    overflow: auto;
     margin: auto;
     overflow: auto;
     border-collapse: collapse;
