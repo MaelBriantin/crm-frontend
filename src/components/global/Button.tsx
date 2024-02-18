@@ -22,9 +22,11 @@ type ButtonProps = {
     icon?: React.ReactNode;
     bigIcon?: boolean;
     disabled?: boolean;
+    color?: string;
 };
 
-export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant = 'regular', icon, bigIcon, disabled }) => {
+export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant = 'regular', icon, bigIcon, disabled, color }) => {
+    color = color ?? theme.colors.primary;
     const textRef: RefObject<HTMLInputElement> = useRef(null);
     const [width, setWidth] = useState(0);
     useEffect(() => {
@@ -42,6 +44,7 @@ export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant
 
     return (
         <ButtonStyle
+            $color={color}
             $disabled={disabled}
             $variantStyle={variantStyle as VariantStyleType}
             $loading={loading}
@@ -49,13 +52,13 @@ export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant
         >
             <button hidden={true} />
             {(!loading && !icon && value) &&
-                <span className="textContent" ref={textRef}>{value}</span>}
+                <div className="textContent" ref={textRef}>{value}</div>}
             {(!loading && icon && value) &&
-                <span className="textContent">{icon}{value}</span>}
+                <div className="textContent"><span className="icon">{icon}</span>{value}</div>}
             {(!loading && icon && !value) &&
-                <span className={`textContent ${bigIcon && 'bigIcon'}`}>{icon}</span>}
+                <div className={`textContent ${bigIcon && 'bigIcon'}`}>{icon}</div>}
             {loading &&
-                <span className="textContent" style={{ width }}><VscLoading className={'loading'} /></span>}
+                <div className="textContent" style={{ width }}><VscLoading className={'loading'} /></div>}
         </ButtonStyle>
     )
 
@@ -66,13 +69,15 @@ const LoadingKeyframe = keyframes`
         transform: rotate(360deg);
     }
 `
-const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: VariantStyleType, $disabled: boolean | undefined }>`
+const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: VariantStyleType, $disabled: boolean | undefined, $color: string }>`
     ${({ $disabled }) => $disabled && css`opacity: 0.5;`};
     user-select: none;
     height: ${({ $variantStyle }) => $variantStyle.height};
     font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
-    background: ${theme.colors.primary};
-    border: ${({ $variantStyle }) => $variantStyle.borderSize}px solid ${theme.colors.primary};
+    background: ${({ $color }) => $color};
+
+    border: ${({ $variantStyle, $color}) => `${$variantStyle.borderSize}px solid ${$color}`};
+    
     /* padding: 0 ${theme.materialDesign.padding.dense}; */
     display: flex;
     justify-content: center;
@@ -97,19 +102,25 @@ const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: Varia
         color: ${theme.colors.white};
     }
 
+    .icon {
+        font-size: ${theme.fonts.size.P1};
+        margin: 0;
+        padding: 0;
+        transform: translateY(1px);
+    }
+
     .bigIcon {
         font-size: ${theme.fonts.size.P3};
     }
 
     &:hover .textContent{
-        color: ${({ $loading, $disabled }): string | false => (!$loading && !$disabled) && `${theme.colors.primary};`};
-    }
+        color: ${({ $loading, $disabled, $color }): string | false => (!$loading && !$disabled) && `${$color || theme.colors.primary};`};    }
 
     &:hover {
-        ${({ $disabled, $loading }) => $disabled
+        ${({ $disabled, $loading, $color }) => $disabled
         ? css`cursor: default;`
         : css`
-            color: ${!$loading && `${theme.colors.primary};`};
+            color: ${!$loading && `${$color};`};
             background: ${!$loading && `${theme.colors.white};`};
         `};
         /* color: ${({ $loading }): string | false => !$loading && `${theme.colors.primary};`};
