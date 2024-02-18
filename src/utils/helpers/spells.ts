@@ -147,3 +147,37 @@ export const removeKeys = (obj: object | object[], keysToRemove: string[]): obje
     return newObj;
   }
 };
+
+
+
+/**
+ * Deeply compares two objects and checks if they are equal.
+ * @param obj1 - The first object to compare.
+ * @param obj2 - The second object to compare.
+ * @param keys - Optional array of keys to compare. If provided, only the specified keys will be compared.
+ * @returns True if the objects are equal, false otherwise.
+ */
+export const deepCompare = <T extends object>(obj1: T, obj2: T, keys?: string[]): boolean => {
+  if (keys) {
+    for (const key of keys) {
+      if (JSON.stringify(obj1[key as keyof typeof obj1]) !== JSON.stringify(obj2[key as keyof typeof obj2])) {
+        return false;
+      }
+    }
+  } else {
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+
+    for (const key of keys1) {
+      if (JSON.stringify(obj1[key as keyof typeof obj1]) !== JSON.stringify(obj2[key as keyof typeof obj2])) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+};
