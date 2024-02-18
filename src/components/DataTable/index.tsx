@@ -83,6 +83,7 @@ export const DataTable = <T extends RowDataType>({
                     onClick={openModal}
                 />
             }
+            {sortedData.length > 0 && 
             <Table>
                 <DataTableHeader
                     columns={columns}
@@ -99,7 +100,7 @@ export const DataTable = <T extends RowDataType>({
                     selectable={selectable}
                     hoverable={hoverable}
                 />
-            </Table>
+            </Table>}
             {sortedData.length > 0 &&
                 <DataTableActions
                     page={page}

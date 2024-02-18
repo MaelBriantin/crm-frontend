@@ -87,7 +87,7 @@ export const SectorPage: React.FC = () => {
 const Container = styled.div`
     position: relative;
     width: 90%;
-    height: 90%;
+    height: 95%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
