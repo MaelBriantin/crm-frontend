@@ -9,18 +9,33 @@ import { DataTableBody } from './DataTableBody';
 import { DataTableActions } from './DataTableActions';
 import { DataTableTopBar } from './DataTableTopBar';
 import { useModal } from '../../contexts/global/ModalContext';
+import { SectorForm } from '../forms/SectorForm';
 
-export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, onDoubleClickOnRow, hoverable = false, searchbar = false, emptyMessage }: DataTableProps<T>): React.ReactElement => {
+export const DataTable = <T extends RowDataType>({ 
+    data, 
+    columns, 
+    onClickOnRow, 
+    onDoubleClickOnRow, 
+    hoverable = false, 
+    searchbar = false, 
+    emptyMessage,
+    sort,
+    setSort,
+    sortDirection,
+    setSortDirection }: DataTableProps<T>): React.ReactElement => {
 
     const selectable = onClickOnRow !== undefined || onDoubleClickOnRow !== undefined;
 
-    const [sort, setSort] = React.useState<string | null>(null);
-    const [sortDirection, setSortDirection] = React.useState<boolean>(true);
     const [page, setPage] = React.useState<number>(1);
-    const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
+    const [rowsPerPage, setRowsPerPage] = React.useState<number>(15);
     const [searchResults, setSearchResults] = React.useState<T[]>([]);
     const [searchedValue, setSearchedValue] = React.useState<string | number>('');
-    const { openModal } = useModal();
+
+    const { showModal } = useModal();
+
+    const openModal = () => {
+        showModal(<SectorForm />, 'Créer un secteur');
+    };
 
     let dataNumber = data.length;
 
@@ -68,11 +83,12 @@ export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, 
                     onClick={openModal}
                 />
             }
+            {sortedData.length > 0 && 
             <Table>
                 <DataTableHeader
                     columns={columns}
                     sort={sort}
-                    sortDirection={sortDirection}
+                    sortDirection={sortDirection || false}
                     handleSort={handleSort}
                 />
                 <DataTableBody
@@ -84,7 +100,7 @@ export const DataTable = <T extends RowDataType>({ data, columns, onClickOnRow, 
                     selectable={selectable}
                     hoverable={hoverable}
                 />
-            </Table>
+            </Table>}
             {sortedData.length > 0 &&
                 <DataTableActions
                     page={page}
@@ -114,11 +130,15 @@ const Container = styled.div`
     padding: 10px 20px;
     width: 100%;
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
 `;
 
 const Table = styled.table`
-    width: 100%;
+    display: block;
+    min-width: 100%;
+    table-layout: fixed;
+    height: 85%;
+    overflow: auto;
     margin: auto;
     overflow: auto;
     border-collapse: collapse;

@@ -18,7 +18,7 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
 
     useEffect(() => {
         onSearch(advancedFilter(data, searchedColumn, searchedOperator, search, columns) as T[]);
-        searchedValue(searchedOperator === '' ? search : ' ');
+        searchedValue(searchedOperator === '' ? search : '');
     }, [search, data, onSearch, searchedValue, columns, searchedColumn, searchedOperator]);
 
     const enableAdvancedSearch = () => {
@@ -28,7 +28,7 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
         setTimeout(() => {
             setActiveAdvancedSearch(!activeAdvancedSearch);
             setStartAnimation(false);
-        }, 250);
+        }, 150);
     }
 
     const operatorFilter = [
@@ -145,8 +145,8 @@ const AdvancedSearchContainer = styled.div<{ $activeAdvancedSearch: boolean, $st
     justify-content: flex-start;
     gap: 10px;
     transition: all 250ms;
-    animation: ${({ $activeAdvancedSearch }) => $activeAdvancedSearch && css`${fromDownToUp} 0.4s`};
-    animation: ${({ $activeAdvancedSearch, $startAnimation }) => $activeAdvancedSearch && $startAnimation && css`${fromUpToDown} 0.4s`};
+    animation: ${({ $activeAdvancedSearch }) => $activeAdvancedSearch && css`${fromDownToUp} 0.25s`};
+    animation: ${({ $activeAdvancedSearch, $startAnimation }) => $activeAdvancedSearch && $startAnimation && css`${fromUpToDown} 0.25s`};
     .label {
         color: ${theme.colors.dark};
     }

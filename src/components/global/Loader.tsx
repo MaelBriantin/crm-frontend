@@ -2,10 +2,10 @@ import styled, { keyframes } from "styled-components";
 import { AiOutlineLoading } from "react-icons/ai";
 import { theme } from "../../assets/themes/index.ts";
 
-export const Loader: React.FC<{ blurry?: boolean }> = ({ blurry = false }) => {
+export const Loader: React.FC<{ transparent?: boolean }> = ({ transparent = false }) => {
 
   return (
-    <LoaderContainer $blurry={blurry}>
+    <LoaderContainer $transparent={transparent}>
       <AiOutlineLoading className={'loader'} />
     </LoaderContainer>
   );
@@ -18,8 +18,9 @@ const Spinning = keyframes`
   }
 `
 
-const LoaderContainer = styled.div<{ $blurry?: boolean }>`
+const LoaderContainer = styled.div<{ $transparent?: boolean }>`
   position: absolute;
+  z-index: 9999;
   top: 0; 
   left: 0;
   height: 100%;
@@ -27,7 +28,7 @@ const LoaderContainer = styled.div<{ $blurry?: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  ${({ $blurry }): string | false => $blurry ? `background: rgba(245, 245, 245, 0.445);` : `background: white;`};
+  ${({ $transparent }): string | false => $transparent ? `background: rgba(0, 0, 0, 0);` : `background: white;`};
   .loader{
     font-size: ${theme.fonts.size.P6};
     color: ${theme.colors.primary};

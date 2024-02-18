@@ -17,6 +17,7 @@ export type DataTableCellProps = {
   row: RowType;
   column: ColumnType;
   columnIndex: number;
+  columnWidth?: string;
   color?: { background: string | undefined, text: string | undefined } | undefined;
   searchedValue?: string | number;
   arrayLimit?: number;
@@ -35,6 +36,7 @@ export type ColumnProps = {
   type?: string;
   limit?: number;
   color?: ColumnColorProps[] | undefined;
+  width?: string;
 };
 
 export type RowDataType = {
@@ -52,6 +54,10 @@ export type DataTableProps<T extends RowDataType> = {
   hoverable?: boolean;
   searchbar?: boolean;
   emptyMessage?: string;
+  sort: string | null;
+  setSort: Dispatch<SetStateAction<string | null>>;
+  sortDirection?: boolean;
+  setSortDirection: Dispatch<SetStateAction<boolean>>;
 };
 
 export type TableRowProps = {

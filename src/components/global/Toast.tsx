@@ -44,7 +44,7 @@ export const Toast = () => {
                 <IoMdClose className={'closeIcon'} onClick={resetToastContext} />
             </div>
             <div className="toastMessage">
-                <span>{message}</span>
+                <span dangerouslySetInnerHTML={{ __html: message }} />
             </div>
         </ToastStyle>
     );
@@ -76,12 +76,14 @@ const typeTitleColor = (type: string): { toastTitle: string, toastColor: string 
 
 
 const ToastStyle = styled.div<{ $color: string, $show: boolean }>`
+    z-index: 99999;
+    background-color: ${theme.colors.white};
     position: absolute;
     bottom: 50px;
     right: 50px;
-    height: 100px;
+    min-height: 100px;
     width: 300px;
-    border-radius: ${theme.materialDesign.borderRadius.default};
+    border-radius: ${theme.materialDesign.borderRadius.rounded};
     display: flex;
     justify-content: center;
     align-items: center;
@@ -99,7 +101,7 @@ const ToastStyle = styled.div<{ $color: string, $show: boolean }>`
         align-items: center;
         background-color: ${({ $color }): string => $color};
         font-family: 'Dancing Script', 'sans-serif';
-        font-size: x-large;
+        font-size: ${theme.fonts.size.P3};
     }
     .closeIcon {
         padding: 10px;
@@ -113,13 +115,13 @@ const ToastStyle = styled.div<{ $color: string, $show: boolean }>`
     }
     .toastMessage{
         text-overflow: ellipsis;
-        height: 60px;
+        min-height: 60px;
         width: 100%;
         display: flex;
         justify-content: flex-start;
         align-items: center;
         background-color: #f5f5f540;
-        font-size: medium;
+        font-size: ${theme.fonts.size.P1};
     }
     .toastTitle span, .toastMessage span{
         padding: 5px 10px;

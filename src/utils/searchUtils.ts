@@ -1,5 +1,4 @@
 import { ColumnProps, RowDataType, RowDataValueTypes } from '../types/DataTableTypes';
-import { firstOf, removeKeys } from './helpers/spells';
 
 /**
  * Performs a wildcard search on the given value based on the search criteria.
@@ -53,23 +52,21 @@ export const wildcardSearch = (
  */
 export const advancedFilter = (data: RowDataType[], searchedColumn: string, searchedOperator: string, search: string, columns: ColumnProps[]) => {
     
-    // Get the keys of the data passed
-    const dataKeys = Object.keys(firstOf(data) as RowDataType);
     // Get the keys of the columns passed
     const columnKeys = columns.map(column => column.value);
-    // Store the keys that are not present in the columns
-    const missingKeys = dataKeys.filter(key => !columnKeys.includes(key));
-    // Remove the keys that are not present in the columns from the data
-    const filteredData = removeKeys(data, missingKeys) as RowDataType[];
 
-    const result = filteredData.filter((row: RowDataType) => {
-
+    const result = data.filter((row: RowDataType) => {
         return Object.entries(row).some(([key, value]: [string, RowDataValueTypes]) => {
+            // Ignore the keys that are not present in the columns
+            if (!columnKeys.includes(key)) {
+                return false;
+            }
+
             if (searchedColumn && searchedColumn !== key) {
                 return false;
             }
 
-            const column = columns && columns.find((column) => column.value === key);
+            const column = columns.find((column) => column.value === key);
             const columnText = column ? column.text : '';
 
             switch (searchedOperator) {
@@ -83,7 +80,43 @@ export const advancedFilter = (data: RowDataType[], searchedColumn: string, sear
                     return wildcardSearch(search, value, columnText);
             }
         });
-
     });
     return result;
 }
+// export const advancedFilter_old = (data: RowDataType[], searchedColumn: string, searchedOperator: string, search: string, columns: ColumnProps[]) => {
+    
+//     // Get the keys of the data passed
+//     const dataKeys = Object.keys(firstOf(data) as RowDataType);
+//     // Get the keys of the columns passed
+//     const columnKeys = columns.map(column => column.value);
+//     // Store the keys that are not present in the columns
+//     const missingKeys = dataKeys.filter(key => !columnKeys.includes(key));
+//     // Remove the keys that are not present in the columns from the data
+//     const filteredData = removeKeys(data, missingKeys) as RowDataType[];
+
+//     const result = filteredData.filter((row: RowDataType) => {
+
+//         return Object.entries(row).some(([key, value]: [string, RowDataValueTypes]) => {
+//             if (searchedColumn && searchedColumn !== key) {
+//                 return false;
+//             }
+
+//             const column = columns && columns.find((column) => column.value === key);
+//             const columnText = column ? column.text : '';
+
+//             switch (searchedOperator) {
+//                 case '>':
+//                     return Number(value) < Number(search);
+//                 case '<':
+//                     return Number(value) > Number(search);
+//                 case '=':
+//                     return String(value) === String(search);
+//                 default:
+//                     return wildcardSearch(search, value, columnText);
+//             }
+//         });
+
+//     });
+//     return result;
+// }
+

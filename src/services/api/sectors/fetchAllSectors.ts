@@ -1,7 +1,7 @@
-import { SectorType } from '../../../types/DataTypes';
+import { SectorType } from '../../../types/SectorTypes.ts';
 import { fetchAPI, handleAPIResponse } from '../fetchApi.config.ts';
 
-export const fetchAllSectors = async (options: string | null = null) => {
+export const fetchAllSectors = async (options: 'withPostcodes' | null = null) => {
     const withPostCodes = options && options === 'withPostcodes';
     let sectorsResponse: SectorType[] = [];
     

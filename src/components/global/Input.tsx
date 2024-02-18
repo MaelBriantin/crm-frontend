@@ -81,9 +81,16 @@ export const Input = (
     };
 
     const handleCount = (operator: 'plus' | 'minus') => {
-        if (noNegativeNumber && operator === 'minus' && count === 0) return;
         if (String(count) === '' || count === undefined) setCount(0);
-        operator === 'plus' ? setCount(prevCount => prevCount + 1) : setCount(prevCount => prevCount - 1);
+        if (noNegativeNumber
+            && operator === 'minus'
+            && (count === 0
+                || (String(count) === '' || count === undefined)))
+            return;
+
+        operator === 'plus' && setCount(prevCount => prevCount + 1);
+        operator === 'minus' && setCount(prevCount => prevCount - 1);
+
         inputRef.current && inputRef.current.focus();
     };
 
