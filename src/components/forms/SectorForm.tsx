@@ -35,7 +35,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     useEffect(() => {
         if (deleteAlert) {
             setDisableClose(true);
-        } 
+        }
         if (!deleteAlert) {
             setDisableClose(false);
         }
@@ -99,6 +99,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         || postcode.city === ''
         || allPostcodes.find(e => e.postcode === postcode.postcode) !== undefined
         || postcode.postcode.length !== 5
+        || Number(postcode.postcode) < 0
         || deleteAlert;
 
     const disableDelete = deleteAlert;
@@ -227,5 +228,5 @@ const ChipContainer = styled.div`
     gap: 10px;
     width: 480px;
     max-height: 400px;
-    overflow: scroll;
+    overflow: auto;
 `;
