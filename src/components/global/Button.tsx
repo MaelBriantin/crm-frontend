@@ -48,7 +48,7 @@ export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant
             $disabled={disabled}
             $variantStyle={variantStyle as VariantStyleType}
             $loading={loading}
-            onClick={!loading ? ((e: React.MouseEvent<HTMLDivElement>) => onClick(e)) : () => { }}
+            onClick={!loading && !disabled ? ((e: React.MouseEvent<HTMLDivElement>) => onClick(e)) : () => { }}
         >
             <button hidden={true} />
             {(!loading && !icon && value) &&
