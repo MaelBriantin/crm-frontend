@@ -19,7 +19,7 @@ export const SectorPage: React.FC = () => {
     const { setAppLoading } = useAppLoading();
 
     useEffect(() => {
-        refreshSectors();
+        isEmpty(sectors) && refreshSectors();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
