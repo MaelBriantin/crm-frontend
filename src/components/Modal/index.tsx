@@ -122,6 +122,7 @@ const ModalTitle = styled.div`
     height: 10%;
     display: flex;
     justify-content: space-between;
+    gap: 10px;
     align-items: flex-start;
     margin-bottom: 10px;
     font-size: ${theme.fonts.size.P2};

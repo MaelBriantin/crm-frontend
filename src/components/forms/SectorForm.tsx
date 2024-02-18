@@ -5,11 +5,12 @@ import { Button, Chip } from '../global';
 import { useModal } from '../../contexts';
 import { VscAdd, VscClose } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
-import { createSector } from '../../services/api/sectors';
+import { createSector, deleteSector } from '../../services/api/sectors';
 import { PostcodeType, SectorType } from '../../types/SectorTypes';
 import { useSectors } from '../../contexts';
 import { useToast } from '../../contexts';
 import { updateSector } from '../../services/api/sectors';
+import { MdDeleteOutline } from "react-icons/md";
 
 type SectorFormProps = {
     sector?: SectorType;
@@ -32,6 +33,14 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         if (sectorName !== '' && allPostcodes.length > 0) {
             setSaving(true);
             await createSector({ name: sectorName, postcodes: allPostcodes } as SectorType, callToast, refreshSectors, closeModal);
+            setSaving(false);
+        }
+    }
+
+    const handleDeleteSector = async () => {
+        if (sectorToUpdate) {
+            setSaving(true);
+            await deleteSector({id: sectorToUpdate.id, name: sectorName} as SectorType, callToast, refreshSectors, closeModal);
             setSaving(false);
         }
     }
@@ -119,7 +128,13 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
 
                 </PostcodesDisplay> */}
             </InputSection>
-            <SaveAction>
+            <SaveAction $sector={sector !== undefined}>
+                {sector && <Button
+                    color={theme.colors.error}
+                    value='supprimer ce secteur'
+                    icon={<MdDeleteOutline />}
+                    onClick={handleDeleteSector}
+                />}
                 <Button
                     disabled={disableSave}
                     loading={loadingSectors || saving}
@@ -159,12 +174,13 @@ const CityForm = styled.form`
     width: 100%;
 `;
 
-const SaveAction = styled.div`
+const SaveAction = styled.div<{ $sector: boolean }>`
+    gap: 10px;
     width: 100%;
     height: 10%;
     display: flex;
     // margin-top: 10px;
-    justify-content: flex-end;
+    justify-content: ${({ $sector }) => $sector ? 'space-between' : 'flex-end'};
     align-items: flex-end;
 `;
 
