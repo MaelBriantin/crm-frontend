@@ -53,11 +53,16 @@ export type DataTableProps<T extends RowDataType> = {
   onDoubleClickOnRow?: (row: RowType) => void;
   hoverable?: boolean;
   searchbar?: boolean;
+  advancedSearch?: boolean;
   emptyMessage?: string;
   sort: string | null;
   setSort: Dispatch<SetStateAction<string | null>>;
   sortDirection?: boolean;
   setSortDirection: Dispatch<SetStateAction<boolean>>;
+  onClickTopBar?: () => void;
+  iconTopBar?: React.ReactElement;
+  topBar?: boolean;
+  search?: boolean;
 };
 
 export type TableRowProps = {

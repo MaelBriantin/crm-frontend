@@ -8,21 +8,23 @@ import { DataTableHeader } from './DataTableHeader';
 import { DataTableBody } from './DataTableBody';
 import { DataTableActions } from './DataTableActions';
 import { DataTableTopBar } from './DataTableTopBar';
-import { useModal } from '../../contexts/global/ModalContext';
-import { SectorForm } from '../forms/SectorForm';
 
-export const DataTable = <T extends RowDataType>({ 
-    data, 
-    columns, 
-    onClickOnRow, 
-    onDoubleClickOnRow, 
-    hoverable = false, 
-    searchbar = false, 
+export const DataTable = <T extends RowDataType>({
+    data,
+    columns,
+    onClickOnRow,
+    onDoubleClickOnRow,
+    hoverable = false,
+    searchbar = false,
     emptyMessage,
     sort,
     setSort,
     sortDirection,
-    setSortDirection }: DataTableProps<T>): React.ReactElement => {
+    setSortDirection,
+    onClickTopBar,
+    iconTopBar,
+    topBar
+}: DataTableProps<T>): React.ReactElement => {
 
     const selectable = onClickOnRow !== undefined || onDoubleClickOnRow !== undefined;
 
@@ -30,12 +32,6 @@ export const DataTable = <T extends RowDataType>({
     const [rowsPerPage, setRowsPerPage] = React.useState<number>(15);
     const [searchResults, setSearchResults] = React.useState<T[]>([]);
     const [searchedValue, setSearchedValue] = React.useState<string | number>('');
-
-    const { showModal } = useModal();
-
-    const openModal = () => {
-        showModal(<SectorForm />, 'Créer un secteur');
-    };
 
     let dataNumber = data.length;
 
@@ -73,34 +69,35 @@ export const DataTable = <T extends RowDataType>({
 
     return (
         <Container>
-            {searchbar &&
+            {topBar &&
                 <DataTableTopBar
-                    withAdvancedSearch
+                    withAdvancedSearch={searchbar}
                     setSearchedValue={setSearchedValue}
                     data={data as T[]}
                     columns={columns}
                     onSearch={setSearchResults}
-                    onClick={openModal}
+                    icon={iconTopBar || <></>}
+                    onClick={onClickTopBar ? onClickTopBar : () => undefined}
                 />
             }
-            {sortedData.length > 0 && 
-            <Table>
-                <DataTableHeader
-                    columns={columns}
-                    sort={sort}
-                    sortDirection={sortDirection || false}
-                    handleSort={handleSort}
-                />
-                <DataTableBody
-                    searchedValue={searchedValue}
-                    data={dataOnPage as RowType[]}
-                    columns={columns}
-                    onClickOnRow={onClickOnRow}
-                    onDoubleClickOnRow={onDoubleClickOnRow}
-                    selectable={selectable}
-                    hoverable={hoverable}
-                />
-            </Table>}
+            {sortedData.length > 0 &&
+                <Table>
+                    <DataTableHeader
+                        columns={columns}
+                        sort={sort}
+                        sortDirection={sortDirection || false}
+                        handleSort={handleSort}
+                    />
+                    <DataTableBody
+                        searchedValue={searchedValue}
+                        data={dataOnPage as RowType[]}
+                        columns={columns}
+                        onClickOnRow={onClickOnRow}
+                        onDoubleClickOnRow={onDoubleClickOnRow}
+                        selectable={selectable}
+                        hoverable={hoverable}
+                    />
+                </Table>}
             {sortedData.length > 0 &&
                 <DataTableActions
                     page={page}
