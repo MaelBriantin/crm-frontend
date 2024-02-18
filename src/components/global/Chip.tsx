@@ -12,9 +12,10 @@ type ChipProps = {
     onClickOnChip?: () => void;
     onClickOnIcon?: () => void;
     variant?: 'regular' | 'small';
+    disabled?: boolean;
 };
 
-export const Chip: React.FC<ChipProps> = ({ text, color, highlight, startIcon, endIcon, onClickOnChip, onClickOnIcon, iconColor, variant = 'regular' }) => {
+export const Chip: React.FC<ChipProps> = ({ text, color, highlight, startIcon, endIcon, onClickOnChip, onClickOnIcon, iconColor, variant = 'regular', disabled }) => {
 
     const setHighlight = (text: string, highlight: (string | number | undefined)[] | undefined): boolean => {
         if (highlight) {
@@ -34,10 +35,10 @@ export const Chip: React.FC<ChipProps> = ({ text, color, highlight, startIcon, e
             $highlight={setHighlight(text, highlight)}
         >
             {startIcon &&
-                <Icon onClick={onClickOnIcon} $iconColor={iconColor}>{startIcon}</Icon>}
+                <Icon $disabled={disabled} onClick={!disabled ? onClickOnIcon : () => {}} $iconColor={iconColor}>{startIcon}</Icon>}
             <ChipText $text={color?.text ?? ''} dangerouslySetInnerHTML={{ __html: text }} onClick={onClickOnChip} />
             {endIcon &&
-                <Icon onClick={onClickOnIcon} $iconColor={iconColor}>{endIcon}</Icon>}
+                <Icon $disabled={disabled} onClick={!disabled ? onClickOnIcon : () => {}} $iconColor={iconColor}>{endIcon}</Icon>}
         </ChipContainer>
     );
 };
@@ -60,14 +61,16 @@ const ChipText = styled.span<{ $text: string }>`
     color: ${({ $text }): string => $text ? $text : `${theme.colors.dark}`};
 `;
 
-const Icon = styled.div<{ $iconColor: string | undefined }>`
+const Icon = styled.div<{ $iconColor: string | undefined, $disabled: boolean | undefined }>`
     animation: all 0.25s;
     width: 16px;
     height: 16px;
     border-radius: 50%;
     color: ${({ $iconColor }): string => $iconColor ? $iconColor : `${theme.colors.dark}`};
     &:hover {
-        background-color: #f9f9f9;
+        ${({ $disabled }) => !$disabled && css`
+        background-color: ${theme.colors.white};
         cursor: pointer;
+        `};
     }
 `;
