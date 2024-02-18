@@ -85,7 +85,7 @@ const AlertStyle = styled.div<{ $type: string, $absolute: { absolute: boolean | 
     display: flex;
     ${({ $absolute }) => $absolute?.absolute && css`
     position: absolute;
-    ${$absolute.position === 'top' ? 'top: 2vh;' : 'bottom: 2vh;'};
+    ${$absolute.position === 'top' ? 'top: 4vh;' : 'bottom: 4vh;'};
     left: 50%;
     transform: translateX(-50%);
     z-index: 9999;
