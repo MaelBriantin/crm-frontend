@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useBrands } from '../contexts';
+import { useBrands, useModal } from '../contexts';
 import { isEmpty } from '../utils/helpers/spells';
 import { DataTable } from '../components/DataTable';
 import { Loader } from '../components/global/Loader';
@@ -7,18 +7,24 @@ import { RowDataType } from '../types/DataTableTypes';
 import styled from 'styled-components';
 import { deepCopy } from '../utils/helpers/spells';
 import { VscJersey } from "react-icons/vsc";
+import { BrandForm } from '../components/forms/BrandForm';
 
 export const BrandPage = () => {
 
     const [sort, setSort] = useState<string | null>(null);
     const [sortDirection, setSortDirection] = useState<boolean>(true);
 
+    const { showModal } = useModal();
     const { refreshBrands, brands } = useBrands();
 
     useEffect(() => {
         isEmpty(brands) && refreshBrands();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const newBrand = () => {
+        showModal(<BrandForm/>, 'Ajouter une marque');
+    }
 
     const columns = [
         {
@@ -63,7 +69,7 @@ export const BrandPage = () => {
                     topBar
                     searchbar
                     iconTopBar={<VscJersey />}
-                    onClickTopBar={() => { }}
+                    onClickTopBar={newBrand}
                     hoverable
                     columns={columns}
                     data={deepCopy(brands) as RowDataType[]}
