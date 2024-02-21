@@ -190,7 +190,7 @@ const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $
         border: none;
         width: 100%;
         height: 100%;
-        font-family: 'Source Sans 3', sans-serif;
+        font-family: ${theme.fonts.family.source};
         padding-right: ${({ $type, $clearable }): string => $type === 'password' || $type === 'number' || $clearable ? ' 35px' : '10px'};
         border-radius: ${theme.materialDesign.borderRadius.default};
         background: ${theme.colors.transparent};
@@ -232,10 +232,8 @@ const ClearButton = styled.div`
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    /* background-color: ${theme.colors.greyLight}; */
     transition: all 250ms;
     &:hover {
-        /* background-color: ${theme.colors.error}; */
         color: ${theme.colors.error};
     }
 `;
