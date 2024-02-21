@@ -66,7 +66,6 @@ export const SectorPage: React.FC = () => {
     };
 
     const newSector = () => {
-        console.log('new sector');
         showModal(<SectorForm />, 'Créer un nouveau secteur');
     };
 
