@@ -38,7 +38,6 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     const handleSave = async () => {
         if (sectorForm.name !== '' && sectorForm.postcodes.length > 0) {
             setSaving(true);
-            console.log(sectorForm);
             await createSector(sectorForm as SectorType, callToast, refreshSectors, closeModal);
             setSaving(false);
         }
