@@ -100,6 +100,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         <Form>
             <InputSection>
                 <Input
+                    label='Nom du secteur'
                     type='text'
                     placeholder='Nom du secteur'
                     width='300px'
@@ -108,18 +109,20 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
                 />
                 <CityForm noValidate onSubmit={handleAddPostcode}>
                     <Input
+                        label='Code postal'
                         type='number'
                         noNegativeNumber
                         maxLength={5}
                         placeholder='Code postal'
-                        width='125px'
+                        width='150px'
                         value={newPostcode.postcode}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setNewPostcode({ ...newPostcode, postcode: e.target.value })}
                     />
                     <Input
+                        label='Ville'
                         type='text'
                         placeholder='Ville'
-                        width='225px'
+                        width='250px'
                         value={newPostcode.city}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setNewPostcode({ ...newPostcode, city: e.target.value })}
                     />
@@ -146,7 +149,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
                 {sector && <Button
                     disabled={disableDelete}
                     color={theme.colors.error}
-                    value='supprimer ce secteur'
+                    value='supprimer'
                     icon={<MdDeleteOutline />}
                     onClick={() => setDeleteAlert(!deleteAlert)}
                 />}
@@ -176,6 +179,7 @@ const Form = styled.div`
 `;
 
 const InputSection = styled.div`
+    padding-top: 20px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -186,6 +190,7 @@ const InputSection = styled.div`
 `;
 
 const CityForm = styled.form`
+    padding-top: 10px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -203,6 +208,7 @@ const SaveAction = styled.div<{ $sector: boolean }>`
 `;
 
 const ChipContainer = styled.div`
+    margin-top: 10px;
     border: 2px solid ${theme.colors.greyLight};
     border-radius: ${theme.materialDesign.borderRadius.rounded};
     padding: 10px;
@@ -212,7 +218,7 @@ const ChipContainer = styled.div`
     justify-content: flex-start;
     flex-wrap: wrap;
     gap: 10px;
-    width: 480px;
+    width: 456px;
     max-height: 400px;
     overflow: auto;
 `;
