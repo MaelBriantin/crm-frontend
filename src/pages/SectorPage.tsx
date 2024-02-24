@@ -57,10 +57,10 @@ export const SectorPage: React.FC = () => {
         }
     ];
 
-    const handleDoubleClick = async (row: RowType) => {
+    const handleDoubleClick = (row: RowType) => {
         setAppLoading(true);
         const sector = sectors.find((sector: SectorType) => sector.id === row.id);
-        showModal(<SectorForm sector={sector as SectorType} />, `Modifier le secteur "${sector?.name}"`);
+        showModal(<SectorForm sector={sector as SectorType} />, `Modifier un secteur`);
         setAppLoading(false);
     };
 
