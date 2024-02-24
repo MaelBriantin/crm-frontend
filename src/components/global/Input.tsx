@@ -114,7 +114,7 @@ export const Input = (
     };
 
     return (
-        <InputStyle $value={!!value} $label={!!label} $width={width} $type={type} $icon={!!icon} $variantStyle={variantStyle} $clearable={clearable}>
+        <InputStyle $value={!!value || !!count} $label={!!label} $width={width} $type={type} $icon={!!icon} $variantStyle={variantStyle} $clearable={clearable}>
             {label &&
                 <label className="label">{label}</label>
             }
@@ -174,7 +174,8 @@ const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $
         appearance: textfield;
     }
 
-    height: ${({ $variantStyle }) => $variantStyle.height};
+    min-height: ${({ $variantStyle }) => $variantStyle.height};
+    max-height: ${({ $variantStyle }) => $variantStyle.height};
     font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
     border-radius: ${theme.materialDesign.borderRadius.rounded};
     width: ${({ $width }) => $width};
@@ -190,6 +191,7 @@ const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $
     /* ${({ $label }) => $label && css`margin-top: 20px;`}; */
 
     .label{
+        user-select: none;
         font-size: ${theme.fonts.size.P0};
         color: ${theme.colors.greyDark};
         position: absolute;
