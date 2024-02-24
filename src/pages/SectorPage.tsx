@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { deepCopy, isEmpty, firstOf } from '../utils/helpers/spells.ts';
+import { deepCopy, isEmpty } from '../utils/helpers/spells.ts';
 import { Loader } from '../components/global/Loader.tsx';
 import { DataTable } from '../components/DataTable';
 import { RowDataType, RowType } from '../types/DataTableTypes.ts';
 import { SectorType } from '../types/SectorTypes.ts';
-import { fetchSectors } from '../services/api/sectors';
 import { useSectors, useModal, useAppLoading } from '../contexts';
 import { SectorForm } from '../components/forms/SectorForm.tsx';
 import { LiaMapMarkedAltSolid } from "react-icons/lia";
@@ -60,8 +59,8 @@ export const SectorPage: React.FC = () => {
 
     const handleDoubleClick = async (row: RowType) => {
         setAppLoading(true);
-        const sector = await fetchSectors(row.id as SectorType['id'], 'withPostcodes');
-        showModal(<SectorForm sector={firstOf(sector) as SectorType} />, `Modifier le secteur "${firstOf(sector)?.name}"`);
+        const sector = sectors.find((sector: SectorType) => sector.id === row.id);
+        showModal(<SectorForm sector={sector as SectorType} />, `Modifier le secteur "${sector?.name}"`);
         setAppLoading(false);
     };
 
