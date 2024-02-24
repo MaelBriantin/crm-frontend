@@ -85,7 +85,7 @@ const StyledTextarea = styled.textarea<{
     $maxHeight: string | undefined,
     $noResize: boolean | undefined,
 }>`
-  transition: all 0.3s;
+  transition: border 0.3s;
   z-index: 999;
   min-width: ${({ $width }) => `calc(${$width} - 20px)`};
   ${({ $maxWidth }) => $maxWidth && css`max-width: ${$maxWidth}`};
