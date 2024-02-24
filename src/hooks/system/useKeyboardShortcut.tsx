@@ -4,6 +4,11 @@ type KeyActionMap = {
   [key: string]: () => void;
 };
 
+/**
+ * Custom hook that allows registering keyboard shortcuts and their corresponding actions.
+ *
+ * @param keyActionMap - An object mapping key combinations to action functions.
+ */
 export const useKeyboardShortcut = (keyActionMap: KeyActionMap) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
