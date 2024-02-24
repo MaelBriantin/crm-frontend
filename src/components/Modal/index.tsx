@@ -103,6 +103,7 @@ const Container = styled.div<{ $closeModalAnimation: boolean, $isOpen: boolean }
     align-items: center;
     animation: ${ContainerDisplayAnimation} 200ms;
     ${({ $closeModalAnimation }) => $closeModalAnimation ? css`animation: ${ContainerCloseAnimation} 250ms;` : ''};    
+    backdrop-filter: blur(5px);
 `;
 
 const ModalStructure = styled.div<{ $closeModalAnimation: boolean, $style: { height: string | undefined, width: string | undefined } }>`
