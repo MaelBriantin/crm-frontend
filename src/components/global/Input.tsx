@@ -1,7 +1,7 @@
 import { theme } from "../../assets/themes";
 import { RefObject, useEffect, useRef, useState, ReactNode, ChangeEvent, useCallback } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { getVariantStyle } from "../../utils/inputUtils";
 import { VscChevronDown, VscChevronUp, VscChromeClose } from "react-icons/vsc";
 
@@ -26,6 +26,7 @@ export const Input = (
         variant?: 'large' | 'regular' | 'small',
         textColor?: string,
         onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+        label?: string;
     }) => {
     const {
         placeholder,
@@ -40,6 +41,7 @@ export const Input = (
         variant = 'regular',
         textColor = theme.colors.dark,
         onChange,
+        label
     } = props
 
     const inputRef: RefObject<HTMLInputElement> = useRef(null);
@@ -112,7 +114,10 @@ export const Input = (
     };
 
     return (
-        <InputStyle $width={width} $type={type} $icon={!!icon} $variantStyle={variantStyle} $clearable={clearable}>
+        <InputStyle $value={!!value} $label={!!label} $width={width} $type={type} $icon={!!icon} $variantStyle={variantStyle} $clearable={clearable}>
+            {label &&
+                <label className="label">{label}</label>
+            }
             {icon && <span className="icon">{icon}</span>}
             {
                 (type === 'password')
@@ -154,7 +159,7 @@ export const Input = (
     )
 }
 
-const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $variantStyle: VariantStyleType, $clearable: boolean }>`
+const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $variantStyle: VariantStyleType, $clearable: boolean, $label: boolean, $value: boolean }>`
 
     // Remove arrows from input number
     // Chrome
@@ -182,6 +187,20 @@ const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $
     background: ${theme.colors.white};
     transition: all 400ms;
 
+    /* ${({ $label }) => $label && css`margin-top: 20px;`}; */
+
+    .label{
+        font-size: ${theme.fonts.size.P0};
+        color: ${theme.colors.greyDark};
+        position: absolute;
+        top: -20px;
+        left: -${({ $variantStyle }) => $variantStyle.borderSize}px;
+        transform: ${({ $value }) => $value ? 'translateY(0)' : 'translateY(20px)'};
+        clip-path: ${({ $value }) => $value ? 'inset(0)' : 'inset(0 0 100% 0)'};
+        transition: transform 0.3s, clip-path 0.3s;
+        
+    }
+
     input {
         color: ${({ $variantStyle }) => $variantStyle.textColor};
         font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
@@ -208,6 +227,12 @@ const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $
     &:focus-within {
         border: ${theme.colors.primary} solid ${({ $variantStyle }) => $variantStyle.borderSize}px;
         color: ${theme.colors.primary};
+    }
+
+    &:focus-within label {
+        color: ${theme.colors.primary};
+        /* transform: translateY(0);
+        clip-path: inset(0); */
     }
 `
 const Hide = styled.div`

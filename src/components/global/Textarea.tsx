@@ -10,6 +10,7 @@ type TextareaProps = {
     placeholder: string;
     noResize?: boolean;
     value: string;
+    label?: string;
     onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 };
 
@@ -21,32 +22,71 @@ export const Textarea: React.FC<TextareaProps> = ({
     placeholder,
     noResize,
     value,
+    label,
     onChange,
 }) => {
     const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+    const [isFocused, setIsFocused] = React.useState(false);
+
+    React.useEffect(() => {
+        const textarea = textareaRef.current;
+        if (textarea) {
+            textarea.addEventListener('focus', () => setIsFocused(true));
+            textarea.addEventListener('blur', () => setIsFocused(false));
+        }
+        return () => {
+            if (textarea) {
+                textarea.removeEventListener('focus', () => setIsFocused(true));
+                textarea.removeEventListener('blur', () => setIsFocused(false));
+            }
+        };
+    }, []);
+
 
     return (
-        <StyledTextarea
-            ref={textareaRef}
-            $width={width}
-            $maxWidth={maxWidth}
-            $height={height}
-            $maxHeight={maxHeight}
-            $noResize={noResize}
-            placeholder={placeholder}
-            value={value}
-            onChange={onChange}
-        />
+        <TextareaContainer>
+            {label && <Label $focusOnTextarea={isFocused} $value={!!value}>{label}</Label>}
+            <StyledTextarea
+                ref={textareaRef}
+                $width={width}
+                $maxWidth={maxWidth}
+                $height={height}
+                $maxHeight={maxHeight}
+                $noResize={noResize}
+                placeholder={placeholder}
+                value={value}
+                onChange={onChange}
+            />
+        </TextareaContainer>
     );
 };
 
+const TextareaContainer = styled.div`
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: -18px;
+`;
+
+const Label = styled.label<{ $value: boolean, $focusOnTextarea: boolean }>`
+    font-size: ${theme.fonts.size.P0};
+    ${({ $focusOnTextarea }) => $focusOnTextarea ? css`color: ${theme.colors.primary};` : css`color:${theme.colors.greyDark}`};
+    transform: ${({ $value }) => $value ? 'translateY(0)' : 'translateY(25px)'};
+    clip-path: ${({ $value }) => $value ? 'inset(0)' : 'inset(0 0 100% 0)'};
+    transition: transform 0.3s, clip-path 0.3s;
+`;
+
 const StyledTextarea = styled.textarea<{
+    value: string,
     $width: string | undefined,
     $height: string | undefined,
     $maxWidth: string | undefined,
     $maxHeight: string | undefined,
     $noResize: boolean | undefined,
 }>`
+  transition: all 0.3s;
+  z-index: 999;
   min-width: ${({ $width }) => `calc(${$width} - 20px)`};
   ${({ $maxWidth }) => $maxWidth && css`max-width: ${$maxWidth}`};
   min-height: ${({ $height }) => $height ? $height : theme.materialDesign.height.medium};
