@@ -117,6 +117,25 @@ export const filterOut = <T>(elements: T | T[], from: T[]): T[] => {
   return from.filter((element) => !elementsArray.includes(element));
 };
 
+/**
+ * Exclude keys from an object based on given keys.
+ *
+ * @template T - The type of the object.
+ * @param {keyof T | (keyof T)[]} keys - The key or array of keys to exclude from the object.
+ * @param {T} from - The object from which to exclude the keys.
+ * @returns {Partial<T>} - The object without the excluded keys.
+ */
+export const filterOutKeys = <T extends object>(keys: keyof T | (keyof T)[], from: T): Partial<T> => {
+  const keysArray = Array.isArray(keys) ? keys : [keys];
+  const result: Partial<T> = {};
+  for (const key in from) {
+    if (!keysArray.includes(key as keyof T)) {
+      result[key as keyof T] = from[key as keyof T];
+    }
+  }
+  return result;
+};
+
 
 /**
  * Creates a deep copy of the given object.
