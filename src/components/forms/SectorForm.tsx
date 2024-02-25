@@ -1,14 +1,14 @@
 import styled from 'styled-components';
-import { useState, ChangeEvent, useEffect } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { Button, Chip, Input } from '../global';
 import { VscAdd, VscClose } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
 import { createSector, deleteSector, updateSector } from '../../services/api/sectors';
 import { useSectors, useToast, useModal } from '../../contexts';
-import { MdDeleteOutline } from "react-icons/md";
 import { DeleteAlert } from './DeleteAlert';
 import { SectorType, emptySector } from '../../types/SectorTypes';
 import { deepCompare } from '../../utils/helpers/spells';
+import { DiscreteButton } from '../global/DiscreteButton';
 
 type SectorFormProps = {
     sector?: SectorType;
@@ -26,14 +26,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
 
     const { closeModal, setDisableClose } = useModal();
 
-    useEffect(() => {
-        if (deleteAlert) {
-            setDisableClose(true);
-        }
-        if (!deleteAlert) {
-            setDisableClose(false);
-        }
-    }, [deleteAlert, setDisableClose]);
+    deleteAlert || saving ? setDisableClose(true) : setDisableClose(false);
 
     const handleSave = async () => {
         if (sectorForm.name !== '' && sectorForm.postcodes.length > 0) {
@@ -78,23 +71,23 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     const compareSectors = (sector: SectorType, sectorToUpdate: SectorType) => {
         const keysToCompare = ['name', 'postcodes'];
         return deepCompare(sector, sectorToUpdate, keysToCompare);
-    }        
+    }
 
     const disableSave =
-        sectorForm.name === ''
+        saving 
+        || sectorForm.name === ''
         || sectorForm.postcodes.length === 0
         || (sector && compareSectors(sector, sectorForm))
         || deleteAlert;
 
     const disableAddPostcode =
-        newPostcode.postcode === ''
+        saving 
+        || newPostcode.postcode === ''
         || newPostcode.city === ''
         || sectorForm.postcodes.find(e => e.postcode === newPostcode.postcode && e.city === newPostcode.city) !== undefined
         || newPostcode.postcode.length !== 5
         || Number(newPostcode.postcode) < 0
         || deleteAlert;
-
-    const disableDelete = deleteAlert;
 
     return (
         <Form>
@@ -135,8 +128,8 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
                 <ChipContainer>
                     {sectorForm.postcodes.map((e) => (
                         <Chip
-                            disabled={disableDelete}
-                            key={e.postcode+e.city}
+                            disabled={deleteAlert || saving}
+                            key={e.postcode + e.city}
                             endIcon={<VscClose />}
                             iconColor={theme.colors.error}
                             text={`${e.postcode} - ${e.city}`}
@@ -145,14 +138,14 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
                     ))}
                 </ChipContainer>
             </InputSection>
-            <SaveAction $sector={sector !== undefined}>
-                {sector && <Button
-                    disabled={disableDelete}
-                    color={theme.colors.error}
-                    value='supprimer'
-                    icon={<MdDeleteOutline />}
-                    onClick={() => setDeleteAlert(!deleteAlert)}
-                />}
+            <SaveAction $sector={!!sector}>
+                {sector &&
+                    <DiscreteButton
+                        value='supprimer'
+                        onClick={() => setDeleteAlert(!deleteAlert)}
+                        color={theme.colors.error}
+                        disabled={deleteAlert}
+                    />}
                 <Button
                     disabled={disableSave}
                     loading={loadingSectors || saving}
@@ -204,7 +197,7 @@ const SaveAction = styled.div<{ $sector: boolean }>`
     height: 10%;
     display: flex;
     justify-content: ${({ $sector }) => $sector ? 'space-between' : 'flex-end'};
-    align-items: flex-end;
+    align-items: center;
 `;
 
 const ChipContainer = styled.div`
