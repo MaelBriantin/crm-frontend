@@ -3,11 +3,12 @@ import { useBrands, useModal } from '../contexts';
 import { isEmpty } from '../utils/helpers/spells';
 import { DataTable } from '../components/DataTable';
 import { Loader } from '../components/global/Loader';
-import { RowDataType } from '../types/DataTableTypes';
+import { RowDataType, RowType } from '../types/DataTableTypes';
 import styled from 'styled-components';
 import { deepCopy } from '../utils/helpers/spells';
 import { VscJersey } from "react-icons/vsc";
 import { BrandForm } from '../components/forms/BrandForm';
+import { BrandType } from '../types/BrandTypes';
 
 export const BrandPage = () => {
 
@@ -24,6 +25,11 @@ export const BrandPage = () => {
 
     const newBrand = () => {
         showModal(<BrandForm/>, 'Ajouter une marque');
+    }
+
+    const editBrand = (row: RowType) => {
+        const brand = brands.find((brand: BrandType) => brand.id === row.id);
+        showModal(<BrandForm brand={brand as BrandType} />, 'Modifier une marque');
     }
 
     const columns = [
@@ -70,6 +76,7 @@ export const BrandPage = () => {
                     searchbar
                     iconTopBar={<VscJersey />}
                     onClickTopBar={newBrand}
+                    onDoubleClickOnRow={editBrand}
                     hoverable
                     columns={columns}
                     data={deepCopy(brands) as RowDataType[]}
