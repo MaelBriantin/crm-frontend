@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import { Button, Chip, Input } from '../global';
 import { VscAdd, VscClose } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
@@ -9,6 +9,7 @@ import { DeleteAlert } from './DeleteAlert';
 import { SectorType, emptySector } from '../../types/SectorTypes';
 import { deepCompare } from '../../utils/helpers/spells';
 import { DiscreteButton } from '../global/DiscreteButton';
+import { useKeyboardShortcut } from '../../hooks/system/useKeyboardShortcut';
 
 type SectorFormProps = {
     sector?: SectorType;
@@ -26,7 +27,18 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
 
     const { closeModal, setDisableClose } = useModal();
 
-    deleteAlert || saving ? setDisableClose(true) : setDisableClose(false);
+    useEffect(() => {
+        setDisableClose(deleteAlert || saving || loadingSectors);
+    }, [deleteAlert, saving, setDisableClose, loadingSectors]);
+
+    useKeyboardShortcut({
+        'Escape': () => {
+            if (saving || deleteAlert || loadingSectors) {
+                return;
+            }
+            closeModal();
+        }
+    });
 
     const handleSave = async () => {
         if (sectorForm.name !== '' && sectorForm.postcodes.length > 0) {
@@ -155,7 +167,8 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
             </SaveAction>
             {deleteAlert &&
                 <DeleteAlert
-                    message='Êtes-vous sûr de vouloir supprimer ce secteur ? Cette action est irréversible.'
+                    message={`Êtes-vous sûr de vouloir supprimer le secteur ${sector?.name} ?
+                            <br>Cette action est irréversible et entrainera la perte de toutes les données statistiques associées.`}
                     confirmAction={handleDeleteSector}
                     cancelAction={() => setDeleteAlert(false)}
                 />}
