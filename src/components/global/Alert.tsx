@@ -99,7 +99,7 @@ const AlertStyle = styled.div<{ $type: string, $absolute: { absolute: boolean | 
     background-color: ${({ $type }) => $type === 'error' ? theme.colors.error : theme.colors.success};
     color: ${theme.colors.white};
     font-size: ${theme.fonts.size.P0};
-    text-align: center;
+    text-align: start;
 
     ${({ $animation, $absolute }) =>
         $animation.openAnimation && $absolute.absolute
