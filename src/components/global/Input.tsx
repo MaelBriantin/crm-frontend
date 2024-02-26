@@ -86,7 +86,7 @@ export const Input = (
         if (String(count) === '' || count === undefined) setCount(0);
         if (noNegativeNumber
             && operator === 'minus'
-            && (count === 0
+            && (count === 0 || count < 0
                 || (String(count) === '' || count === undefined)))
             return;
 
@@ -99,6 +99,9 @@ export const Input = (
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (type === 'number') {
             if (!isNaN(Number(e.target.value))) {
+                if(noNegativeNumber && Number(e.target.value) < 0) {
+                    return;
+                }
                 if (maxLength && e.target.value.length <= maxLength) {
                     setCount(Number(e.target.value));
                 }
@@ -152,7 +155,6 @@ export const Input = (
                 value={type === 'number' ? count : value}
                 onBlur={handleBlur}
                 onFocus={handleFocus}
-                required={true}
                 onInput={handleInput}
             />
         </InputStyle>
@@ -178,7 +180,8 @@ const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $
     max-height: ${({ $variantStyle }) => $variantStyle.height};
     font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
     border-radius: ${theme.materialDesign.borderRadius.rounded};
-    width: ${({ $width }) => $width};
+    min-width: ${({ $width }) => $width};
+    max-width: ${({ $width }) => $width};
     display: flex;
     justify-content: center;
     align-items: center;
