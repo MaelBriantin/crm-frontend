@@ -1,18 +1,20 @@
 import { BrandType } from '../../../types/BrandTypes';
-import { fetchAPI, handleAPIResponse } from '../fetchApi.config';
+import { handleAPIResponse } from '../fetchApi.config';
 import { APIResponseFormat } from '../../../types/FetchTypes';
+import { fetchAPI } from '../fetchApi.config';
 import { CallToastProps } from '../../../contexts/global/ToastContext';
 
-export const deleteBrand = async (brand: BrandType, callToast: CallToastProps, refreshBrands: { (): Promise<void>; (): void; }, closeModal: { (): void; (): void; }) => {
+
+export const updateBrand = async (updatedBrand: BrandType, callToast: CallToastProps, refreshBrands: { (): Promise<void>; (): void; }, closeModal: { (): void; (): void; }) => {
     let brandsResponse: BrandType[] = [];
     try {
-        const response: APIResponseFormat<BrandType> = await fetchAPI(`/api/brands/${brand.id}`, 'DELETE');
+        const response: APIResponseFormat<BrandType> = await fetchAPI(`/api/brands/${updatedBrand.id}`, 'PUT', updatedBrand);
         handleAPIResponse<BrandType>(
             response,
             async (brands) => {
                 brandsResponse = brands as BrandType[];
                 await refreshBrands();
-                callToast('success', `La marque ${brand.name} a bien été supprimée.`, 3000);
+                callToast('success', `La marque ${updatedBrand.name} a été modifiée avec succès.`, 3000);
                 closeModal();
             },
             (error) => {
@@ -24,4 +26,4 @@ export const deleteBrand = async (brand: BrandType, callToast: CallToastProps, r
         console.error(error);
     }
     return brandsResponse;
-};
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrandType, emptyBrand } from "../../types/BrandTypes";
 import styled from "styled-components";
 import { Chip, Input, Textarea, Button, Note } from "../global";
@@ -6,10 +6,11 @@ import { useModal, useBrands, useToast } from "../../contexts";
 import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
 import { TbAlertSquare } from "react-icons/tb";
 import { theme } from "../../assets/themes";
-import { deepCompare, filterOutKeys } from "../../utils/helpers/spells";
+import { deepCompare } from "../../utils/helpers/spells";
 import { DeleteAlert } from "./DeleteAlert";
 import { DiscreteButton } from "../global/DiscreteButton";
-import { deleteBrand } from "../../services/api/brands";
+import { createBrand, deleteBrand, updateBrand } from "../../services/api/brands";
+import { generateSKUCode } from "../../utils/brandUtils";
 
 type BrandFormProps = {
     brand?: BrandType;
@@ -20,24 +21,48 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
     const [deleteAlert, setDeleteAlert] = useState(false);
     const [saving, setSaving] = useState(false);
 
-    const { refreshBrands } = useBrands();
+    const { refreshBrands, loadingBrands } = useBrands();
     const { closeModal, setDisableClose } = useModal();
     const { callToast } = useToast();
 
-    saving || deleteAlert ? setDisableClose(true) : setDisableClose(false);
+    useEffect(() => {
+        setDisableClose(deleteAlert || saving || loadingBrands);
+    }, [deleteAlert, saving, setDisableClose, loadingBrands]);
 
-    useKeyboardShortcut({ 
+    useEffect(() => {
+        if (brand) return;
+        const timeoutId = setTimeout(() => {
+            if(brandForm.name.length < 3) {
+                setBrandForm(prevState => ({ ...prevState, sku_code: '' }));
+                return;
+            }
+            const skuCode = generateSKUCode(brandForm.name);
+            setBrandForm(prevState => ({ ...prevState, sku_code: skuCode }));
+        }, 1000);
+        return () => clearTimeout(timeoutId);
+    }, [brandForm.name, brand]);
+
+    useKeyboardShortcut({
         'Escape': () => {
-            if (saving || deleteAlert) {
+            if (saving || deleteAlert || loadingBrands) {
                 return;
             }
             closeModal();
-        } 
+        }
     });
 
-    const save = (e: React.FormEvent<HTMLFormElement>) => {
+    const save = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        !disableSave && console.log('save');
+        setSaving(true);
+        !disableSave && await createBrand(brandForm, callToast, refreshBrands, closeModal);
+        setSaving(false);
+    }
+
+    const update = async (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+        setSaving(true);
+        !disableSave && await updateBrand(brandForm, callToast, refreshBrands, closeModal);
+        setSaving(false);
     }
 
     const handleDeleteSector = async () => {
@@ -50,8 +75,10 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
     }
 
     const disableSave =
-        deepCompare(brand as BrandType, brandForm, ['name', 'contact_name', 'contact_email', 'contact_phone', 'notes'])
-        || Object.values(filterOutKeys(['notes', 'contact_email', 'contact_name', 'contact_phone'], brandForm)).some(value => value === '');
+        brand
+            ? deepCompare(brand as BrandType, brandForm, ['name', 'contact_name', 'contact_email', 'contact_phone', 'notes'])
+            || brandForm.name.length === 0 || brandForm.address.length === 0 || brandForm.postcode.length < 5 || Number(brandForm.postcode) < 0 || brandForm.city.length === 0
+            : brandForm.name.length === 0 || brandForm.address.length === 0 || brandForm.postcode.length < 5 || Number(brandForm.postcode) < 0 || brandForm.city.length === 0;
 
     return (
         <Container onSubmit={save}>
@@ -65,10 +92,10 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
             <BrandName $brand={!!brand}>
                 <Input
                     label="Nom"
-                    width={`${brandForm.sku_code ? '300px' : '414px'}`}
+                    width={`${brandForm.sku_code != '' ? '350px' : '444px'}`}
                     type="text"
                     placeholder="Nom"
-                    value={brandForm.name}
+                    value={brandForm.name || ''}
                     onChange={(e) => setBrandForm({ ...brandForm, name: e.target.value } as BrandType)}
                 />
                 {
@@ -80,11 +107,39 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                 }
             </BrandName>
             <Input
+                label="Adresse"
+                width="444px"
+                type="text"
+                placeholder="Adresse"
+                value={brandForm.address || ''}
+                onChange={(e) => setBrandForm({ ...brandForm, address: e.target.value } as BrandType)}
+            />
+            <BrandAddress>
+                <Input
+                    label="Code postal"
+                    width="140px"
+                    type="number"
+                    noNegativeNumber
+                    maxLength={5}
+                    placeholder="Code postal"
+                    value={brandForm.postcode || ''}
+                    onChange={(e) => setBrandForm({ ...brandForm, postcode: e.target.value } as BrandType)}
+                />
+                <Input
+                    label="Ville"
+                    width="290px"
+                    type="text"
+                    placeholder="Ville"
+                    value={brandForm.city || ''}
+                    onChange={(e) => setBrandForm({ ...brandForm, city: e.target.value } as BrandType)}
+                />
+            </BrandAddress>
+            <Input
                 label="Contact"
                 width="444px"
                 type="text"
                 placeholder="Contact"
-                value={brandForm.contact_name}
+                value={brandForm.contact_name || ''}
                 onChange={(e) => setBrandForm({ ...brandForm, contact_name: e.target.value } as BrandType)}
             />
             <Contact>
@@ -93,7 +148,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                     width="250px"
                     type="text"
                     placeholder="Email"
-                    value={brandForm.contact_email}
+                    value={brandForm.contact_email || ''}
                     onChange={(e) => setBrandForm({ ...brandForm, contact_email: e.target.value } as BrandType)}
                 />
                 <Input
@@ -101,7 +156,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                     width="180px"
                     type="text"
                     placeholder="Téléphone"
-                    value={brandForm.contact_phone}
+                    value={brandForm.contact_phone || ''}
                     onChange={(e) => setBrandForm({ ...brandForm, contact_phone: e.target.value } as BrandType)}
                 />
             </Contact>
@@ -112,7 +167,8 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                 height="100px"
                 maxHeight="400px"
                 placeholder="Notes"
-                value={brandForm.notes}
+                maxLength={255}
+                value={brandForm.notes || ''}
                 onChange={(e: { target: { value: unknown; }; }) => setBrandForm({ ...brandForm, notes: e.target.value } as BrandType)}
             />
             <SaveAction $brand={!!brand}>
@@ -124,14 +180,16 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                         disabled={deleteAlert}
                     />}
                 <Button
+                    loading={saving || loadingBrands}
                     disabled={disableSave}
                     value='enregistrer'
-                    onClick={() => console.log('save')}
+                    onClick={brand ? update : save}
                 />
             </SaveAction>
             {deleteAlert &&
                 <DeleteAlert
-                    message='Êtes-vous sûr de vouloir supprimer cette marque ? Cette action est irréversible.'
+                    message={`Êtes-vous sûr de vouloir supprimer la marque ${brand?.name} ?
+                            <br>Cette action est définitive et entrainera la perte de toutes les données produits associées.`}
                     confirmAction={handleDeleteSector}
                     cancelAction={() => setDeleteAlert(false)}
                 />}
@@ -154,6 +212,14 @@ const BrandName = styled.div<{ $brand: boolean }>`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 444px;
+`;
+
+const BrandAddress = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
     width: 444px;
 `;
 
