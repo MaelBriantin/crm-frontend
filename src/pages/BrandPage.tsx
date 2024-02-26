@@ -16,7 +16,7 @@ export const BrandPage = () => {
     const [sortDirection, setSortDirection] = useState<boolean>(true);
 
     const { showModal } = useModal();
-    const { refreshBrands, brands } = useBrands();
+    const { refreshBrands, brands, loadingBrands } = useBrands();
 
     useEffect(() => {
         isEmpty(brands) && refreshBrands();
@@ -24,7 +24,7 @@ export const BrandPage = () => {
     }, []);
 
     const newBrand = () => {
-        showModal(<BrandForm/>, 'Ajouter une marque');
+        showModal(<BrandForm />, 'Ajouter une marque');
     }
 
     const editBrand = (row: RowType) => {
@@ -68,9 +68,8 @@ export const BrandPage = () => {
 
     return (
         <Container>
-            {isEmpty(brands) &&
-                <Loader />}
-            {!isEmpty(brands) &&
+            {(isEmpty(brands) || loadingBrands) && <Loader />}
+            {(!isEmpty(brands) && !loadingBrands) &&
                 <DataTable
                     topBar
                     searchbar
@@ -78,6 +77,7 @@ export const BrandPage = () => {
                     onClickTopBar={newBrand}
                     onDoubleClickOnRow={editBrand}
                     hoverable
+                    emptyMessage={'Aucune marque trouvée'}
                     columns={columns}
                     data={deepCopy(brands) as RowDataType[]}
                     sort={sort}
