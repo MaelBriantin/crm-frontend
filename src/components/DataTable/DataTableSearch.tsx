@@ -4,9 +4,10 @@ import { RowDataType, DataTableSearchProps } from '../../types/DataTableTypes';
 import { advancedFilter } from '../../utils/searchUtils';
 import { VscSearch } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
-import { Dropdown, Switch, Input } from '../global';
+import { Dropdown, Input } from '../global';
 import { DropdownValueType } from '../global/Dropdown';
 import { firstOf } from '../../utils/helpers/spells';
+import { VscListFilter } from "react-icons/vsc";
 
 export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searchedValue, columns, clearable = true, advancedSearch = false }: DataTableSearchProps<T>): React.ReactElement => {
 
@@ -56,11 +57,10 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
                 icon={<VscSearch />}
             />
             {advancedSearch &&
-                <Switch
-                    vertical
-                    variant='small'
-                    onChange={enableAdvancedSearch}
-                />}
+                <AdvancedSearchToggle $activeAdvancedSearch={activeAdvancedSearch} onClick={enableAdvancedSearch}>
+                    <VscListFilter />
+                </AdvancedSearchToggle>
+            }
             <AdvancedSearchContainer $activeAdvancedSearch={activeAdvancedSearch} $startAnimation={startAnimation}>
                 {/* {activeAdvancedSearch && <span className='label'>Condition :</span>} */}
                 {activeAdvancedSearch &&
@@ -138,6 +138,17 @@ const fromUpToDown = keyframes`
   }
 `;
 
+const AdvancedSearchToggle = styled.div<{$activeAdvancedSearch: boolean}>`
+    font-size: ${theme.fonts.size.P3};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: ${({ $activeAdvancedSearch }) => $activeAdvancedSearch ? theme.colors.primary : theme.colors.greyMedium};
+    transform: ${({ $activeAdvancedSearch }) => $activeAdvancedSearch ? 'rotate(-90deg)' : 'rotate(0)'};
+`;
 
 const AdvancedSearchContainer = styled.div<{ $activeAdvancedSearch: boolean, $startAnimation: boolean }>`
     display: flex;
