@@ -12,6 +12,7 @@ type TextareaProps = {
     value: string;
     label?: string;
     onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    maxLength?: number;
 };
 
 export const Textarea: React.FC<TextareaProps> = ({
@@ -24,6 +25,7 @@ export const Textarea: React.FC<TextareaProps> = ({
     value,
     label,
     onChange,
+    maxLength
 }) => {
     const textareaRef = React.useRef<HTMLTextAreaElement>(null);
     const [isFocused, setIsFocused] = React.useState(false);
@@ -47,6 +49,7 @@ export const Textarea: React.FC<TextareaProps> = ({
         <TextareaContainer>
             {label && <Label $focusOnTextarea={isFocused} $value={!!value}>{label}</Label>}
             <StyledTextarea
+                maxLength={maxLength}
                 ref={textareaRef}
                 $width={width}
                 $maxWidth={maxWidth}
