@@ -148,6 +148,9 @@ const AdvancedSearchToggle = styled.div<{$activeAdvancedSearch: boolean}>`
     transition: all 0.2s;
     color: ${({ $activeAdvancedSearch }) => $activeAdvancedSearch ? theme.colors.primary : theme.colors.greyMedium};
     transform: ${({ $activeAdvancedSearch }) => $activeAdvancedSearch ? 'rotate(-90deg)' : 'rotate(0)'};
+    &:hover {
+        color: ${theme.colors.primary};
+    }
 `;
 
 const AdvancedSearchContainer = styled.div<{ $activeAdvancedSearch: boolean, $startAnimation: boolean }>`
