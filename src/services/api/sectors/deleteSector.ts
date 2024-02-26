@@ -9,10 +9,10 @@ export const deleteSector = async (sector: SectorType, callToast: CallToastProps
         const response: APIResponseFormat<SectorType> = await fetchAPI(`/api/sectors/${sector.id}`, 'DELETE');
         handleAPIResponse<SectorType>(
             response,
-            (sectors) => {
+            async (sectors) => {
                 sectorsResponse = sectors as SectorType[];
-                refreshSectors();
-                callToast('success', `Le secteur "${sector.name}" a bien été supprimé.`, 3000);
+                await refreshSectors();
+                callToast('success', `Le secteur ${sector.name} a bien été supprimé.`, 3000);
                 closeModal();
             },
             (error) => {

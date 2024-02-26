@@ -9,10 +9,10 @@ export const updateSector = async (sector: SectorType, callToast: CallToastProps
         const response: APIResponseFormat<SectorType> = await fetchAPI(`/api/sectors/${sector.id}`, 'PUT', sector);
         handleAPIResponse<SectorType>(
             response,
-            (sectors) => {
+            async (sectors) => {
                 sectorsResponse = sectors as SectorType[];
-                refreshSectors();
-                callToast('success', `Le secteur "${sector.name}" a été modifié avec succès.`, 3000);
+                await refreshSectors();
+                callToast('success', `Le secteur ${sector.name} a été modifié avec succès.`, 3000);
                 closeModal();
             },
             (error) => {
