@@ -23,7 +23,8 @@ export const DataTable = <T extends RowDataType>({
     setSortDirection,
     onClickTopBar,
     iconTopBar,
-    topBar
+    topBar,
+    buttonValueTopBar
 }: DataTableProps<T>): React.ReactElement => {
 
     const selectable = onClickOnRow !== undefined || onDoubleClickOnRow !== undefined;
@@ -76,7 +77,8 @@ export const DataTable = <T extends RowDataType>({
                     data={data as T[]}
                     columns={columns}
                     onSearch={setSearchResults}
-                    icon={iconTopBar || <></>}
+                    icon={iconTopBar || null}
+                    buttonValue={buttonValueTopBar || ''}
                     onClick={onClickTopBar ? onClickTopBar : () => undefined}
                 />
             }

@@ -13,10 +13,11 @@ type DataTableTopBarProps<T> = {
     columns: ColumnProps[];
     onSearch: Dispatch<SetStateAction<T[]>>;
     onClick: () => void;
-    icon: React.ReactElement;
+    icon?: React.ReactElement | null;
+    buttonValue?: string;
 };
 
-export const DataTableTopBar = <T extends RowDataType>({ withSearch = false, withAdvancedSearch = false, setSearchedValue, data, columns, onSearch, onClick, icon }: DataTableTopBarProps<T>): React.ReactElement => {
+export const DataTableTopBar = <T extends RowDataType>({ withSearch = false, withAdvancedSearch = false, setSearchedValue, data, columns, onSearch, onClick, icon, buttonValue }: DataTableTopBarProps<T>): React.ReactElement => {
     return (
         <Container $withSearch={withSearch}>
             {(withSearch || withAdvancedSearch) &&
@@ -31,7 +32,8 @@ export const DataTableTopBar = <T extends RowDataType>({ withSearch = false, wit
                 variant='regular'
                 onClick={onClick}
                 bigIcon
-                icon={icon}
+                icon={icon || null}
+                value={buttonValue || ''}
             />
         </Container>
     );

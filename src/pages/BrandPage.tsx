@@ -9,6 +9,8 @@ import { deepCopy } from '../utils/helpers/spells';
 import { VscJersey } from "react-icons/vsc";
 import { BrandForm } from '../components/forms/BrandForm';
 import { BrandType } from '../types/BrandTypes';
+import { VscEdit } from "react-icons/vsc";
+import { theme } from '../assets/themes';
 
 export const BrandPage = () => {
 
@@ -34,6 +36,13 @@ export const BrandPage = () => {
 
     const columns = [
         {
+            text: 'Code SKU',
+            value: 'sku_code',
+            sortable: true,
+            width: '10%',
+            type: 'chips',
+        },
+        {
             text: 'Marque',
             value: 'name',
             sortable: true,
@@ -58,12 +67,15 @@ export const BrandPage = () => {
             width: '20%'
         },
         {
-            text: 'Code SKU',
-            value: 'sku_code',
-            sortable: true,
-            width: '10%',
-            type: 'chips',
-        },
+            text: '',
+            value: '',
+            type: 'rowActions',
+            sortable: false,
+            actions: [
+                { icon: <VscEdit />, onClick: (row: RowType) => editBrand(row), color: theme.colors.primary },
+                // { icon: <VscChromeClose />, onClick: (row: RowType) => console.log(row), color: theme.colors.error }
+            ]
+        }
     ];
 
     return (
@@ -74,6 +86,7 @@ export const BrandPage = () => {
                     topBar
                     searchbar
                     iconTopBar={<VscJersey />}
+                    buttonValueTopBar='Ajouter une marque'
                     onClickTopBar={newBrand}
                     onDoubleClickOnRow={editBrand}
                     hoverable

@@ -65,7 +65,7 @@ export const SectorPage: React.FC = () => {
     };
 
     const newSector = () => {
-        showModal(<SectorForm />, 'Créer un nouveau secteur');
+        showModal(<SectorForm />, 'Ajouter un secteur');
     };
 
     return (
@@ -76,6 +76,7 @@ export const SectorPage: React.FC = () => {
                     topBar
                     searchbar
                     iconTopBar={<LiaMapMarkedAltSolid />}
+                    buttonValueTopBar='Ajouter un secteur'
                     columns={columns}
                     onDoubleClickOnRow={handleDoubleClick}
                     onClickTopBar={newSector}
