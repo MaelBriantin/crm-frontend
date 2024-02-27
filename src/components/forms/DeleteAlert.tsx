@@ -5,11 +5,13 @@ type DeleteAlertProps = {
     message: string;
     confirmAction: () => void;
     cancelAction: () => void;
+    close?: boolean;
 };
 
-export const DeleteAlert: React.FC<DeleteAlertProps> = ({ message, confirmAction, cancelAction }) => {
+export const DeleteAlert: React.FC<DeleteAlertProps> = ({ message, confirmAction, cancelAction, close }) => {
     return (
         <Alert 
+            close={close}
             type={'error'} 
             absolute 
             position='bottom'

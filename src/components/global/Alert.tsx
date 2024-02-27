@@ -9,13 +9,14 @@ export type AlertContentTypes = {
     absolute?: boolean;
     position?: 'top' | 'bottom';
     children?: React.ReactNode;
+    close?: boolean;
 }
 
-export const Alert: React.FC<AlertContentTypes> = ({ type, absolute, position = 'top', children }) => {
+export const Alert: React.FC<AlertContentTypes> = ({ type, absolute, position = 'top', children, close }) => {
     const [show, setShow] = React.useState<boolean>(true);
     const [openAnimation, setOpenAnimation] = React.useState<boolean>(true);
     const [closeAnimation, setCloseAnimation] = React.useState<boolean>(false);
-    
+
     useEffect(() => {
         if (show) {
             setOpenAnimation(true);
@@ -30,9 +31,11 @@ export const Alert: React.FC<AlertContentTypes> = ({ type, absolute, position = 
     }, [show]);
 
     return (
-        <AlertStyle $type={type} $absolute={{ absolute, position }} $animation={{ openAnimation, closeAnimation }}>
-            { children }
-        </AlertStyle>
+        <Container $close={close}>
+            <AlertStyle $type={type} $absolute={{ absolute, position }} $animation={{ openAnimation, closeAnimation }}>
+                {children}
+            </AlertStyle>
+        </Container>
     );
 }
 
@@ -80,6 +83,39 @@ const ContainerDisplayAnimationBottom = keyframes`
     }
 `;
 
+const BackgroundFadeIn = keyframes`
+    from {
+        background: rgba(0, 0, 0, 0);
+    }
+    to {
+        background: rgba(0, 0, 0, 0.1);
+    }
+`;
+
+const BackgroundFadeOut = keyframes`
+    from {
+        background: rgba(0, 0, 0, 0.1);
+    }
+    to {
+        background: rgba(0, 0, 0, 0);
+    }
+`;
+
+const Container = styled.div<{ $close: boolean | undefined }>`
+    display: 'flex';
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: all 250ms;
+    position: absolute;
+    animation: ${({ $close }) => $close ? BackgroundFadeOut : BackgroundFadeIn} 150ms ease-in-out forwards;
+    top: 0;
+    left: 0;
+    z-index: 99999;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.1);
+`;
 
 const AlertStyle = styled.div<{ $type: string, $absolute: { absolute: boolean | undefined, position: string }, $animation: { openAnimation: boolean, closeAnimation: boolean } }>`
     display: flex;
@@ -110,7 +146,7 @@ const AlertStyle = styled.div<{ $type: string, $absolute: { absolute: boolean | 
 
     ${({ $animation, $absolute }) =>
         $animation.openAnimation && !$absolute.absolute
-        ? css`animation: ${$absolute.position === 'top' ? ContainerDisplayAnimationTop : ContainerDisplayAnimationBottom} 250ms ease-in-out forwards;`
+            ? css`animation: ${$absolute.position === 'top' ? ContainerDisplayAnimationTop : ContainerDisplayAnimationBottom} 250ms ease-in-out forwards;`
             : $animation.closeAnimation && $absolute.absolute
                 ? css`animation: ${$absolute.position === 'top' ? ContainerDisplayAnimationTop : ContainerDisplayAnimationBottom} 250ms ease-in-out reverse forwards;`
                 : ''};
