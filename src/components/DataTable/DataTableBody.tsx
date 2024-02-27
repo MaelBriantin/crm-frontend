@@ -1,7 +1,5 @@
-import styled, { css, RuleSet } from 'styled-components';
-import { DataTableCell } from './DataTableCell';
-import { ColumnProps, ColumnType, RowType } from '../../types/DataTableTypes';
-import { getColor } from '../../utils/dataTableUtils';
+import { ColumnProps, RowType } from '../../types/DataTableTypes';
+import { DataTableRow } from './DataTableRow';
 
 type DataTableBodyProps = {
     data: RowType[];
@@ -17,50 +15,18 @@ export const DataTableBody = ({ data, columns, onClickOnRow, onDoubleClickOnRow,
     return (
         <tbody>
             {data.map((row, rowIndex) => (
-                <TableRowBody
+                <DataTableRow
                     key={rowIndex}
-                    $selectable={selectable}
-                    $hoverable={hoverable}
-                    onClick={() => onClickOnRow && onClickOnRow(row)}
-                    onDoubleClick={() => onDoubleClickOnRow && onDoubleClickOnRow(row)}
-                >
-                    {columns.map((column, columnIndex) => (
-                        <DataTableCell
-                            searchedValue={searchedValue}
-                            key={columnIndex}
-                            row={row as RowType}
-                            column={column as ColumnType}
-                            columnWidth={column?.width}
-                            columnIndex={columnIndex}
-                            color={getColor(column.color, String(row[column.value]))}
-                            arrayLimit={column.limit}
-                        />
-                    ))}
-                </TableRowBody>
+                    row={row}
+                    rowIndex={rowIndex}
+                    columns={columns}
+                    onClickOnRow={onClickOnRow}
+                    onDoubleClickOnRow={onDoubleClickOnRow}
+                    selectable={selectable}
+                    hoverable={hoverable}
+                    searchedValue={searchedValue}
+                />
             ))}
         </tbody>
     );
 };
-
-const TableRowBody = styled.tr <{ $selectable: boolean, $hoverable: boolean }>`
-    transition: all 250ms;
-    background-color: white;
-    height: 40px;
-    overflow: hidden;
-    width: 100%;
-    &:hover {
-        ${({ $hoverable }): false | RuleSet<object> =>
-        $hoverable &&
-        css`
-            background-color: #f9f9f9;
-        `}
-        ${({ $selectable }): false | RuleSet<object> =>
-        $selectable &&
-        css`
-            cursor: pointer;
-            user-select: none;
-            background-color: #f9f9f9;
-        `}
-    }
-`;
-
