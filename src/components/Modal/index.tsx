@@ -98,12 +98,10 @@ const Container = styled.div<{ $closeModalAnimation: boolean, $isOpen: boolean }
     z-index: 99999;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    animation: ${ContainerDisplayAnimation} 200ms;
+    background: rgba(0, 0, 0, 0.25);
+    animation: ${ContainerDisplayAnimation} 250ms ease-in-out forwards;
     ${({ $closeModalAnimation }) => $closeModalAnimation ? css`animation: ${ContainerCloseAnimation} 250ms;` : ''};    
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(2px);
 `;
 
 const ModalStructure = styled.div<{ $closeModalAnimation: boolean, $style: { height: string | undefined, width: string | undefined } }>`
