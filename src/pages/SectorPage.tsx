@@ -8,6 +8,8 @@ import { SectorType } from '../types/SectorTypes.ts';
 import { useSectors, useModal, useAppLoading } from '../contexts';
 import { SectorForm } from '../components/forms/SectorForm.tsx';
 import { LiaMapMarkedAltSolid } from "react-icons/lia";
+import { VscEdit } from "react-icons/vsc";
+import { theme } from '../assets/themes/index.ts';
 
 export const SectorPage: React.FC = () => {
 
@@ -53,7 +55,18 @@ export const SectorPage: React.FC = () => {
             sortable: false,
             type: 'chips',
             limit: 5,
-            width: '60%'
+            width: '55%'
+        },
+        {
+            text: '',
+            value: '',
+            type: 'rowActions',
+            sortable: false,
+            actions: [
+                { icon: <VscEdit />, onClick: (row: RowType) => handleDoubleClick(row), color: theme.colors.primary },
+                // { icon: <VscChromeClose />, onClick: (row: RowType) => console.log(row), color: theme.colors.error }
+            ],
+            width: '5%'
         }
     ];
 

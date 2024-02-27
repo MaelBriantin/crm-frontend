@@ -64,7 +64,7 @@ export const BrandPage = () => {
             text: 'Téléphone',
             value: 'contact_phone',
             sortable: false,
-            width: '20%'
+            width: '15%'
         },
         {
             text: '',
@@ -74,7 +74,8 @@ export const BrandPage = () => {
             actions: [
                 { icon: <VscEdit />, onClick: (row: RowType) => editBrand(row), color: theme.colors.primary },
                 // { icon: <VscChromeClose />, onClick: (row: RowType) => console.log(row), color: theme.colors.error }
-            ]
+            ],
+            width: '5%'
         }
     ];
 
