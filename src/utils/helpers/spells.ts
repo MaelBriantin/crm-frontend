@@ -179,7 +179,14 @@ export const removeKeys = (obj: object | object[], keysToRemove: string[]): obje
 export const deepCompare = <T extends object>(obj1: T, obj2: T, keys?: string[]): boolean => {
   if (keys) {
     for (const key of keys) {
-      if (JSON.stringify(obj1[key as keyof typeof obj1]) !== JSON.stringify(obj2[key as keyof typeof obj2])) {
+      const value1 = obj1[key as keyof typeof obj1];
+      const value2 = obj2[key as keyof typeof obj2];
+
+      if (typeof value1 === 'object' && value1 !== null && typeof value2 === 'object' && value2 !== null) {
+        if (!deepCompare(value1, value2)) {
+          return false;
+        }
+      } else if (JSON.stringify(value1) !== JSON.stringify(value2)) {
         return false;
       }
     }
@@ -192,7 +199,14 @@ export const deepCompare = <T extends object>(obj1: T, obj2: T, keys?: string[])
     }
 
     for (const key of keys1) {
-      if (JSON.stringify(obj1[key as keyof typeof obj1]) !== JSON.stringify(obj2[key as keyof typeof obj2])) {
+      const value1 = obj1[key as keyof typeof obj1];
+      const value2 = obj2[key as keyof typeof obj2];
+
+      if (typeof value1 === 'object' && value1 !== null && typeof value2 === 'object' && value2 !== null) {
+        if (!deepCompare(value1, value2)) {
+          return false;
+        }
+      } else if (JSON.stringify(value1) !== JSON.stringify(value2)) {
         return false;
       }
     }
