@@ -12,6 +12,7 @@ import { BrandType } from '../types/BrandTypes';
 import { VscEdit, VscChromeClose } from "react-icons/vsc";
 import { theme } from '../assets/themes';
 import { deleteBrand } from '../services/api/brands';
+import { useKeyboardShortcut } from '../hooks/system/useKeyboardShortcut';
 
 export const BrandPage = () => {
 
@@ -31,6 +32,8 @@ export const BrandPage = () => {
     const newBrand = () => {
         showModal(<BrandForm />, 'Ajouter une marque');
     }
+
+    useKeyboardShortcut({ 'Control+Alt+n': () => newBrand() });
 
     const editBrand = (row: RowType) => {
         const brand = brands.find((brand: BrandType) => brand.id === row.id);
@@ -86,7 +89,7 @@ export const BrandPage = () => {
             type: 'rowActions',
             sortable: false,
             actions: [
-                { icon: <VscEdit />, onClick: (row: RowType) => editBrand(row), color: theme.colors.blue },
+                { icon: <VscEdit />, onClick: (row: RowType) => editBrand(row), color: theme.colors.primary },
                 { icon: <VscChromeClose />, onClick: (row: RowType) => handleDeleteAlert(row as BrandType), color: theme.colors.error }
             ],
             width: '2%'
@@ -95,8 +98,8 @@ export const BrandPage = () => {
 
     return (
         <Container>
-            {(isEmpty(brands) || loadingBrands) && <Loader />}
-            {(!isEmpty(brands) && !loadingBrands) &&
+            {(isEmpty(brands) || loadingBrands) && <Loader transparent />}
+            {(!isEmpty(brands)) &&
                 <DataTable
                     topBar
                     searchbar

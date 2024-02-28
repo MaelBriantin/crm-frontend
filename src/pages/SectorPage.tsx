@@ -11,6 +11,7 @@ import { LiaMapMarkedAltSolid } from "react-icons/lia";
 import { VscEdit, VscChromeClose } from "react-icons/vsc";
 import { theme } from '../assets/themes/index.ts';
 import { deleteSector } from '../services/api/sectors/deleteSector.ts';
+import { useKeyboardShortcut } from '../hooks/system/useKeyboardShortcut';
 
 export const SectorPage: React.FC = () => {
 
@@ -27,6 +28,8 @@ export const SectorPage: React.FC = () => {
         isEmpty(sectors) && refreshSectors();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useKeyboardShortcut({ 'Control+Alt+n': () => newSector() });
 
     const handleDeleteAlert = (row: RowType) => {
         const sector = sectors.find((sector: SectorType) => sector.id === row.id);
@@ -78,7 +81,7 @@ export const SectorPage: React.FC = () => {
             type: 'rowActions',
             sortable: false,
             actions: [
-                { icon: <VscEdit />, onClick: (row: RowType) => handleDoubleClick(row), color: theme.colors.blue },
+                { icon: <VscEdit />, onClick: (row: RowType) => handleDoubleClick(row), color: theme.colors.primary },
                 { icon: <VscChromeClose />, onClick: (row: RowType) => handleDeleteAlert(row), color: theme.colors.error }
             ],
             width: '2%'
@@ -98,8 +101,8 @@ export const SectorPage: React.FC = () => {
 
     return (
         <Container>
-            {(isEmpty(sectors) || loadingSectors) && <Loader />}
-            {(!isEmpty(sectors) && !loadingSectors) &&
+            {(isEmpty(sectors) || loadingSectors) && <Loader transparent />}
+            {(!isEmpty(sectors)) &&
                 <DataTable
                     topBar
                     searchbar
