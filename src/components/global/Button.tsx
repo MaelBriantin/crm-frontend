@@ -78,7 +78,6 @@ const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: Varia
 
     border: ${({ $variantStyle, $color}) => `${$variantStyle.borderSize}px solid ${$color}`};
     
-    /* padding: 0 ${theme.materialDesign.padding.dense}; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -90,7 +89,6 @@ const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: Varia
 
     .textContent {
         padding: 0;
-        //width: 100%;
         height: 100%;
         display: flex;
         justify-content: center;
@@ -104,6 +102,7 @@ const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: Varia
 
     .icon {
         font-size: ${theme.fonts.size.P1};
+        color: ${theme.colors.white};
         margin: 0;
         padding: 0;
         transform: translateY(1px);
@@ -115,6 +114,10 @@ const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: Varia
 
     &:hover .textContent{
         color: ${({ $loading, $disabled, $color }): string | false => (!$loading && !$disabled) && `${$color || theme.colors.primary};`};    }
+    
+    &:hover .icon{
+        color: ${({ $loading, $disabled, $color }): string | false => (!$loading && !$disabled) && `${$color || theme.colors.primary};`};
+    }
 
     &:hover {
         ${({ $disabled, $loading, $color }) => $disabled
@@ -123,8 +126,6 @@ const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: Varia
             color: ${!$loading && `${$color};`};
             background: ${!$loading && `${theme.colors.white};`};
         `};
-        /* color: ${({ $loading }): string | false => !$loading && `${theme.colors.primary};`};
-        background: ${({ $loading }): string | false => !$loading && `${theme.colors.white};`}; */
     }
 
     .loading {

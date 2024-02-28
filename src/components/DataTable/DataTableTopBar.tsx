@@ -1,10 +1,9 @@
 import styled from "styled-components";
 import { DataTableSearch } from "./DataTableSearch";
 import { ColumnProps, RowDataType } from "../../types/DataTableTypes";
-import { SetStateAction } from "react";
+import React, { SetStateAction } from "react";
 import { Dispatch } from "react";
 import { Button } from "../global";
-import { LiaMapMarkedAltSolid } from "react-icons/lia";
 
 type DataTableTopBarProps<T> = {
     withSearch?: boolean;
@@ -14,9 +13,11 @@ type DataTableTopBarProps<T> = {
     columns: ColumnProps[];
     onSearch: Dispatch<SetStateAction<T[]>>;
     onClick: () => void;
+    icon?: React.ReactElement | null;
+    buttonValue?: string;
 };
 
-export const DataTableTopBar = <T extends RowDataType>({ withSearch = false, withAdvancedSearch = false, setSearchedValue, data, columns, onSearch, onClick }: DataTableTopBarProps<T>): React.ReactElement => {
+export const DataTableTopBar = <T extends RowDataType>({ withSearch = false, withAdvancedSearch = false, setSearchedValue, data, columns, onSearch, onClick, icon, buttonValue }: DataTableTopBarProps<T>): React.ReactElement => {
     return (
         <Container $withSearch={withSearch}>
             {(withSearch || withAdvancedSearch) &&
@@ -31,7 +32,8 @@ export const DataTableTopBar = <T extends RowDataType>({ withSearch = false, wit
                 variant='regular'
                 onClick={onClick}
                 bigIcon
-                icon={<LiaMapMarkedAltSolid />}
+                icon={icon || null}
+                value={buttonValue || ''}
             />
         </Container>
     );

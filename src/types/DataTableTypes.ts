@@ -11,6 +11,7 @@ export type RowType = {
 export type ColumnType = {
   value: string;
   type?: DataTableType;
+  actions?: ColumnActionType[];
 };
 
 export type DataTableCellProps = {
@@ -21,6 +22,7 @@ export type DataTableCellProps = {
   color?: { background: string | undefined, text: string | undefined } | undefined;
   searchedValue?: string | number;
   arrayLimit?: number;
+  isHovered?: boolean;
 };
 
 export type TableCellProps = {
@@ -37,6 +39,13 @@ export type ColumnProps = {
   limit?: number;
   color?: ColumnColorProps[] | undefined;
   width?: string;
+  actions?: ColumnActionType[] | undefined;
+};
+
+type ColumnActionType = {
+  icon: React.ReactElement;
+  onClick: (row: RowType) => void;
+  color?: string;
 };
 
 export type RowDataType = {
@@ -53,11 +62,17 @@ export type DataTableProps<T extends RowDataType> = {
   onDoubleClickOnRow?: (row: RowType) => void;
   hoverable?: boolean;
   searchbar?: boolean;
+  advancedSearch?: boolean;
   emptyMessage?: string;
   sort: string | null;
   setSort: Dispatch<SetStateAction<string | null>>;
   sortDirection?: boolean;
   setSortDirection: Dispatch<SetStateAction<boolean>>;
+  onClickTopBar?: () => void;
+  iconTopBar?: React.ReactElement;
+  topBar?: boolean;
+  search?: boolean;
+  buttonValueTopBar?: string;
 };
 
 export type TableRowProps = {

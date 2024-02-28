@@ -117,6 +117,25 @@ export const filterOut = <T>(elements: T | T[], from: T[]): T[] => {
   return from.filter((element) => !elementsArray.includes(element));
 };
 
+/**
+ * Exclude keys from an object based on given keys.
+ *
+ * @template T - The type of the object.
+ * @param {keyof T | (keyof T)[]} keys - The key or array of keys to exclude from the object.
+ * @param {T} from - The object from which to exclude the keys.
+ * @returns {Partial<T>} - The object without the excluded keys.
+ */
+export const filterOutKeys = <T extends object>(keys: keyof T | (keyof T)[], from: T): Partial<T> => {
+  const keysArray = Array.isArray(keys) ? keys : [keys];
+  const result: Partial<T> = {};
+  for (const key in from) {
+    if (!keysArray.includes(key as keyof T)) {
+      result[key as keyof T] = from[key as keyof T];
+    }
+  }
+  return result;
+};
+
 
 /**
  * Creates a deep copy of the given object.
@@ -160,7 +179,14 @@ export const removeKeys = (obj: object | object[], keysToRemove: string[]): obje
 export const deepCompare = <T extends object>(obj1: T, obj2: T, keys?: string[]): boolean => {
   if (keys) {
     for (const key of keys) {
-      if (JSON.stringify(obj1[key as keyof typeof obj1]) !== JSON.stringify(obj2[key as keyof typeof obj2])) {
+      const value1 = obj1[key as keyof typeof obj1];
+      const value2 = obj2[key as keyof typeof obj2];
+
+      if (typeof value1 === 'object' && value1 !== null && typeof value2 === 'object' && value2 !== null) {
+        if (!deepCompare(value1, value2)) {
+          return false;
+        }
+      } else if (JSON.stringify(value1) !== JSON.stringify(value2)) {
         return false;
       }
     }
@@ -173,7 +199,14 @@ export const deepCompare = <T extends object>(obj1: T, obj2: T, keys?: string[])
     }
 
     for (const key of keys1) {
-      if (JSON.stringify(obj1[key as keyof typeof obj1]) !== JSON.stringify(obj2[key as keyof typeof obj2])) {
+      const value1 = obj1[key as keyof typeof obj1];
+      const value2 = obj2[key as keyof typeof obj2];
+
+      if (typeof value1 === 'object' && value1 !== null && typeof value2 === 'object' && value2 !== null) {
+        if (!deepCompare(value1, value2)) {
+          return false;
+        }
+      } else if (JSON.stringify(value1) !== JSON.stringify(value2)) {
         return false;
       }
     }

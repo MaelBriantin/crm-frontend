@@ -7,6 +7,7 @@ import { LoadingPage } from "../pages/LoadingPage.tsx";
 import { useCheckAuth } from "../hooks/auth/useCheckAuth.ts";
 import { useAuth } from "../contexts/auth/AuthContext.tsx";
 import { SectorPage } from "../pages/SectorPage.tsx";
+import { BrandPage } from "../pages/BrandPage.tsx";
 
 export const Router = () => {
     useCheckAuth();
@@ -28,6 +29,7 @@ export const Router = () => {
                 <Route element={<AuthenticatedLayout />}>
                     <Route path={'/home'} element={<HomePage />} />
                     <Route path={'/sectors'} element={<SectorPage />} />
+                    <Route path={'/brands'} element={<BrandPage />} />
                     {/* Other routes to add */}
                 </Route>
 

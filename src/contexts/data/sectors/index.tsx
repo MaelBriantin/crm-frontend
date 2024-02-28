@@ -1,6 +1,6 @@
-import { SectorType } from "../../types/SectorTypes";
+import { SectorType } from "../../../types/SectorTypes";
 import React, { createContext, useState, useContext } from "react";
-import { fetchAllSectors } from "../../services/api/sectors";
+import { fetchAllSectors } from "../../../services/api/sectors";
 
 type SectorProviderProps = {
     children: React.ReactNode;

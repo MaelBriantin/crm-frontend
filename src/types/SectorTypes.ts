@@ -13,3 +13,11 @@ export type PostcodeType = {
     city:      string;
     sector?:    SectorType;
 };
+
+export const emptySector: SectorType = {
+    id: 0,
+    name: '',
+    postcodes: [],
+    postcodes_count: 0,
+    postcodes_list: '',
+};

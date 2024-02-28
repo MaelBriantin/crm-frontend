@@ -1,134 +1,153 @@
 import styled from 'styled-components';
-import { Input } from '../global';
-import { useState, ChangeEvent, useEffect } from 'react';
-import { Button, Chip } from '../global';
-import { useModal } from '../../contexts';
+import { useState, ChangeEvent, useEffect, useRef } from 'react';
+import { Button, Chip, Input } from '../global';
 import { VscAdd, VscClose } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
-import { createSector, deleteSector } from '../../services/api/sectors';
-import { PostcodeType, SectorType } from '../../types/SectorTypes';
-import { useSectors } from '../../contexts';
-import { useToast } from '../../contexts';
-import { updateSector } from '../../services/api/sectors';
-import { MdDeleteOutline } from "react-icons/md";
+import { createSector, deleteSector, updateSector } from '../../services/api/sectors';
+import { useSectors, useToast, useModal, useDeleteAlert } from '../../contexts';
+import { SectorType, emptySector } from '../../types/SectorTypes';
 import { deepCompare } from '../../utils/helpers/spells';
-import { DeleteAlert } from './DeleteAlert';
+import { DiscreteButton } from '../global/DiscreteButton';
+import { useKeyboardShortcut } from '../../hooks/system/useKeyboardShortcut';
 
 type SectorFormProps = {
     sector?: SectorType;
 };
 
 export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
-    const [sectorName, setSectorName] = useState(sector?.name || '');
-    const [allPostcodes, setAllPostcodes] = useState<PostcodeType[]>(sector?.postcodes || []);
-    const [postcode, setPostcode] = useState({ postcode: '', city: '' });
+    const [sectorForm, setSectorForm] = useState(sector || emptySector as SectorType);
+    const [newPostcode, setNewPostcode] = useState({ postcode: '', city: '' });
     const [saving, setSaving] = useState(false);
-    const [sectorToUpdate] = useState<SectorType | null>(sector || null);
-    const [deleteAlert, setDeleteAlert] = useState(false);
 
     const { callToast } = useToast();
-
     const { loadingSectors, refreshSectors } = useSectors();
-
     const { closeModal, setDisableClose } = useModal();
+    const { showDeleteAlert, isOpenDeleteAlert } = useDeleteAlert();
+
+    const firstInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (deleteAlert) {
-            setDisableClose(true);
-        } 
-        if (!deleteAlert) {
-            setDisableClose(false);
-        }
-    }, [deleteAlert, setDisableClose]);
+        setDisableClose(saving || loadingSectors);
+    }, [saving, setDisableClose, loadingSectors]);
 
-    const handleSave = async () => {
-        if (sectorName !== '' && allPostcodes.length > 0) {
+    useEffect(() => {
+        if (firstInputRef.current) {
+            setTimeout(() => {
+                firstInputRef.current?.focus();
+            }, 250);
+        }
+    }, []);
+
+    useKeyboardShortcut({
+        'Escape': () => {
+            if (saving || loadingSectors || isOpenDeleteAlert) {
+                return;
+            }
+            closeModal();
+        }
+    });
+
+    const handleSave = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (sectorForm.name !== '' && sectorForm.postcodes.length > 0) {
             setSaving(true);
-            await createSector({ name: sectorName, postcodes: allPostcodes } as SectorType, callToast, refreshSectors, closeModal);
+            await createSector(sectorForm as SectorType, callToast, refreshSectors, closeModal);
             setSaving(false);
         }
+    }
+
+    const handleDeleteAlert = () => {
+        const message = `Êtes-vous sûr de vouloir supprimer le secteur ${sector?.name} ?
+                        <br>Cette action est irréversible et entrainera la perte de toutes les données statistiques associées.`
+        showDeleteAlert(message, handleDeleteSector);
     }
 
     const handleDeleteSector = async () => {
-        setDeleteAlert(false);
-        if (sectorToUpdate) {
+        if (sectorForm.id) {
             setSaving(true);
-            await deleteSector({ id: sectorToUpdate.id, name: sectorName } as SectorType, callToast, refreshSectors, closeModal);
+            await deleteSector({ id: sectorForm.id, name: sectorForm.name } as SectorType, callToast, refreshSectors, closeModal);
             setSaving(false);
         }
     }
 
-    const handleUpdate = async () => {
-        if (sectorToUpdate && allPostcodes.length > 0 && sectorName !== '') {
+    const handleUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (sectorForm && sectorForm.postcodes.length > 0 && sectorForm.name !== '') {
             setSaving(true);
-            const sector = { id: sectorToUpdate.id, name: sectorName, postcodes: allPostcodes } as SectorType;
-            await updateSector(sector as SectorType, callToast, refreshSectors, closeModal);
+            await updateSector(sectorForm as SectorType, callToast, refreshSectors, closeModal);
             setSaving(false);
         }
     }
 
     const handleAddPostcode = (e: React.FormEvent) => {
         e.preventDefault();
-        if (postcode.postcode !== '' && postcode.city !== '') {
-            const newPostcode: PostcodeType = { postcode: postcode.postcode, city: postcode.city };
-            if (allPostcodes.find(e => e.postcode === newPostcode.postcode)) {
+        if (newPostcode.postcode !== '' && newPostcode.city !== '') {
+            if (sector?.postcodes.find(e => e.postcode === newPostcode.postcode)) {
                 return;
             }
-            setAllPostcodes(prevPostcodes => [...prevPostcodes, newPostcode]);
-            setPostcode({ postcode: '', city: '' });
+            setSectorForm({ ...sectorForm, postcodes: [...sectorForm.postcodes, newPostcode] });
+            setNewPostcode({ postcode: '', city: '' });
         }
+        firstInputRef.current?.focus();
     }
 
     const removeFromPostcodes = (postcode: string) => {
-        setAllPostcodes(prevPostcodes => prevPostcodes.filter(e => e.postcode !== postcode));
+        setSectorForm({ ...sectorForm, postcodes: sectorForm.postcodes.filter(e => e.postcode !== postcode) });
     }
 
-    const compareEditSectorAndSector = (sector: SectorType, sectorToUpdate: SectorType) => {
+    const compareSectors = (sector: SectorType, sectorToUpdate: SectorType) => {
         const keysToCompare = ['name', 'postcodes'];
         return deepCompare(sector, sectorToUpdate, keysToCompare);
     }
 
     const disableSave =
-        sectorName === ''
-        || allPostcodes.length === 0
-        || deleteAlert
-        || compareEditSectorAndSector({ name: sectorName, postcodes: allPostcodes } as SectorType, sectorToUpdate as SectorType);
+        saving 
+        || sectorForm.name === ''
+        || sectorForm.postcodes.length === 0
+        || (sector && compareSectors(sector, sectorForm))
+        || loadingSectors
+        || isOpenDeleteAlert;
 
     const disableAddPostcode =
-        postcode.postcode === ''
-        || postcode.city === ''
-        || allPostcodes.find(e => e.postcode === postcode.postcode) !== undefined
-        || postcode.postcode.length !== 5
-        || deleteAlert;
-
-    const disableDelete = deleteAlert;
+        saving 
+        || newPostcode.postcode === ''
+        || newPostcode.city === ''
+        || sectorForm.postcodes.find(e => e.postcode === newPostcode.postcode && e.city === newPostcode.city) !== undefined
+        || newPostcode.postcode.length !== 5
+        || Number(newPostcode.postcode) < 0
+        || loadingSectors
+        || isOpenDeleteAlert;
 
     return (
-        <Form>
+        <Form onSubmit={sector ? handleUpdate : handleSave}>
             <InputSection>
                 <Input
+                    ref={firstInputRef}
+                    label='Nom du secteur'
                     type='text'
                     placeholder='Nom du secteur'
                     width='300px'
-                    value={sectorName}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setSectorName(e.target.value)}
+                    value={sectorForm.name}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setSectorForm({ ...sectorForm, name: e.target.value })}
                 />
                 <CityForm noValidate onSubmit={handleAddPostcode}>
                     <Input
+                        label='Code postal'
                         type='number'
                         noNegativeNumber
                         maxLength={5}
                         placeholder='Code postal'
-                        width='125px'
-                        value={postcode.postcode}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setPostcode({ ...postcode, postcode: e.target.value })}
+                        width='150px'
+                        value={newPostcode.postcode}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setNewPostcode({ ...newPostcode, postcode: e.target.value })}
                     />
                     <Input
+                        label='Ville'
                         type='text'
                         placeholder='Ville'
-                        width='225px'
-                        value={postcode.city}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setPostcode({ ...postcode, city: e.target.value })}
+                        width='250px'
+                        value={newPostcode.city}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setNewPostcode({ ...newPostcode, city: e.target.value })}
                     />
                     <Button
                         disabled={disableAddPostcode}
@@ -137,10 +156,10 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
                     />
                 </CityForm>
                 <ChipContainer>
-                    {allPostcodes.map((e) => (
+                    {sectorForm.postcodes.map((e) => (
                         <Chip
-                            disabled={disableDelete}
-                            key={e.postcode}
+                            disabled={isOpenDeleteAlert || saving}
+                            key={e.postcode + e.city}
                             endIcon={<VscClose />}
                             iconColor={theme.colors.error}
                             text={`${e.postcode} - ${e.city}`}
@@ -148,18 +167,15 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
                         />
                     ))}
                 </ChipContainer>
-                {/* <PostcodesDisplay>
-
-                </PostcodesDisplay> */}
             </InputSection>
-            <SaveAction $sector={sector !== undefined}>
-                {sector && <Button
-                    disabled={disableDelete}
-                    color={theme.colors.error}
-                    value='supprimer ce secteur'
-                    icon={<MdDeleteOutline />}
-                    onClick={() => setDeleteAlert(!deleteAlert)}
-                />}
+            <SaveAction $sector={!!sector}>
+                {sector &&
+                    <DiscreteButton
+                        value='supprimer'
+                        onClick={handleDeleteAlert}
+                        color={theme.colors.error}
+                        disabled={isOpenDeleteAlert}
+                    />}
                 <Button
                     disabled={disableSave}
                     loading={loadingSectors || saving}
@@ -167,27 +183,20 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
                     onClick={sector ? handleUpdate : handleSave}
                 />
             </SaveAction>
-            {deleteAlert &&
-                <DeleteAlert
-                    message='Êtes-vous sûr de vouloir supprimer ce secteur ? Cette action est irréversible.'
-                    confirmAction={handleDeleteSector}
-                    cancelAction={() => setDeleteAlert(false)}
-                />}
         </Form >
     );
 };
 
-const Form = styled.div`
+const Form = styled.form`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: space-between;
-    /* height: 400px;
-    width: 400px; */
     gap: 20px;
 `;
 
 const InputSection = styled.div`
+    padding-top: 20px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -198,6 +207,7 @@ const InputSection = styled.div`
 `;
 
 const CityForm = styled.form`
+    padding-top: 10px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -210,12 +220,12 @@ const SaveAction = styled.div<{ $sector: boolean }>`
     width: 100%;
     height: 10%;
     display: flex;
-    // margin-top: 10px;
     justify-content: ${({ $sector }) => $sector ? 'space-between' : 'flex-end'};
-    align-items: flex-end;
+    align-items: center;
 `;
 
 const ChipContainer = styled.div`
+    margin-top: 10px;
     border: 2px solid ${theme.colors.greyLight};
     border-radius: ${theme.materialDesign.borderRadius.rounded};
     padding: 10px;
@@ -225,7 +235,7 @@ const ChipContainer = styled.div`
     justify-content: flex-start;
     flex-wrap: wrap;
     gap: 10px;
-    width: 480px;
+    width: 456px;
     max-height: 400px;
-    overflow: scroll;
+    overflow: auto;
 `;

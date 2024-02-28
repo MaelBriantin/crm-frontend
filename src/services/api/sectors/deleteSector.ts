@@ -3,17 +3,17 @@ import { fetchAPI, handleAPIResponse } from '../fetchApi.config';
 import { APIResponseFormat } from '../../../types/FetchTypes';
 import { CallToastProps } from '../../../contexts/global/ToastContext';
 
-export const deleteSector = async (sector: SectorType, callToast: CallToastProps, refreshSectors: { (): Promise<void>; (): void; }, closeModal: { (): void; (): void; }) => {
+export const deleteSector = async (sector: SectorType, callToast: CallToastProps, refreshSectors: { (): Promise<void>; (): void; }, closeModal?: { (): void; (): void; }) => {
     let sectorsResponse: SectorType[] = [];
     try {
         const response: APIResponseFormat<SectorType> = await fetchAPI(`/api/sectors/${sector.id}`, 'DELETE');
         handleAPIResponse<SectorType>(
             response,
-            (sectors) => {
+            async (sectors) => {
                 sectorsResponse = sectors as SectorType[];
-                refreshSectors();
-                callToast('success', `Le secteur "${sector.name}" a bien été supprimé.`, 3000);
-                closeModal();
+                await refreshSectors();
+                callToast('success', `Le secteur ${sector.name} a bien été supprimé.`, 3000);
+                closeModal && closeModal();
             },
             (error) => {
                 console.error(error.message);

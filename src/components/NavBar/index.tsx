@@ -6,7 +6,8 @@ import { PiButterflyThin } from "react-icons/pi";
 import { LiaMapMarkedAltSolid } from "react-icons/lia";
 import { useLogoutService } from "../../hooks/auth/useLogout";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction } from "react";
+import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
 
 type NavbarProps = {
     showNavbar: boolean;
@@ -39,22 +40,9 @@ export const Navbar = (props: NavbarProps) => {
     };
 
     // shortcut to show/hide navbar
-    useEffect(() => {
-        const handleKeyDown = (event: KeyboardEvent) => {
-            // set showNavbar to true when ctrl + alt + s is pressed
-            // if (event.ctrlKey && event.altKey && event.key === 's') {
-            if (event.ctrlKey && event.key === 'q') {
-                setShowNavbar(prevShowNavbar => !prevShowNavbar);
-            }
-        };
-        // add event listener when component mounts
-        window.addEventListener('keydown', handleKeyDown);
-        
-        return () => {
-            // remove event listener when component unmounts
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [setShowNavbar]);
+    useKeyboardShortcut({
+        'Control+Alt+s': () => setShowNavbar(prevShowNavbar => !prevShowNavbar)
+    });
 
     const links: NavbarGroups[] = [
         {
@@ -110,7 +98,7 @@ export const Navbar = (props: NavbarProps) => {
             <NavListContainer $showNavbar={showNavbar}>
 
                 <AppName>
-                    <PiButterflyThin className="logo" onClick={() => {}} />
+                    <PiButterflyThin className="logo" onClick={() => { }} />
                 </AppName>
 
                 <NavLinks>

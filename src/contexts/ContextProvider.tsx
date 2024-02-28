@@ -1,11 +1,12 @@
 import React from "react";
-import { 
-    AuthProvider, 
-    ToastProvider, 
-    ModalProvider, 
-    SectorsProvider, 
-    AppLoadingProvider 
+import {
+    AuthProvider,
+    ToastProvider,
+    ModalProvider,
+    AppLoadingProvider,
+    DeleteAlertProvider,
 } from ".";
+import { DataProvider } from "./DataProvider";
 
 interface ContextProviderProps {
     children: React.ReactNode;
@@ -15,13 +16,15 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) =>
     return (
         <AuthProvider>
             <AppLoadingProvider>
-                <SectorsProvider>
+                <DataProvider>
                     <ToastProvider>
-                        <ModalProvider>
-                            {children}
-                        </ModalProvider>
+                        <DeleteAlertProvider>
+                            <ModalProvider>
+                                {children}
+                            </ModalProvider>
+                        </DeleteAlertProvider>
                     </ToastProvider>
-                </SectorsProvider>
+                </DataProvider>
             </AppLoadingProvider>
         </AuthProvider>
     );

@@ -27,6 +27,7 @@ const NavbarButtonStyle = styled.div<{ $showNavbar: boolean }>`
     z-index: 999;
     transition: all 450ms;
     top: 50vh;
+    transform: translateY(-50%);
     left: 0;
     display: flex;
     flex-direction: column;

@@ -6,12 +6,20 @@ import { DataTableCellProps, dataTableTypeList } from '../../types/DataTableType
 import { getRowValueAndHighlight } from '../../utils/dataTableUtils.ts';
 import { theme } from '../../assets/themes/index.ts';
 
-export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, columnWidth, columnIndex, color, searchedValue, arrayLimit = 4 }) => {
+export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, columnWidth, columnIndex, color, searchedValue, arrayLimit = 4, isHovered }) => {
 
     const { rowValue, highlight } = getRowValueAndHighlight(searchedValue, row[column.value], arrayLimit);
-    console.log(column.value, columnWidth);
     return (
         <TableCell key={columnIndex} $columnWidth={columnWidth}>
+            {(column.type === 'rowActions') && (
+                <RowActions $isHovered={isHovered}>
+                    {column.actions?.map((action, index) => (
+                        <RowActionIcon $color={action.color} key={index} onClick={() => action.onClick(row)}>
+                            {action.icon}
+                        </RowActionIcon>
+                    ))}
+                </RowActions>
+            )}
             {(column.type === 'chips' && !Array.isArray(rowValue)) && (
                 <Chip
                     variant='small'
@@ -57,6 +65,29 @@ export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, colum
         </TableCell>
     );
 }
+
+const RowActions = styled.div<{$isHovered: boolean | undefined}>`
+    transition: opacity 250ms;
+    opacity: ${({ $isHovered }): string => $isHovered ? '1' : '0'};
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    color: ${theme.colors.greyDark};
+`;
+
+const RowActionIcon = styled.div<{$color: string | undefined}>`
+        font-size: ${theme.fonts.size.P1};
+        cursor: pointer;
+        transition: all 250ms;
+        &:hover {
+            // transform: scale(1.2);
+            color: ${({ $color }): string => $color || theme.colors.greyDark}
+        }
+`;
+
 
 const TableCell = styled.td<{ $columnWidth: string | undefined }>`
     padding: 8px;

@@ -1,7 +1,7 @@
 import { theme } from "../../assets/themes";
-import { RefObject, useEffect, useRef, useState, ReactNode, ChangeEvent, useCallback } from "react";
+import { RefObject, useEffect, useRef, useState, ReactNode, ChangeEvent, useCallback, forwardRef, useImperativeHandle } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { getVariantStyle } from "../../utils/inputUtils";
 import { VscChevronDown, VscChevronUp, VscChromeClose } from "react-icons/vsc";
 
@@ -12,7 +12,7 @@ type VariantStyleType = {
     textColor: string;
 };
 
-export const Input = (
+export const Input = forwardRef((
     props: {
         clearable?: boolean,
         placeholder: string,
@@ -26,7 +26,8 @@ export const Input = (
         variant?: 'large' | 'regular' | 'small',
         textColor?: string,
         onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-    }) => {
+        label?: string;
+    }, ref) => {
     const {
         placeholder,
         clearable = false,
@@ -40,6 +41,7 @@ export const Input = (
         variant = 'regular',
         textColor = theme.colors.dark,
         onChange,
+        label
     } = props
 
     const inputRef: RefObject<HTMLInputElement> = useRef(null);
@@ -73,6 +75,14 @@ export const Input = (
         }
     }, [type, value]);
 
+    useImperativeHandle(ref, () => ({
+        focus: () => {
+            if (inputRef.current) {
+                inputRef.current.focus();
+            }
+        }
+    }));
+
     const variantStyle = getVariantStyle(variant, textColor);
 
     const handleClear = () => {
@@ -84,7 +94,7 @@ export const Input = (
         if (String(count) === '' || count === undefined) setCount(0);
         if (noNegativeNumber
             && operator === 'minus'
-            && (count === 0
+            && (count === 0 || count < 0
                 || (String(count) === '' || count === undefined)))
             return;
 
@@ -97,6 +107,9 @@ export const Input = (
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (type === 'number') {
             if (!isNaN(Number(e.target.value))) {
+                if(noNegativeNumber && Number(e.target.value) < 0) {
+                    return;
+                }
                 if (maxLength && e.target.value.length <= maxLength) {
                     setCount(Number(e.target.value));
                 }
@@ -112,7 +125,10 @@ export const Input = (
     };
 
     return (
-        <InputStyle $width={width} $type={type} $icon={!!icon} $variantStyle={variantStyle} $clearable={clearable}>
+        <InputStyle $value={!!value || !!count} $label={!!label} $width={width} $type={type} $icon={!!icon} $variantStyle={variantStyle} $clearable={clearable}>
+            {label &&
+                <label className="label">{label}</label>
+            }
             {icon && <span className="icon">{icon}</span>}
             {
                 (type === 'password')
@@ -140,20 +156,20 @@ export const Input = (
                 ref={inputRef}
                 maxLength={maxLength}
                 max={type === 'number' ? max : undefined}
+                min={noNegativeNumber ? 0 : undefined}
                 placeholder={placeholder}
                 type={hidden ? type : 'text'}
                 onChange={handleChange}
                 value={type === 'number' ? count : value}
                 onBlur={handleBlur}
                 onFocus={handleFocus}
-                required={true}
                 onInput={handleInput}
             />
         </InputStyle>
     )
-}
+});
 
-const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $variantStyle: VariantStyleType, $clearable: boolean }>`
+const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $variantStyle: VariantStyleType, $clearable: boolean, $label: boolean, $value: boolean }>`
 
     // Remove arrows from input number
     // Chrome
@@ -168,10 +184,12 @@ const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $
         appearance: textfield;
     }
 
-    height: ${({ $variantStyle }) => $variantStyle.height};
+    min-height: ${({ $variantStyle }) => $variantStyle.height};
+    max-height: ${({ $variantStyle }) => $variantStyle.height};
     font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
     border-radius: ${theme.materialDesign.borderRadius.rounded};
-    width: ${({ $width }) => $width};
+    min-width: ${({ $width }) => $width};
+    max-width: ${({ $width }) => $width};
     display: flex;
     justify-content: center;
     align-items: center;
@@ -181,6 +199,21 @@ const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $
     background: ${theme.colors.white};
     transition: all 400ms;
 
+    /* ${({ $label }) => $label && css`margin-top: 20px;`}; */
+
+    .label{
+        user-select: none;
+        font-size: ${theme.fonts.size.P0};
+        color: ${theme.colors.greyDark};
+        position: absolute;
+        top: -20px;
+        left: -${({ $variantStyle }) => $variantStyle.borderSize}px;
+        transform: ${({ $value }) => $value ? 'translateY(0)' : 'translateY(20px)'};
+        clip-path: ${({ $value }) => $value ? 'inset(0)' : 'inset(0 0 100% 0)'};
+        transition: transform 0.3s, clip-path 0.3s;
+        
+    }
+
     input {
         color: ${({ $variantStyle }) => $variantStyle.textColor};
         font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
@@ -189,7 +222,7 @@ const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $
         border: none;
         width: 100%;
         height: 100%;
-        font-family: 'Source Sans 3', sans-serif;
+        font-family: ${theme.fonts.family.source};
         padding-right: ${({ $type, $clearable }): string => $type === 'password' || $type === 'number' || $clearable ? ' 35px' : '10px'};
         border-radius: ${theme.materialDesign.borderRadius.default};
         background: ${theme.colors.transparent};
@@ -207,6 +240,12 @@ const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $
     &:focus-within {
         border: ${theme.colors.primary} solid ${({ $variantStyle }) => $variantStyle.borderSize}px;
         color: ${theme.colors.primary};
+    }
+
+    &:focus-within label {
+        color: ${theme.colors.primary};
+        /* transform: translateY(0);
+        clip-path: inset(0); */
     }
 `
 const Hide = styled.div`
@@ -231,10 +270,8 @@ const ClearButton = styled.div`
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    /* background-color: ${theme.colors.greyLight}; */
     transition: all 250ms;
     &:hover {
-        /* background-color: ${theme.colors.error}; */
         color: ${theme.colors.error};
     }
 `;
