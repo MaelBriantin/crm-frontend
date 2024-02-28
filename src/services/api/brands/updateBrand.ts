@@ -8,7 +8,7 @@ import { CallToastProps } from '../../../contexts/global/ToastContext';
 export const updateBrand = async (updatedBrand: BrandType, callToast: CallToastProps, refreshBrands: { (): Promise<void>; (): void; }, closeModal: { (): void; (): void; }) => {
     let brandsResponse: BrandType[] = [];
     try {
-        const response: APIResponseFormat<BrandType> = await fetchAPI(`/api/brands/${updatedBrand.id}`, 'PUT', updatedBrand);
+        const response: APIResponseFormat<BrandType> = await fetchAPI(`/api/brands/${updatedBrand.id}`, 'PATCH', updatedBrand);
         handleAPIResponse<BrandType>(
             response,
             async (brands) => {
