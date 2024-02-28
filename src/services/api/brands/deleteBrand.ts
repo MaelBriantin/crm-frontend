@@ -3,7 +3,7 @@ import { fetchAPI, handleAPIResponse } from '../fetchApi.config';
 import { APIResponseFormat } from '../../../types/FetchTypes';
 import { CallToastProps } from '../../../contexts/global/ToastContext';
 
-export const deleteBrand = async (brand: BrandType, callToast: CallToastProps, refreshBrands: { (): Promise<void>; (): void; }, closeModal: { (): void; (): void; }) => {
+export const deleteBrand = async (brand: BrandType, callToast: CallToastProps, refreshBrands: { (): Promise<void>; (): void; }, closeModal?: { (): void; (): void; }) => {
     let brandsResponse: BrandType[] = [];
     try {
         const response: APIResponseFormat<BrandType> = await fetchAPI(`/api/brands/${brand.id}`, 'DELETE');
@@ -13,7 +13,7 @@ export const deleteBrand = async (brand: BrandType, callToast: CallToastProps, r
                 brandsResponse = brands as BrandType[];
                 await refreshBrands();
                 callToast('success', `La marque ${brand.name} a bien été supprimée.`, 3000);
-                closeModal();
+                closeModal && closeModal();
             },
             (error) => {
                 console.error(error.message);
