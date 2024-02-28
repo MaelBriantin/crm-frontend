@@ -79,10 +79,11 @@ const RowActions = styled.div<{$isHovered: boolean | undefined}>`
 `;
 
 const RowActionIcon = styled.div<{$color: string | undefined}>`
+        font-size: ${theme.fonts.size.P1};
         cursor: pointer;
         transition: all 250ms;
         &:hover {
-            transform: scale(1.2);
+            // transform: scale(1.2);
             color: ${({ $color }): string => $color || theme.colors.greyDark}
         }
 `;
