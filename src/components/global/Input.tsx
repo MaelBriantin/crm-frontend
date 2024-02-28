@@ -1,5 +1,5 @@
 import { theme } from "../../assets/themes";
-import { RefObject, useEffect, useRef, useState, ReactNode, ChangeEvent, useCallback } from "react";
+import { RefObject, useEffect, useRef, useState, ReactNode, ChangeEvent, useCallback, forwardRef, useImperativeHandle } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import styled, { css } from "styled-components";
 import { getVariantStyle } from "../../utils/inputUtils";
@@ -12,7 +12,7 @@ type VariantStyleType = {
     textColor: string;
 };
 
-export const Input = (
+export const Input = forwardRef((
     props: {
         clearable?: boolean,
         placeholder: string,
@@ -27,7 +27,7 @@ export const Input = (
         textColor?: string,
         onChange: (e: ChangeEvent<HTMLInputElement>) => void;
         label?: string;
-    }) => {
+    }, ref) => {
     const {
         placeholder,
         clearable = false,
@@ -74,6 +74,14 @@ export const Input = (
             setCount(value as number);
         }
     }, [type, value]);
+
+    useImperativeHandle(ref, () => ({
+        focus: () => {
+            if (inputRef.current) {
+                inputRef.current.focus();
+            }
+        }
+    }));
 
     const variantStyle = getVariantStyle(variant, textColor);
 
@@ -159,7 +167,7 @@ export const Input = (
             />
         </InputStyle>
     )
-}
+});
 
 const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $variantStyle: VariantStyleType, $clearable: boolean, $label: boolean, $value: boolean }>`
 
