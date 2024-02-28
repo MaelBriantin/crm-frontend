@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState, ChangeEvent, useEffect } from 'react';
+import { useState, ChangeEvent, useEffect, useRef } from 'react';
 import { Button, Chip, Input } from '../global';
 import { VscAdd, VscClose } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
@@ -24,9 +24,19 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     const { closeModal, setDisableClose } = useModal();
     const { showDeleteAlert, isOpenDeleteAlert } = useDeleteAlert();
 
+    const firstInputRef = useRef<HTMLInputElement>(null);
+
     useEffect(() => {
         setDisableClose(saving || loadingSectors);
     }, [saving, setDisableClose, loadingSectors]);
+
+    useEffect(() => {
+        if (firstInputRef.current) {
+            setTimeout(() => {
+                firstInputRef.current?.focus();
+            }, 250);
+        }
+    }, []);
 
     useKeyboardShortcut({
         'Escape': () => {
@@ -37,7 +47,8 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         }
     });
 
-    const handleSave = async () => {
+    const handleSave = async (e: React.FormEvent) => {
+        e.preventDefault();
         if (sectorForm.name !== '' && sectorForm.postcodes.length > 0) {
             setSaving(true);
             await createSector(sectorForm as SectorType, callToast, refreshSectors, closeModal);
@@ -59,7 +70,8 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         }
     }
 
-    const handleUpdate = async () => {
+    const handleUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
         if (sectorForm && sectorForm.postcodes.length > 0 && sectorForm.name !== '') {
             setSaving(true);
             await updateSector(sectorForm as SectorType, callToast, refreshSectors, closeModal);
@@ -76,6 +88,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
             setSectorForm({ ...sectorForm, postcodes: [...sectorForm.postcodes, newPostcode] });
             setNewPostcode({ postcode: '', city: '' });
         }
+        firstInputRef.current?.focus();
     }
 
     const removeFromPostcodes = (postcode: string) => {
@@ -106,9 +119,10 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         || isOpenDeleteAlert;
 
     return (
-        <Form>
+        <Form onSubmit={sector ? handleUpdate : handleSave}>
             <InputSection>
                 <Input
+                    ref={firstInputRef}
                     label='Nom du secteur'
                     type='text'
                     placeholder='Nom du secteur'
@@ -173,7 +187,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     );
 };
 
-const Form = styled.div`
+const Form = styled.form`
     display: flex;
     flex-direction: column;
     align-items: flex-start;

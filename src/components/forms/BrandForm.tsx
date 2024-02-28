@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { BrandType, emptyBrand } from "../../types/BrandTypes";
 import styled from "styled-components";
 import { Chip, Input, Textarea, Button, Note } from "../global";
@@ -9,7 +9,6 @@ import { theme } from "../../assets/themes";
 import { deepCompare } from "../../utils/helpers/spells";
 import { DiscreteButton } from "../global/DiscreteButton";
 import { createBrand, deleteBrand, updateBrand } from "../../services/api/brands";
-import { generateSKUCode } from "../../utils/brandUtils";
 
 type BrandFormProps = {
     brand?: BrandType;
@@ -23,23 +22,20 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
     const { closeModal, setDisableClose } = useModal();
     const { callToast } = useToast();
     const { showDeleteAlert, isOpenDeleteAlert } = useDeleteAlert();
+    
+    const firstInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         setDisableClose(saving || loadingBrands);
     }, [saving, setDisableClose, loadingBrands]);
 
     useEffect(() => {
-        if (brand) return;
-        const timeoutId = setTimeout(() => {
-            if(brandForm.name.length < 3) {
-                setBrandForm(prevState => ({ ...prevState, sku_code: '' }));
-                return;
-            }
-            const skuCode = generateSKUCode(brandForm.name);
-            setBrandForm(prevState => ({ ...prevState, sku_code: skuCode }));
-        }, 200);
-        return () => clearTimeout(timeoutId);
-    }, [brandForm.name, brand]);
+        if (firstInputRef.current) {
+            setTimeout(() => {
+                firstInputRef.current?.focus();
+            }, 250);
+        }
+    }, []);
 
     useKeyboardShortcut({
         'Escape': () => {
@@ -50,21 +46,21 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
         }
     });
 
-    const save = async (e: { preventDefault: () => void; }) => {
+    const save = async (e: React.FormEvent) => {
         e.preventDefault();
         setSaving(true);
         !disableSave && await createBrand(brandForm, callToast, refreshBrands, closeModal);
         setSaving(false);
     }
 
-    const update = async (e: { preventDefault: () => void; }) => {
+    const update = async (e: React.FormEvent) => {
         e.preventDefault();
         setSaving(true);
         !disableSave && await updateBrand(brandForm, callToast, refreshBrands, closeModal);
         setSaving(false);
     }
 
-    const handleDeleteSector = async () => {
+    const handleDeleteBrand = async () => {
         if (brandForm.id) {
             setSaving(true);
             await deleteBrand(brand as BrandType, callToast, refreshBrands, closeModal);
@@ -75,7 +71,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
     const handleDeleteAlert = () => {
         const message = `Êtes-vous sûr de vouloir supprimer la marque ${brand?.name} ?
         <br>Cette action est définitive et entrainera la perte de toutes les données produits associées.`
-        showDeleteAlert(message, handleDeleteSector);
+        showDeleteAlert(message, handleDeleteBrand);
     }
 
     const disableSave =
@@ -85,7 +81,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
             : brandForm.name.length < 3 || brandForm.address.length === 0 || brandForm.postcode.length < 5 || Number(brandForm.postcode) < 0 || brandForm.city.length === 0 || isOpenDeleteAlert;
 
     return (
-        <Container onSubmit={save}>
+        <Container onSubmit={brand ? update : save}>
             {brand &&
                 <Note
                     message="Attention, afin de préserver l'intégrité des données produits, modifier le nom de la marque ne modifiera pas le code SKU associé."
@@ -95,6 +91,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                 />}
             <BrandName $brand={!!brand}>
                 <Input
+                    ref={firstInputRef}
                     label="Nom"
                     width={`${brandForm.sku_code != '' ? '350px' : '444px'}`}
                     type="text"
