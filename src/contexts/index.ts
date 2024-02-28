@@ -2,6 +2,7 @@
 export { useModal, ModalProvider } from './global/ModalContext';
 export { useToast, ToastProvider } from './global/ToastContext';
 export { useAppLoading, AppLoadingProvider } from './global/AppLoadingContext';
+export { useDeleteAlert, DeleteAlertProvider } from './global/DeleteAlertContext';
 
 // auth contexts
 export { useAuth, AuthProvider } from './auth/AuthContext';
