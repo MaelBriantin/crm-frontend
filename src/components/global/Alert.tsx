@@ -32,7 +32,7 @@ export const Alert: React.FC<AlertContentTypes> = ({ type, absolute, position = 
 
     return (
         <Container $close={close}>
-            <AlertStyle $type={type} $absolute={{ absolute, position }} $animation={{ openAnimation, closeAnimation }}>
+            <AlertStyle $close={close} $type={type} $absolute={{ absolute, position }} $animation={{ openAnimation, closeAnimation }}>
                 {children}
             </AlertStyle>
         </Container>
@@ -83,6 +83,50 @@ const ContainerDisplayAnimationBottom = keyframes`
     }
 `;
 
+const AbsoluteContainerHideAnimationTop = keyframes`
+    from {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+    to {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+`;
+
+const AbsoluteContainerHideAnimationBottom = keyframes`
+    from {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+    to {
+        transform: translate(-50%, 100%);
+        opacity: 0;
+    }
+`;
+
+const ContainerHideAnimationTop = keyframes`
+    from {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+    to {
+        transform: translate(0, -100%);
+        opacity: 0;
+    }
+`;
+
+const ContainerHideAnimationBottom = keyframes`
+    from {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+    to {
+        transform: translate(0, 100%);
+        opacity: 0;
+    }
+`;
+
 const BackgroundFadeIn = keyframes`
     from {
         background: rgba(0, 0, 0, 0);
@@ -117,7 +161,7 @@ const Container = styled.div<{ $close: boolean | undefined }>`
     background: rgba(0, 0, 0, 0.1);
 `;
 
-const AlertStyle = styled.div<{ $type: string, $absolute: { absolute: boolean | undefined, position: string }, $animation: { openAnimation: boolean, closeAnimation: boolean } }>`
+const AlertStyle = styled.div<{ $type: string, $absolute: { absolute: boolean | undefined, position: string }, $animation: { openAnimation: boolean, closeAnimation: boolean }, $close: boolean | undefined }>`
     display: flex;
     ${({ $absolute }) => $absolute?.absolute && css`
     position: absolute;
@@ -137,20 +181,20 @@ const AlertStyle = styled.div<{ $type: string, $absolute: { absolute: boolean | 
     font-size: ${theme.fonts.size.P0};
     text-align: start;
 
-    ${({ $animation, $absolute }) =>
-        $animation.openAnimation && $absolute.absolute
-            ? css`animation: ${$absolute.position === 'top' ? AbsoluteContainerDisplayAnimationTop : AbsoluteContainerDisplayAnimationBottom} 250ms ease-in-out forwards;`
-            : $animation.closeAnimation && $absolute.absolute
-                ? css`animation: ${$absolute.position === 'top' ? AbsoluteContainerDisplayAnimationTop : AbsoluteContainerDisplayAnimationBottom} 250ms ease-in-out reverse forwards;`
+    ${({ $animation, $absolute, $close }) =>
+        $animation.openAnimation && !$close && $absolute.absolute
+            ? css`animation: ${$absolute.position === 'top' ? AbsoluteContainerDisplayAnimationTop : AbsoluteContainerDisplayAnimationBottom} 150ms ease-in-out forwards;`
+            : $close && $absolute.absolute
+                ? css`animation: ${$absolute.position === 'top' ? AbsoluteContainerHideAnimationTop : AbsoluteContainerHideAnimationBottom} 150ms ease-in-out forwards;`
                 : ''};
 
-    ${({ $animation, $absolute }) =>
-        $animation.openAnimation && !$absolute.absolute
-            ? css`animation: ${$absolute.position === 'top' ? ContainerDisplayAnimationTop : ContainerDisplayAnimationBottom} 250ms ease-in-out forwards;`
-            : $animation.closeAnimation && $absolute.absolute
-                ? css`animation: ${$absolute.position === 'top' ? ContainerDisplayAnimationTop : ContainerDisplayAnimationBottom} 250ms ease-in-out reverse forwards;`
+    ${({ $animation, $absolute, $close }) =>
+        $animation.openAnimation && !$close && !$absolute.absolute
+            ? css`animation: ${$absolute.position === 'top' ? ContainerDisplayAnimationTop : ContainerDisplayAnimationBottom} 150ms ease-in-out forwards;`
+            : $close && !$absolute.absolute
+                ? css`animation: ${$absolute.position === 'top' ? ContainerHideAnimationTop : ContainerHideAnimationBottom} 150ms ease-in-out forwards;`
                 : ''};
 
-    transition: all 250ms;
+    transition: all 150ms;
 `;
 
