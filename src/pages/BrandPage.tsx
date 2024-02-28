@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useBrands, useModal } from '../contexts';
+import { useBrands, useDeleteAlert, useModal, useToast } from '../contexts';
 import { isEmpty } from '../utils/helpers/spells';
 import { DataTable } from '../components/DataTable';
 import { Loader } from '../components/global/Loader';
@@ -9,8 +9,9 @@ import { deepCopy } from '../utils/helpers/spells';
 import { VscJersey } from "react-icons/vsc";
 import { BrandForm } from '../components/forms/BrandForm';
 import { BrandType } from '../types/BrandTypes';
-import { VscEdit } from "react-icons/vsc";
+import { VscEdit, VscChromeClose } from "react-icons/vsc";
 import { theme } from '../assets/themes';
+import { deleteBrand } from '../services/api/brands';
 
 export const BrandPage = () => {
 
@@ -19,6 +20,8 @@ export const BrandPage = () => {
 
     const { showModal } = useModal();
     const { refreshBrands, brands, loadingBrands } = useBrands();
+    const { showDeleteAlert } = useDeleteAlert();
+    const { callToast } = useToast();
 
     useEffect(() => {
         isEmpty(brands) && refreshBrands();
@@ -32,6 +35,17 @@ export const BrandPage = () => {
     const editBrand = (row: RowType) => {
         const brand = brands.find((brand: BrandType) => brand.id === row.id);
         showModal(<BrandForm brand={brand as BrandType} />, 'Modifier une marque');
+    }
+
+    const handleDeleteAlert = (row: RowType) => {
+        const brand = brands.find((brand: BrandType) => brand.id === row.id);
+        const message = `Êtes-vous sûr de vouloir supprimer la marque ${brand?.name} ?
+        <br>Cette action est définitive et entrainera la perte de toutes les données produits associées.`
+        showDeleteAlert(message, () => handleDeleteSector(brand as BrandType));
+    }
+
+    const handleDeleteSector = async (brand: BrandType) => {
+        await deleteBrand(brand, callToast, refreshBrands);
     }
 
     const columns = [
@@ -64,7 +78,7 @@ export const BrandPage = () => {
             text: 'Téléphone',
             value: 'contact_phone',
             sortable: false,
-            width: '15%'
+            width: '18%'
         },
         {
             text: '',
@@ -72,10 +86,10 @@ export const BrandPage = () => {
             type: 'rowActions',
             sortable: false,
             actions: [
-                { icon: <VscEdit />, onClick: (row: RowType) => editBrand(row), color: theme.colors.primary },
-                // { icon: <VscChromeClose />, onClick: (row: RowType) => console.log(row), color: theme.colors.error }
+                { icon: <VscEdit />, onClick: (row: RowType) => editBrand(row), color: theme.colors.blue },
+                { icon: <VscChromeClose />, onClick: (row: RowType) => handleDeleteAlert(row as BrandType), color: theme.colors.error }
             ],
-            width: '5%'
+            width: '2%'
         }
     ];
 

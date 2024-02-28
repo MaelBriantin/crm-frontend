@@ -5,11 +5,12 @@ import { Loader } from '../components/global/Loader.tsx';
 import { DataTable } from '../components/DataTable';
 import { RowDataType, RowType } from '../types/DataTableTypes.ts';
 import { SectorType } from '../types/SectorTypes.ts';
-import { useSectors, useModal, useAppLoading } from '../contexts';
+import { useSectors, useModal, useAppLoading, useDeleteAlert, useToast } from '../contexts';
 import { SectorForm } from '../components/forms/SectorForm.tsx';
 import { LiaMapMarkedAltSolid } from "react-icons/lia";
-import { VscEdit } from "react-icons/vsc";
+import { VscEdit, VscChromeClose } from "react-icons/vsc";
 import { theme } from '../assets/themes/index.ts';
+import { deleteSector } from '../services/api/sectors/deleteSector.ts';
 
 export const SectorPage: React.FC = () => {
 
@@ -19,11 +20,25 @@ export const SectorPage: React.FC = () => {
     const { sectors, refreshSectors, loadingSectors } = useSectors();
     const { showModal } = useModal();
     const { setAppLoading } = useAppLoading();
+    const { showDeleteAlert } = useDeleteAlert();
+    const { callToast } = useToast();
 
     useEffect(() => {
         isEmpty(sectors) && refreshSectors();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const handleDeleteAlert = (row: RowType) => {
+        const sector = sectors.find((sector: SectorType) => sector.id === row.id);
+        const message = `Êtes-vous sûr de vouloir supprimer le secteur ${sector?.name} ?
+        <br>Cette action est irréversible et entrainera la perte de toutes les données statistiques associées.`
+        showDeleteAlert(message, () => handleDeleteSector(sector as SectorType));
+    }
+
+    const handleDeleteSector = async (sector: SectorType) => {
+        await deleteSector(sector, callToast, refreshSectors);
+    }
+
 
     const columns = [
         {
@@ -55,7 +70,7 @@ export const SectorPage: React.FC = () => {
             sortable: false,
             type: 'chips',
             limit: 5,
-            width: '55%'
+            width: '58%'
         },
         {
             text: '',
@@ -63,10 +78,10 @@ export const SectorPage: React.FC = () => {
             type: 'rowActions',
             sortable: false,
             actions: [
-                { icon: <VscEdit />, onClick: (row: RowType) => handleDoubleClick(row), color: theme.colors.primary },
-                // { icon: <VscChromeClose />, onClick: (row: RowType) => console.log(row), color: theme.colors.error }
+                { icon: <VscEdit />, onClick: (row: RowType) => handleDoubleClick(row), color: theme.colors.blue },
+                { icon: <VscChromeClose />, onClick: (row: RowType) => handleDeleteAlert(row), color: theme.colors.error }
             ],
-            width: '5%'
+            width: '2%'
         }
     ];
 

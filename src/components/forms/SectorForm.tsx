@@ -4,8 +4,7 @@ import { Button, Chip, Input } from '../global';
 import { VscAdd, VscClose } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
 import { createSector, deleteSector, updateSector } from '../../services/api/sectors';
-import { useSectors, useToast, useModal } from '../../contexts';
-import { DeleteAlert } from './DeleteAlert';
+import { useSectors, useToast, useModal, useDeleteAlert } from '../../contexts';
 import { SectorType, emptySector } from '../../types/SectorTypes';
 import { deepCompare } from '../../utils/helpers/spells';
 import { DiscreteButton } from '../global/DiscreteButton';
@@ -19,21 +18,19 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     const [sectorForm, setSectorForm] = useState(sector || emptySector as SectorType);
     const [newPostcode, setNewPostcode] = useState({ postcode: '', city: '' });
     const [saving, setSaving] = useState(false);
-    const [deleteAlert, setDeleteAlert] = useState(false);
 
     const { callToast } = useToast();
-
     const { loadingSectors, refreshSectors } = useSectors();
-
     const { closeModal, setDisableClose } = useModal();
+    const { showDeleteAlert, isOpenDeleteAlert } = useDeleteAlert();
 
     useEffect(() => {
-        setDisableClose(deleteAlert || saving || loadingSectors);
-    }, [deleteAlert, saving, setDisableClose, loadingSectors]);
+        setDisableClose(saving || loadingSectors);
+    }, [saving, setDisableClose, loadingSectors]);
 
     useKeyboardShortcut({
         'Escape': () => {
-            if (saving || deleteAlert || loadingSectors) {
+            if (saving || loadingSectors || isOpenDeleteAlert) {
                 return;
             }
             closeModal();
@@ -48,8 +45,13 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         }
     }
 
+    const handleDeleteAlert = () => {
+        const message = `Êtes-vous sûr de vouloir supprimer le secteur ${sector?.name} ?
+                        <br>Cette action est irréversible et entrainera la perte de toutes les données statistiques associées.`
+        showDeleteAlert(message, handleDeleteSector);
+    }
+
     const handleDeleteSector = async () => {
-        setDeleteAlert(false);
         if (sectorForm.id) {
             setSaving(true);
             await deleteSector({ id: sectorForm.id, name: sectorForm.name } as SectorType, callToast, refreshSectors, closeModal);
@@ -90,7 +92,8 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         || sectorForm.name === ''
         || sectorForm.postcodes.length === 0
         || (sector && compareSectors(sector, sectorForm))
-        || deleteAlert;
+        || loadingSectors
+        || isOpenDeleteAlert;
 
     const disableAddPostcode =
         saving 
@@ -99,7 +102,8 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         || sectorForm.postcodes.find(e => e.postcode === newPostcode.postcode && e.city === newPostcode.city) !== undefined
         || newPostcode.postcode.length !== 5
         || Number(newPostcode.postcode) < 0
-        || deleteAlert;
+        || loadingSectors
+        || isOpenDeleteAlert;
 
     return (
         <Form>
@@ -140,7 +144,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
                 <ChipContainer>
                     {sectorForm.postcodes.map((e) => (
                         <Chip
-                            disabled={deleteAlert || saving}
+                            disabled={isOpenDeleteAlert || saving}
                             key={e.postcode + e.city}
                             endIcon={<VscClose />}
                             iconColor={theme.colors.error}
@@ -154,9 +158,9 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
                 {sector &&
                     <DiscreteButton
                         value='supprimer'
-                        onClick={() => setDeleteAlert(!deleteAlert)}
+                        onClick={handleDeleteAlert}
                         color={theme.colors.error}
-                        disabled={deleteAlert}
+                        disabled={isOpenDeleteAlert}
                     />}
                 <Button
                     disabled={disableSave}
@@ -165,13 +169,6 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
                     onClick={sector ? handleUpdate : handleSave}
                 />
             </SaveAction>
-            {deleteAlert &&
-                <DeleteAlert
-                    message={`Êtes-vous sûr de vouloir supprimer le secteur ${sector?.name} ?
-                            <br>Cette action est irréversible et entrainera la perte de toutes les données statistiques associées.`}
-                    confirmAction={handleDeleteSector}
-                    cancelAction={() => setDeleteAlert(false)}
-                />}
         </Form >
     );
 };

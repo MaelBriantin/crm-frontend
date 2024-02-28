@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import { BrandType, emptyBrand } from "../../types/BrandTypes";
 import styled from "styled-components";
 import { Chip, Input, Textarea, Button, Note } from "../global";
-import { useModal, useBrands, useToast } from "../../contexts";
+import { useModal, useBrands, useToast, useDeleteAlert } from "../../contexts";
 import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
 import { TbAlertSquare } from "react-icons/tb";
 import { theme } from "../../assets/themes";
 import { deepCompare } from "../../utils/helpers/spells";
-import { DeleteAlert } from "./DeleteAlert";
 import { DiscreteButton } from "../global/DiscreteButton";
 import { createBrand, deleteBrand, updateBrand } from "../../services/api/brands";
 import { generateSKUCode } from "../../utils/brandUtils";
@@ -18,16 +17,16 @@ type BrandFormProps = {
 
 export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
     const [brandForm, setBrandForm] = useState(brand || emptyBrand as BrandType);
-    const [deleteAlert, setDeleteAlert] = useState(false);
     const [saving, setSaving] = useState(false);
 
     const { refreshBrands, loadingBrands } = useBrands();
     const { closeModal, setDisableClose } = useModal();
     const { callToast } = useToast();
+    const { showDeleteAlert, isOpenDeleteAlert } = useDeleteAlert();
 
     useEffect(() => {
-        setDisableClose(deleteAlert || saving || loadingBrands);
-    }, [deleteAlert, saving, setDisableClose, loadingBrands]);
+        setDisableClose(saving || loadingBrands);
+    }, [saving, setDisableClose, loadingBrands]);
 
     useEffect(() => {
         if (brand) return;
@@ -38,13 +37,13 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
             }
             const skuCode = generateSKUCode(brandForm.name);
             setBrandForm(prevState => ({ ...prevState, sku_code: skuCode }));
-        }, 1000);
+        }, 200);
         return () => clearTimeout(timeoutId);
     }, [brandForm.name, brand]);
 
     useKeyboardShortcut({
         'Escape': () => {
-            if (saving || deleteAlert || loadingBrands) {
+            if (saving || loadingBrands || isOpenDeleteAlert) {
                 return;
             }
             closeModal();
@@ -66,7 +65,6 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
     }
 
     const handleDeleteSector = async () => {
-        setDeleteAlert(false);
         if (brandForm.id) {
             setSaving(true);
             await deleteBrand(brand as BrandType, callToast, refreshBrands, closeModal);
@@ -74,11 +72,17 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
         }
     }
 
+    const handleDeleteAlert = () => {
+        const message = `Êtes-vous sûr de vouloir supprimer la marque ${brand?.name} ?
+        <br>Cette action est définitive et entrainera la perte de toutes les données produits associées.`
+        showDeleteAlert(message, handleDeleteSector);
+    }
+
     const disableSave =
         brand
-            ? deepCompare(brand as BrandType, brandForm, ['name', 'contact_name', 'contact_email', 'contact_phone', 'notes'])
-            || brandForm.name.length === 0 || brandForm.address.length === 0 || brandForm.postcode.length < 5 || Number(brandForm.postcode) < 0 || brandForm.city.length === 0
-            : brandForm.name.length === 0 || brandForm.address.length === 0 || brandForm.postcode.length < 5 || Number(brandForm.postcode) < 0 || brandForm.city.length === 0;
+            ? deepCompare(brand as BrandType, brandForm)
+            || brandForm.name.length < 3 || brandForm.address.length === 0 || brandForm.postcode.length < 5 || Number(brandForm.postcode) < 0 || brandForm.city.length === 0 || isOpenDeleteAlert
+            : brandForm.name.length < 3 || brandForm.address.length === 0 || brandForm.postcode.length < 5 || Number(brandForm.postcode) < 0 || brandForm.city.length === 0 || isOpenDeleteAlert;
 
     return (
         <Container onSubmit={save}>
@@ -175,9 +179,9 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                 {brand &&
                     <DiscreteButton
                         value='supprimer'
-                        onClick={() => setDeleteAlert(!deleteAlert)}
+                        onClick={handleDeleteAlert}
                         color={`${theme.colors.error}`}
-                        disabled={deleteAlert}
+                        disabled={isOpenDeleteAlert}
                     />}
                 <Button
                     loading={saving || loadingBrands}
@@ -186,13 +190,6 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                     onClick={brand ? update : save}
                 />
             </SaveAction>
-            {deleteAlert &&
-                <DeleteAlert
-                    message={`Êtes-vous sûr de vouloir supprimer la marque ${brand?.name} ?
-                            <br>Cette action est définitive et entrainera la perte de toutes les données produits associées.`}
-                    confirmAction={handleDeleteSector}
-                    cancelAction={() => setDeleteAlert(false)}
-                />}
         </Container>
     );
 }
