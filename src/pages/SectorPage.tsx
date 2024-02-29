@@ -62,27 +62,26 @@ export const SectorPage: React.FC = () => {
             value: 'postcodes_list',
             sortable: false,
             type: 'chips',
-            limit: 4,
-            width: '50%'
+            limit: 6,
+            width: '60%'
         },
+        // {
+        //     text: 'Nombre de communes',
+        //     value: 'postcodes_count',
+        //     sortable: true,
+        //     type: 'number',
+        //     width: '15%',
+        //     align: 'center'
+        //     // color: [
+        //     //     { value: '10', text: 'white', background: 'purple' }
+        //     // ]
+        // },
         {
-            text: 'Nombre de communes',
-            value: 'postcodes_count',
-            sortable: true,
-            type: 'number',
-            width: '15%',
-            align: 'center'
-            // color: [
-            //     { value: '10', text: 'white', background: 'purple' }
-            // ]
-        },
-        {
-            text: 'Nombre de clients',
+            text: 'Clients',
             value: 'customers_count',
             sortable: true,
             type: 'number',
-            width: '12%',
-            align: "center"
+            width: '10%',
         },
         {
             text: '',
