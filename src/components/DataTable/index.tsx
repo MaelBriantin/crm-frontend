@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { styled } from 'styled-components';
 import { theme } from '../../assets/themes';
 import { sortBy, extractBetween } from '../../utils/helpers/spells';
@@ -56,6 +56,10 @@ export const DataTable = <T extends RowDataType>({
     } else {
         maxPageNumber = 1;
     }
+
+    useEffect(() => {
+        rowsPerPage === Infinity && setPage(1);
+    }, [rowsPerPage]);
 
     const handleSort = (column: ColumnProps) => {
         if (column.sortable) {
