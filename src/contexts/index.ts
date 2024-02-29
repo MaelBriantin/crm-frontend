@@ -13,5 +13,8 @@ export { useSectors, SectorsProvider } from './data/sectors';
 // brand contexts
 export { useBrands, BrandsProvider } from './data/brands';
 
+// customer contexts
+export { useCustomers, CustomersProvider } from './data/customers';
+
 // use all contexts
 export { ContextProvider } from './ContextProvider';
