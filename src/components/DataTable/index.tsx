@@ -37,7 +37,7 @@ export const DataTable = <T extends RowDataType>({
     const [searchedValue, setSearchedValue] = React.useState<string | number>('');
 
     let dataNumber = data.length;
-    
+
     if (searchResults.length > 0) {
         dataNumber = searchResults.length;
     }
@@ -88,15 +88,15 @@ export const DataTable = <T extends RowDataType>({
                     onClick={onClickTopBar ? onClickTopBar : () => undefined}
                 />
             }
-            <Table>
-                {(sortedData.length > 0) &&
+            {(sortedData.length > 0) &&
+                <Table>
                     <DataTableHeader
                         columns={columns}
                         sort={sort}
                         sortDirection={sortDirection || false}
                         handleSort={handleSort}
-                    />}
-                {(sortedData.length > 0) &&
+                    />
+
                     <DataTableBody
                         searchedValue={searchedValue}
                         data={dataOnPage as RowType[]}
@@ -105,20 +105,26 @@ export const DataTable = <T extends RowDataType>({
                         onDoubleClickOnRow={onDoubleClickOnRow}
                         selectable={selectable}
                         hoverable={hoverable}
-                    />}
-                {loading &&
-                    <Loader transparent />}
-                {(isEmpty(sortedData) && searchedValue === '' && !loading) &&
+                    />
+                </Table>}
+            {loading &&
+                <FakeTableContainer>
+                    <Loader transparent />
+                </FakeTableContainer>}
+            {(isEmpty(sortedData) && searchedValue === '' && !loading) &&
+                <FakeTableContainer>
                     <EmptyMessage>
                         {emptyMessage ? emptyMessage : 'Désolé, il semblerait que nous n\'ayons rien à afficher ici...'}
                     </EmptyMessage>
-                }
-                {(isEmpty(sortedData) && searchedValue !== '' && !loading) &&
+                </FakeTableContainer>
+            }
+            {(isEmpty(sortedData) && searchedValue !== '' && !loading) &&
+                <FakeTableContainer>
                     <EmptyMessage>
                         {'Aucun résultat trouvé pour cette recherche'}
                     </EmptyMessage>
-                }
-            </Table>
+                </FakeTableContainer>
+            }
             {sortedData.length > 0 &&
                 <DataTableActions
                     page={page}
@@ -139,6 +145,20 @@ const Container = styled.div`
     width: 100%;
     height: 100%;
     overflow: hidden;
+`;
+
+const FakeTableContainer = styled.div`
+    position: relative;
+    display: block;
+    min-width: 100%;
+    table-layout: fixed;
+    height: 85%;
+    overflow: auto;
+    margin: auto;
+    overflow: auto;
+    border-collapse: collapse;
+    border: 1px solid #f9f9f9;
+    border-radius: ${theme.materialDesign.borderRadius.rounded};
 `;
 
 const Table = styled.table`
