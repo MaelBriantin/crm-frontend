@@ -3,6 +3,7 @@ import { theme } from '../../assets/themes';
 import React from 'react';
 
 type TextareaProps = {
+    name?: string;
     width?: string;
     maxWidth?: string;
     height?: string;
@@ -16,6 +17,7 @@ type TextareaProps = {
 };
 
 export const Textarea: React.FC<TextareaProps> = ({
+    name,
     width,
     maxWidth,
     height,
@@ -49,6 +51,7 @@ export const Textarea: React.FC<TextareaProps> = ({
         <TextareaContainer>
             {label && <Label $focusOnTextarea={isFocused} $value={!!value}>{label}</Label>}
             <StyledTextarea
+                name={name}
                 maxLength={maxLength}
                 ref={textareaRef}
                 $width={width}

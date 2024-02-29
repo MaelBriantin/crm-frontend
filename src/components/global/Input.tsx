@@ -14,6 +14,7 @@ type VariantStyleType = {
 
 export const Input = forwardRef((
     props: {
+        name?: string,
         clearable?: boolean,
         placeholder: string,
         icon?: ReactNode,
@@ -29,6 +30,7 @@ export const Input = forwardRef((
         label?: string;
     }, ref) => {
     const {
+        name,
         placeholder,
         clearable = false,
         icon,
@@ -153,6 +155,7 @@ export const Input = forwardRef((
                 )
             }
             <input
+                name={name}
                 ref={inputRef}
                 maxLength={maxLength}
                 max={type === 'number' ? max : undefined}
