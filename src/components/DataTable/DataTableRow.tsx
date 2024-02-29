@@ -36,7 +36,9 @@ export const DataTableRow = ({ row, rowIndex, columns, onClickOnRow, onDoubleCli
                     row={row}
                     column={column}
                     columnWidth={column?.width}
+                    columnMaxWidth={column?.maxWidth}
                     columnIndex={columnIndex}
+                    align={column?.align}
                     color={getColor(column.color, String(row[column.value]))}
                     arrayLimit={column.limit}
                 />

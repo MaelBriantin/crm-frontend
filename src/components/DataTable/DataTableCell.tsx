@@ -6,11 +6,27 @@ import { DataTableCellProps, dataTableTypeList } from '../../types/DataTableType
 import { getRowValueAndHighlight } from '../../utils/dataTableUtils.ts';
 import { theme } from '../../assets/themes/index.ts';
 
-export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, columnWidth, columnIndex, color, searchedValue, arrayLimit = 4, isHovered }) => {
+export const DataTableCell: React.FC<DataTableCellProps> = ({ 
+        row, 
+        column, 
+        columnWidth, 
+        columnMaxWidth, 
+        columnIndex, 
+        color, 
+        searchedValue, 
+        arrayLimit = 4, 
+        isHovered,
+        align }) => {
 
     const { rowValue, highlight } = getRowValueAndHighlight(searchedValue, row[column.value], arrayLimit);
+    console.log(align)
     return (
-        <TableCell key={columnIndex} $columnWidth={columnWidth}>
+        <TableCell 
+            key={columnIndex} 
+            $columnWidth={columnWidth} 
+            $columnMaxWidth={columnMaxWidth}
+            $align={align}
+            >
             {(column.type === 'rowActions') && (
                 <RowActions $isHovered={isHovered}>
                     {column.actions?.map((action, index) => (
@@ -71,7 +87,8 @@ const RowActions = styled.div<{$isHovered: boolean | undefined}>`
     opacity: ${({ $isHovered }): string => $isHovered ? '1' : '0'};
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
+    gap: 6px;
     align-items: center;
     width: 100%;
     height: 100%;
@@ -92,10 +109,12 @@ const RowActionIcon = styled.div<{$color: string | undefined}>`
 `;
 
 
-const TableCell = styled.td<{ $columnWidth: string | undefined }>`
+const TableCell = styled.td<{ $columnWidth: string | undefined, $columnMaxWidth: string | undefined, $align: string | undefined }>`
     padding: 8px;
     width: ${(props) => props.$columnWidth || 'auto'};
+    max-width: ${(props) => props.$columnMaxWidth || 'auto'};
     border-bottom: 1px solid #f9f9f9;
+    text-align: ${(props) => props.$align ? props.$align : 'left'};
     vertical-align: middle;
     overflow: hidden;
     text-overflow: ellipsis;
