@@ -38,7 +38,10 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
         { value: '<', label: 'Inférieur' },
         { value: '>', label: 'Supérieur' },
     ]
-    const columnFilter = columns.map((column) => { return { value: column.value, label: column.text } });
+
+    const columnFilter = columns
+        .filter(column => column.type !== 'rowActions')
+        .map(column => { return { value: column.value, label: column.text } });
     columnFilter.unshift({ value: '', label: 'Tout' });
     columnFilter.map((column) => {
         column.label = `Dans ${column.label}`;
@@ -139,7 +142,7 @@ const fromUpToDown = keyframes`
   }
 `;
 
-const AdvancedSearchToggle = styled.div<{$activeAdvancedSearch: boolean}>`
+const AdvancedSearchToggle = styled.div<{ $activeAdvancedSearch: boolean }>`
     font-size: ${theme.fonts.size.P3};
     display: flex;
     align-items: center;
