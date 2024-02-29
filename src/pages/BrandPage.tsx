@@ -62,7 +62,8 @@ export const BrandPage = () => {
             text: 'Marque',
             value: 'name',
             sortable: true,
-            width: '1000px'
+            width: '1000px',
+            maxWidth: '250px',
         },
         {
             text: 'Contact',
