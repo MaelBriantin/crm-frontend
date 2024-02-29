@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useBrands, useDeleteAlert, useModal, useToast } from '../contexts';
 import { isEmpty } from '../utils/helpers/spells';
 import { DataTable } from '../components/DataTable';
-import { Loader } from '../components/global/Loader';
 import { RowDataType, RowType } from '../types/DataTableTypes';
 import styled from 'styled-components';
 import { deepCopy } from '../utils/helpers/spells';
@@ -98,24 +97,24 @@ export const BrandPage = () => {
 
     return (
         <Container>
-            {(isEmpty(brands) || loadingBrands) && <Loader transparent />}
-            {(!isEmpty(brands)) &&
-                <DataTable
-                    topBar
-                    searchbar
-                    iconTopBar={<VscJersey />}
-                    buttonValueTopBar='Ajouter une marque'
-                    onClickTopBar={newBrand}
-                    onDoubleClickOnRow={editBrand}
-                    hoverable
-                    emptyMessage={'Aucune marque trouvée'}
-                    columns={columns}
-                    data={deepCopy(brands) as RowDataType[]}
-                    sort={sort}
-                    setSort={setSort}
-                    sortDirection={sortDirection}
-                    setSortDirection={setSortDirection}
-                />}
+            <DataTable
+                topBar
+                searchbar
+                iconTopBar={<VscJersey />}
+                loading={loadingBrands}
+                buttonValueTopBar='Ajouter une marque'
+                onClickTopBar={newBrand}
+                onDoubleClickOnRow={editBrand}
+                hoverable
+                emptyMessage={'Aucune marque trouvée...'}
+                columns={columns}
+                data={deepCopy(brands) as RowDataType[]}
+                sort={sort}
+                setSort={setSort}
+                sortDirection={sortDirection}
+                setSortDirection={setSortDirection}
+            />
+
         </Container>
     );
 }
