@@ -101,7 +101,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     }
 
     const disableSave =
-        saving 
+        saving
         || sectorForm.name === ''
         || sectorForm.postcodes.length === 0
         || (sector && compareSectors(sector, sectorForm))
@@ -109,7 +109,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         || isOpenDeleteAlert;
 
     const disableAddPostcode =
-        saving 
+        saving
         || newPostcode.postcode === ''
         || newPostcode.city === ''
         || sectorForm.postcodes.find(e => e.postcode === newPostcode.postcode && e.city === newPostcode.city) !== undefined
@@ -119,19 +119,23 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         || isOpenDeleteAlert;
 
     return (
-        <Form onSubmit={sector ? handleUpdate : handleSave}>
+        <Form>
             <InputSection>
-                <Input
-                    ref={firstInputRef}
-                    label='Nom du secteur'
-                    type='text'
-                    placeholder='Nom du secteur'
-                    width='300px'
-                    value={sectorForm.name}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setSectorForm({ ...sectorForm, name: e.target.value })}
-                />
+                <form onSubmit={sector ? handleUpdate : handleSave}>
+                    <Input
+                        name='name'
+                        ref={firstInputRef}
+                        label='Nom du secteur'
+                        type='text'
+                        placeholder='Nom du secteur'
+                        width='300px'
+                        value={sectorForm.name}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setSectorForm({ ...sectorForm, name: e.target.value })}
+                    />
+                </form>
                 <CityForm noValidate onSubmit={handleAddPostcode}>
                     <Input
+                        name='postcode'
                         label='Code postal'
                         type='number'
                         noNegativeNumber
@@ -142,6 +146,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setNewPostcode({ ...newPostcode, postcode: e.target.value })}
                     />
                     <Input
+                        name='city'
                         label='Ville'
                         type='text'
                         placeholder='Ville'
@@ -187,7 +192,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     );
 };
 
-const Form = styled.form`
+const Form = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-start;

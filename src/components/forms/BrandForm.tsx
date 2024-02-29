@@ -91,6 +91,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                 />}
             <BrandName $brand={!!brand}>
                 <Input
+                    name="name"
                     ref={firstInputRef}
                     label="Nom"
                     width={`${brandForm.sku_code != '' ? '350px' : '444px'}`}
@@ -108,6 +109,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                 }
             </BrandName>
             <Input
+                name="address"
                 label="Adresse"
                 width="444px"
                 type="text"
@@ -117,6 +119,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
             />
             <BrandAddress>
                 <Input
+                    name="postcode"
                     label="Code postal"
                     width="140px"
                     type="number"
@@ -127,6 +130,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                     onChange={(e) => setBrandForm({ ...brandForm, postcode: e.target.value } as BrandType)}
                 />
                 <Input
+                    name="city"
                     label="Ville"
                     width="290px"
                     type="text"
@@ -136,6 +140,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                 />
             </BrandAddress>
             <Input
+                name="contact_name"
                 label="Contact"
                 width="444px"
                 type="text"
@@ -145,6 +150,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
             />
             <Contact>
                 <Input
+                    name="contact_email"
                     label="Email"
                     width="250px"
                     type="text"
@@ -153,6 +159,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                     onChange={(e) => setBrandForm({ ...brandForm, contact_email: e.target.value } as BrandType)}
                 />
                 <Input
+                    name="contact_phone"
                     label="Téléphone"
                     width="180px"
                     type="text"
@@ -162,6 +169,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                 />
             </Contact>
             <Textarea
+                name="notes"
                 label="Notes"
                 width="444px"
                 maxWidth="80vw"

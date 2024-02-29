@@ -48,6 +48,7 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
     return (
         <SearchbarContainer>
             <Input
+                name='search'
                 textColor={`${theme.colors.dark}`}
                 placeholder="Rechercher"
                 clearable={clearable}
