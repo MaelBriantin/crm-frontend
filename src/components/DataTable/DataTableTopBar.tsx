@@ -15,13 +15,15 @@ type DataTableTopBarProps<T> = {
     onClick: () => void;
     icon?: React.ReactElement | null;
     buttonValue?: string;
+    isAdvancedSearchEnabled: Dispatch<SetStateAction<boolean>>;
 };
 
-export const DataTableTopBar = <T extends RowDataType>({ withSearch = false, withAdvancedSearch = false, setSearchedValue, data, columns, onSearch, onClick, icon, buttonValue }: DataTableTopBarProps<T>): React.ReactElement => {
+export const DataTableTopBar = <T extends RowDataType>({ withSearch = false, withAdvancedSearch = false, setSearchedValue, data, columns, onSearch, onClick, icon, buttonValue, isAdvancedSearchEnabled }: DataTableTopBarProps<T>): React.ReactElement => {
     return (
         <Container $withSearch={withSearch}>
             {(withSearch || withAdvancedSearch) &&
                 <DataTableSearch
+                    isAdvancedSearchEnabled={isAdvancedSearchEnabled}
                     advancedSearch={withAdvancedSearch}
                     searchedValue={setSearchedValue}
                     data={data as T[]}

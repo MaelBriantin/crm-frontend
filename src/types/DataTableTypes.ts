@@ -93,4 +93,5 @@ export type DataTableSearchProps<T extends RowDataType> = {
   columns: ColumnProps[];
   clearable?: boolean;
   advancedSearch?: boolean;
+  isAdvancedSearchEnabled: Dispatch<SetStateAction<boolean>>;
 };

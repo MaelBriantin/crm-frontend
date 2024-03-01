@@ -9,7 +9,7 @@ import { DropdownValueType } from '../global/Dropdown';
 import { firstOf } from '../../utils/helpers/spells';
 import { VscListFilter } from "react-icons/vsc";
 
-export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searchedValue, columns, clearable = true, advancedSearch = false }: DataTableSearchProps<T>): React.ReactElement => {
+export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searchedValue, columns, clearable = true, advancedSearch = false, isAdvancedSearchEnabled }: DataTableSearchProps<T>): React.ReactElement => {
 
     const [search, setSearch] = useState<string>('');
     const [activeAdvancedSearch, setActiveAdvancedSearch] = React.useState<boolean>(false);
@@ -19,8 +19,9 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
 
     useEffect(() => {
         onSearch(advancedFilter(data, searchedColumn, searchedOperator, search, columns) as T[]);
-        searchedValue(searchedOperator === '' ? search : '');
-    }, [search, data, onSearch, searchedValue, columns, searchedColumn, searchedOperator]);
+        searchedValue((activeAdvancedSearch) ? search : '');
+        isAdvancedSearchEnabled(activeAdvancedSearch);
+    }, [search, data, onSearch, searchedValue, columns, searchedColumn, searchedOperator, activeAdvancedSearch, isAdvancedSearchEnabled]);
 
     const enableAdvancedSearch = () => {
         setSearchedColumn('');
