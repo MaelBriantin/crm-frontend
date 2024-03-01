@@ -6,6 +6,7 @@ import { useCustomers } from '../contexts/data/customers';
 import { isEmpty, deepCopy } from '../utils/helpers/spells';
 import { VscSmiley, VscEdit, VscChromeClose } from 'react-icons/vsc';
 import { RowDataType, ColumnProps, RowType } from '../types/DataTableTypes';
+import { Loader } from '../components/global';
 
 export const CustomerPage: React.FC = () => {
 
@@ -39,7 +40,7 @@ export const CustomerPage: React.FC = () => {
             value: 'full_address',
             sortable: false,
             type: 'number',
-            width: '25%',
+            width: '35%',
             maxWidth: '250px',
             // color: [
             //     { value: '10', text: 'white', background: 'purple' }
@@ -57,14 +58,14 @@ export const CustomerPage: React.FC = () => {
             value: 'email',
             sortable: true,
             type: 'number',
-            width: '15%',
+            width: '10%',
         },
         {
             text: 'Téléphone',
             value: 'phone',
             sortable: true,
             type: 'number',
-            width: '15%',
+            width: '10%',
         },
         {
             text: '',
@@ -82,21 +83,23 @@ export const CustomerPage: React.FC = () => {
 
     return (
         <Container>
+            {(isEmpty(customers) || loadingCustomers) && <Loader transparent />}
+            {(!isEmpty(customers) || !loadingCustomers) && 
             <DataTable
                 topBar
-                searchbar
+                searchbar={!!customers.length}
                 iconTopBar={<VscSmiley />}
                 loading={loadingCustomers}
                 buttonValueTopBar='Ajouter un client'
                 hoverable
-                emptyMessage={'Aucun client enregistré...'}
+                // emptyMessage={'Aucun client enregistré...'}
                 columns={columns}
                 data={deepCopy(customers) as RowDataType[]}
                 sort={sort}
                 setSort={setSort}
                 sortDirection={sortDirection}
                 setSortDirection={setSortDirection}
-            />
+            />}
         </Container>
     );
 }

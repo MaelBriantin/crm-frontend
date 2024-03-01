@@ -11,13 +11,14 @@ import { VscEdit, VscChromeClose } from "react-icons/vsc";
 import { theme } from '../assets/themes/index.ts';
 import { deleteSector } from '../services/api/sectors/deleteSector.ts';
 import { useKeyboardShortcut } from '../hooks/system/useKeyboardShortcut';
+import { Loader } from '../components/global';
 
 export const SectorPage: React.FC = () => {
 
     const [sort, setSort] = React.useState<string | null>(null);
     const [sortDirection, setSortDirection] = React.useState<boolean>(true);
 
-    const { sectors, refreshSectors, loadingSectors } = useSectors();
+    const { sectors, refreshSectors, loadingSectors, setLoadingSectors } = useSectors();
     const { showModal } = useModal();
     const { setAppLoading } = useAppLoading();
     const { showDeleteAlert } = useDeleteAlert();
@@ -38,7 +39,9 @@ export const SectorPage: React.FC = () => {
     }
 
     const handleDeleteSector = async (sector: SectorType) => {
+        setLoadingSectors(true);
         await deleteSector(sector, callToast, refreshSectors);
+        setLoadingSectors(false);
     }
 
 
@@ -49,8 +52,8 @@ export const SectorPage: React.FC = () => {
             sortable: true,
             // The first width must be huge and in a absolute unit to avoid the HTML table to be too small and apply the width of the other columns proportionally
             // The real width for this column will be the rest of the table width if the other widths are in percentage
-            width: '1000px',
-            maxWidth: '250px',
+            width: '2000px',
+            maxWidth: '450px',
             // color: [
             //     { value: 'et', text: 'blue' },
             //     { value: 'quasi', text: 'red' },
@@ -63,7 +66,7 @@ export const SectorPage: React.FC = () => {
             sortable: false,
             type: 'chips',
             limit: 6,
-            width: '60%'
+            width: '70%'
         },
         // {
         //     text: 'Nombre de communes',
@@ -81,7 +84,8 @@ export const SectorPage: React.FC = () => {
             value: 'customers_count',
             sortable: true,
             type: 'number',
-            width: '10%',
+            width: '5%',
+            maxWidth: '100px',
         },
         {
             text: '',
@@ -92,7 +96,8 @@ export const SectorPage: React.FC = () => {
                 { icon: <VscEdit />, onClick: (row: RowType) => handleDoubleClick(row), color: theme.colors.primary },
                 { icon: <VscChromeClose />, onClick: (row: RowType) => handleDeleteAlert(row), color: theme.colors.error }
             ],
-            width: '10%',
+            width: '5%',
+            maxWidth: '100px',
             align: "start"
         }
     ];
@@ -110,10 +115,11 @@ export const SectorPage: React.FC = () => {
 
     return (
         <Container>
+            {(isEmpty(sectors) || loadingSectors) && <Loader transparent />}
+            {(!isEmpty(sectors) || !loadingSectors) && 
             <DataTable
                 topBar
-                searchbar
-                loading={loadingSectors}
+                searchbar={!!sectors.length}
                 iconTopBar={<LiaMapMarkedAltSolid />}
                 buttonValueTopBar='Ajouter un secteur'
                 columns={columns}
@@ -125,7 +131,7 @@ export const SectorPage: React.FC = () => {
                 setSort={setSort}
                 sortDirection={sortDirection}
                 setSortDirection={setSortDirection}
-            />
+            />}
         </Container>
     );
 };

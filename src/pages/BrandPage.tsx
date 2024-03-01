@@ -12,6 +12,7 @@ import { VscEdit, VscChromeClose } from "react-icons/vsc";
 import { theme } from '../assets/themes';
 import { deleteBrand } from '../services/api/brands';
 import { useKeyboardShortcut } from '../hooks/system/useKeyboardShortcut';
+import { Loader } from '../components/global';
 
 export const BrandPage = () => {
 
@@ -98,9 +99,10 @@ export const BrandPage = () => {
 
     return (
         <Container>
-            <DataTable
+            {(isEmpty(brands) && loadingBrands || loadingBrands) && <Loader transparent />}
+            {(!isEmpty(brands) || !loadingBrands) && <DataTable
                 topBar
-                searchbar
+                searchbar={!!brands.length}
                 iconTopBar={<VscJersey />}
                 loading={loadingBrands}
                 buttonValueTopBar='Ajouter une marque'
@@ -114,8 +116,7 @@ export const BrandPage = () => {
                 setSort={setSort}
                 sortDirection={sortDirection}
                 setSortDirection={setSortDirection}
-            />
-
+            />}
         </Container>
     );
 }
