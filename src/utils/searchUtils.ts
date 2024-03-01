@@ -24,11 +24,11 @@ export const wildcardSearch = (
             if (searchValue) {
                 switch (operator) {
                     case '<':
-                        return Number(value) < Number(searchValue);
+                        return searchValue != '' && Number(value) < Number(searchValue);
                     case '>':
-                        return Number(value) > Number(searchValue);
+                        return searchValue != '' && Number(value) > Number(searchValue);
                     case '=':
-                        return String(value) === String(searchValue);
+                        return searchValue != '' && String(value) === String(searchValue);
                 }
             } else {
                 return String(value).toLowerCase().includes(String('').toLowerCase());
@@ -71,11 +71,11 @@ export const advancedFilter = (data: RowDataType[], searchedColumn: string, sear
 
             switch (searchedOperator) {
                 case '>':
-                    return Number(value) < Number(search);
+                    return search != '' && Number(value) < Number(search);
                 case '<':
-                    return Number(value) > Number(search);
+                    return search != '' && Number(value) > Number(search);
                 case '=':
-                    return String(value) === String(search);
+                    return search != '' && String(value) === String(search);
                 default:
                     return wildcardSearch(search, value, columnText);
             }
