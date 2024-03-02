@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import { VscChevronDown } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
 import { getVariantStyle } from '../../utils/dropdownUtils';
@@ -12,6 +12,8 @@ type DropdownProps = {
     width?: string;
     openOnTop?: boolean;
     openOnBottom?: boolean;
+    label?: string;
+    placeholder?: string;
 };
 
 export type DropdownValueType = {
@@ -32,7 +34,7 @@ type VariantStyleType = {
     height: string;
 };
 
-export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular', onChange, defaultValue, width = '200px', openOnTop = false, openOnBottom = false }) => {
+export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular', onChange, defaultValue, width = '200px', openOnTop = false, openOnBottom = false, label, placeholder }) => {
 
     if (openOnBottom) {
         openOnTop = false;
@@ -45,8 +47,12 @@ export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular'
     }
 
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedOption, setSelectedOption] = useState<DropdownValueType>(defaultValue || options[0]);
+    const [selectedOption, setSelectedOption] = useState<DropdownValueType | null>(defaultValue || null);
     const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        setSelectedOption(defaultValue || null);
+    }, [defaultValue]);
 
     const toggling = () => setIsOpen(!isOpen);
 
@@ -75,22 +81,23 @@ export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular'
 
     return (
         <DropdownContainer $width={width} ref={dropdownRef} $variantStyle={variantStyle} >
-            <DropdownHeader onClick={toggling} $isOpen={isOpen} $openOnBottom={openOnBottom} $openOnTop={openOnTop} $variantStyle={variantStyle} >
-                    { selectedOption && selectedOption.label || "Select..." }
-                    <VscChevronDown className={'dropdownIcon'} />
-                </DropdownHeader>
-                {isOpen && (
-                    <DropdownListContainer $openOnTop={openOnTop} $openOnBottom={openOnBottom} $variantStyle={variantStyle} >
-                        <DropdownList>
-                            {options.map(option => (
-                                <ListItem onClick={onOptionClicked(option)} key={Math.random()} $variantStyle={variantStyle} >
-                                    {option.label}
-                                </ListItem>
-                            ))}
-                        </DropdownList>
-                    </DropdownListContainer>
-                )}
-            </DropdownContainer>
+            <DropdownHeader $selectedOption={!!selectedOption && selectedOption.label !== ''} onClick={toggling} $isOpen={isOpen} $openOnBottom={openOnBottom} $openOnTop={openOnTop} $variantStyle={variantStyle} >
+                {label && <Label $selectedOption={!!selectedOption && selectedOption.label !== ''} $isOpen={isOpen} >{label}</Label>}
+                {selectedOption && selectedOption.label || placeholder || "Selectionnez une valeur..."}
+                <VscChevronDown className={'dropdownIcon'} />
+            </DropdownHeader>
+            {isOpen && (
+                <DropdownListContainer $openOnTop={openOnTop} $openOnBottom={openOnBottom} $variantStyle={variantStyle} >
+                    <DropdownList>
+                        {options.map(option => (
+                            <ListItem onClick={onOptionClicked(option)} key={Math.random()} $variantStyle={variantStyle} >
+                                {option.label}
+                            </ListItem>
+                        ))}
+                    </DropdownList>
+                </DropdownListContainer>
+            )}
+        </DropdownContainer>
     );
 };
 
@@ -99,12 +106,12 @@ const DropdownContainer = styled.div<{ $width: string, $variantStyle: VariantSty
     width: ${({ $width }) => $width};
     user-select: none;
     position: relative;
-    color: ${theme.colors.dark};
+    color: ${theme.colors.greyDark};
     background-color: ${theme.colors.white};
     margin-right: calc(${({ $variantStyle }) => $variantStyle.padding * 2}px + ${({ $variantStyle }) => $variantStyle.borderSize * 2}px); // variant dependent
 `;
 
-const DropdownHeader = styled.div<{ $isOpen: boolean, $openOnTop: boolean, $openOnBottom: boolean, $variantStyle: VariantStyleType }>`
+const DropdownHeader = styled.div<{ $isOpen: boolean, $openOnTop: boolean, $openOnBottom: boolean, $variantStyle: VariantStyleType, $selectedOption: boolean }>`
     background-color: ${theme.colors.white};
     padding: ${({ $variantStyle }) => $variantStyle.padding}px; // variant dependent
     height: calc(${({ $variantStyle }) => $variantStyle.height} - ${({ $variantStyle }) => $variantStyle.padding * 2}px); // variant dependent
@@ -118,6 +125,7 @@ const DropdownHeader = styled.div<{ $isOpen: boolean, $openOnTop: boolean, $open
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
+    color: ${({ $selectedOption }) => $selectedOption ? theme.colors.dark : theme.colors.greyDark};
     .dropdownIcon{
         color: ${({ $isOpen }) => $isOpen ? theme.colors.primary : 'inherit'};
         transition: transform 0.1s ease-in-out;
@@ -126,6 +134,17 @@ const DropdownHeader = styled.div<{ $isOpen: boolean, $openOnTop: boolean, $open
     &:hover .dropdownIcon{
         color: ${theme.colors.primary};
     }
+`;
+
+const Label = styled.div<{ $isOpen: boolean, $selectedOption: boolean | undefined }>`
+    transform: ${({ $selectedOption }) => $selectedOption ? 'translateY(-28px)' : 'translateY(0)'};
+    clip-path: ${({ $selectedOption }) => $selectedOption ? 'inset(0)' : 'inset(0 0 100% 0)'};
+    opacity: ${({$selectedOption}) => $selectedOption ? 1 : 0};
+    position: absolute;
+    left: 0;
+    font-size: ${theme.fonts.size.P0};
+    color: ${({ $isOpen }) => $isOpen ? theme.colors.primary : theme.colors.greyDark};
+    transition: all 0.25s ease-in-out;
 `;
 
 const DropdownListContainer = styled.div<{ $openOnTop: boolean, $openOnBottom: boolean, $variantStyle: VariantStyleType }>`
@@ -141,6 +160,8 @@ const DropdownListContainer = styled.div<{ $openOnTop: boolean, $openOnBottom: b
     border-radius: ${theme.materialDesign.borderRadius.rounded};
     border-radius: ${({ $openOnTop }) => $openOnTop && `${theme.materialDesign.borderRadius.rounded} ${theme.materialDesign.borderRadius.rounded} 0 0`};
     border-radius: ${({ $openOnBottom }) => $openOnBottom && `0 0 ${theme.materialDesign.borderRadius.rounded} ${theme.materialDesign.borderRadius.rounded}`};
+    max-height: 150px;
+    overflow-y: auto;
 `;
 
 const DropdownList = styled.ul`
@@ -152,6 +173,7 @@ const DropdownList = styled.ul`
 const ListItem = styled.li<{ $variantStyle: VariantStyleType }>`
     padding: ${({ $variantStyle }) => $variantStyle.padding}px; // variant dependent
     cursor: pointer;
+    color: ${theme.colors.dark};
     &:hover {
         background-color: #f0f0f0;
     }
