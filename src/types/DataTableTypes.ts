@@ -79,7 +79,6 @@ export type DataTableProps<T extends RowDataType> = {
   topBar?: boolean;
   search?: boolean;
   buttonValueTopBar?: string;
-  loading?: boolean;
 };
 
 export type TableRowProps = {
