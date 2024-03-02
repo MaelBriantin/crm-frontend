@@ -19,7 +19,7 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
 
     useEffect(() => {
         onSearch(advancedFilter(data, searchedColumn, searchedOperator, search, columns) as T[]);
-        searchedValue((activeAdvancedSearch) ? search : '');
+        searchedValue(search);
         isAdvancedSearchEnabled(activeAdvancedSearch);
     }, [search, data, onSearch, searchedValue, columns, searchedColumn, searchedOperator, activeAdvancedSearch, isAdvancedSearchEnabled]);
 
@@ -74,6 +74,7 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
                         options={operatorFilter}
                         width={'125px'}
                         onChange={(e: DropdownValueType) => setSearchedOperator((String(e.value)))}
+                        defaultValue={firstOf(operatorFilter) as DropdownValueType}
                     />}
                 {/* {activeAdvancedSearch && <span className='label'>Colonne :</span>} */}
                 {activeAdvancedSearch &&
