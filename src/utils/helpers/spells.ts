@@ -46,13 +46,10 @@ export const firstOf = <T>(array: T[]): T | null => {
 export const sortBy = <T>(array: T[], key: keyof T | null, asc: boolean | null = true): T[] => {
   if (key) {
     return array.sort((a: T, b: T) => {
-      let aValue = a[key];
-      let bValue = b[key];
-      if (typeof aValue === 'string') {
-        aValue = aValue.toLowerCase() as T[keyof T];
-      }
-      if (typeof bValue === 'string') {
-        bValue = bValue.toLowerCase() as T[keyof T];
+      const aValue = a[key];
+      const bValue = b[key];
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return asc ? (aValue as string).localeCompare(bValue as string) : (bValue as string).localeCompare(aValue as string);
       }
       if (asc) {
         if (aValue < bValue) {
