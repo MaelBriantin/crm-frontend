@@ -14,12 +14,14 @@ type DataTableActionsProps = {
 
 export const DataTableActions = ({ page, setPage, dataNumber, setRowsPerPage, defaultRowsPerPage, maxPageNumber }: DataTableActionsProps) => {
     const rowsPerPageOptions = [
-        { value: '5', label: '5' },
         { value: '10', label: '10' },
-        { value: '15', label: '15' },
-        { value: '20', label: '20' },
+        { value: '25', label: '25' },
+        { value: '50', label: '50' },
+        { value: '100', label: '100' },
         { value: 'Infinity', label: 'Tous' }
     ];
+    const filteredOptions = dataNumber > 100 ? rowsPerPageOptions.filter(option => option.value !== 'Infinity') : rowsPerPageOptions.filter(option => option.value !== '100');
+
     const matchingOptions = rowsPerPageOptions.find(option => option.value === defaultRowsPerPage.toString());
     return (
         <TableActions>
@@ -30,7 +32,7 @@ export const DataTableActions = ({ page, setPage, dataNumber, setRowsPerPage, de
                     variant='small'
                     openOnTop
                     defaultValue={matchingOptions}
-                    options={rowsPerPageOptions}
+                    options={filteredOptions}
                     width={'60px'}
                 />
             </ResultPerPage>
