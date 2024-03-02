@@ -7,6 +7,11 @@ import { isEmpty, deepCopy } from '../utils/helpers/spells';
 import { VscSmiley, VscEdit, VscChromeClose } from 'react-icons/vsc';
 import { RowDataType, ColumnProps, RowType } from '../types/DataTableTypes';
 import { Loader } from '../components/global';
+import { CustomerForm } from '../components/forms/CustomerForm';
+import { useModal, useDeleteAlert, useToast } from '../contexts';
+import { CustomerType } from '../types/CustomerTypes';
+import { deleteCustomer } from '../services/api/customers';
+import { useKeyboardShortcut } from '../hooks/system/useKeyboardShortcut';
 
 export const CustomerPage: React.FC = () => {
 
@@ -15,25 +20,44 @@ export const CustomerPage: React.FC = () => {
     const [sort, setSort] = React.useState<string | null>(null);
     const [sortDirection, setSortDirection] = React.useState<boolean>(true);
 
+    const { showModal } = useModal();
+    const { showDeleteAlert } = useDeleteAlert();
+    const { callToast } = useToast();
+
+
     useEffect(() => {
         isEmpty(customers) && refreshCustomers();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const newCustomer = () => {
+        showModal(<CustomerForm />, 'Ajouter un client');
+    }
+
+    const editCustomer = (row: RowType) => {
+        const customer = customers.find((customer: CustomerType) => customer.id === row.id);
+        showModal(<CustomerForm customer={customer as CustomerType} />, 'Modifier les informations d\'un client');
+    }
+
+    useKeyboardShortcut({ 'Control+Alt+n': () => newCustomer() });
+
+    const handleDeleteCustomer = async (customer: CustomerType) => {
+        await deleteCustomer(customer, callToast, refreshCustomers);
+    }
+
+    const handleDeleteAlert = (row: RowType) => {
+        const customer = customers.find((customer: CustomerType) => customer.id === row.id);
+        const message = `Êtes-vous sûr de vouloir supprimer les données concernant ${customer && customer.full_name} ?
+        <br>Cette action est définitive (les commandes liées à ce client resteront toutefois enregistrées).`
+        showDeleteAlert(message, () => handleDeleteCustomer(customer as CustomerType));
+    }
 
     const columns: ColumnProps[] = [
         {
             text: 'Nom',
             value: 'full_name',
             sortable: true,
-            // The first width must be huge and in a absolute unit to avoid the HTML table to be too small and apply the width of the other columns proportionally
-            // The real width for this column will be the rest of the table width if the other widths are in percentage
-            width: '1000px',
             maxWidth: '250px',
-            // color: [
-            //     { value: 'et', text: 'blue' },
-            //     { value: 'quasi', text: 'red' },
-            //     { value: 'et', text: 'green' }
-            // ]
         },
         {
             text: 'Adresse',
@@ -42,9 +66,6 @@ export const CustomerPage: React.FC = () => {
             type: 'number',
             width: '35%',
             maxWidth: '250px',
-            // color: [
-            //     { value: '10', text: 'white', background: 'purple' }
-            // ]
         },
         {
             text: 'Secteur',
@@ -73,8 +94,8 @@ export const CustomerPage: React.FC = () => {
             type: 'rowActions',
             sortable: false,
             actions: [
-                { icon: <VscEdit />, onClick: (row: RowType) => console.log(row), color: theme.colors.primary },
-                { icon: <VscChromeClose />, onClick: (row: RowType) => console.log(row), color: theme.colors.error }
+                { icon: <VscEdit />, onClick: (row: RowType) => editCustomer(row), color: theme.colors.primary },
+                { icon: <VscChromeClose />, onClick: (row: RowType) => handleDeleteAlert(row), color: theme.colors.error }
             ],
             width: '5%',
             align: "start"
@@ -89,7 +110,7 @@ export const CustomerPage: React.FC = () => {
                 topBar
                 searchbar={!!customers.length}
                 iconTopBar={<VscSmiley />}
-                loading={loadingCustomers}
+                onClickTopBar={newCustomer}
                 buttonValueTopBar='Ajouter un client'
                 hoverable
                 // emptyMessage={'Aucun client enregistré...'}
