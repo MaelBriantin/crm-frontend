@@ -91,7 +91,7 @@ export const BrandPage = () => {
             sortable: false,
             actions: [
                 { icon: <VscEdit />, onClick: (row: RowType) => editBrand(row), color: theme.colors.primary },
-                { icon: <VscChromeClose />, onClick: (row: RowType) => handleDeleteAlert(row as BrandType), color: theme.colors.error }
+                { icon: <VscChromeClose />, onClick: (row: RowType) => handleDeleteAlert(row), color: theme.colors.error }
             ],
             width: '2%'
         }
@@ -99,12 +99,11 @@ export const BrandPage = () => {
 
     return (
         <Container>
-            {(isEmpty(brands) && loadingBrands || loadingBrands) && <Loader transparent />}
+            {(isEmpty(brands) && loadingBrands) && <Loader transparent />}
             {(!isEmpty(brands) || !loadingBrands) && <DataTable
                 topBar
                 searchbar={!!brands.length}
                 iconTopBar={<VscJersey />}
-                loading={loadingBrands}
                 buttonValueTopBar='Ajouter une marque'
                 onClickTopBar={newBrand}
                 onDoubleClickOnRow={editBrand}

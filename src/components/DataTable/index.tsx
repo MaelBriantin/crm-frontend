@@ -8,7 +8,6 @@ import { DataTableHeader } from './DataTableHeader';
 import { DataTableBody } from './DataTableBody';
 import { DataTableActions } from './DataTableActions';
 import { DataTableTopBar } from './DataTableTopBar';
-import { Loader } from '../global';
 
 export const DataTable = <T extends RowDataType>({
     data,
@@ -26,15 +25,15 @@ export const DataTable = <T extends RowDataType>({
     iconTopBar,
     topBar,
     buttonValueTopBar,
-    loading
 }: DataTableProps<T>): React.ReactElement => {
 
     const selectable = onClickOnRow !== undefined || onDoubleClickOnRow !== undefined;
 
     const [page, setPage] = React.useState<number>(1);
-    const [rowsPerPage, setRowsPerPage] = React.useState<number>(15);
+    const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
     const [searchResults, setSearchResults] = React.useState<T[]>([]);
     const [searchedValue, setSearchedValue] = React.useState<string | number>('');
+    const [advancedSearch, setAdvancedSearch] = React.useState<boolean>(false);
 
     let dataNumber = data.length;
 
@@ -80,9 +79,10 @@ export const DataTable = <T extends RowDataType>({
                 <DataTableTopBar
                     withAdvancedSearch={searchbar}
                     setSearchedValue={setSearchedValue}
+                    onSearch={setSearchResults}
+                    isAdvancedSearchEnabled={setAdvancedSearch}
                     data={data as T[]}
                     columns={columns}
-                    onSearch={setSearchResults}
                     icon={iconTopBar || null}
                     buttonValue={buttonValueTopBar || ''}
                     onClick={onClickTopBar ? onClickTopBar : () => undefined}
@@ -107,21 +107,25 @@ export const DataTable = <T extends RowDataType>({
                         hoverable={hoverable}
                     />
                 </Table>}
-            {loading &&
-                <FakeTableContainer>
-                    <Loader transparent />
-                </FakeTableContainer>}
-            {(isEmpty(sortedData) && searchedValue === '' && !loading) &&
+            {(isEmpty(sortedData) && searchedValue === '' && !advancedSearch) &&
                 <FakeTableContainer>
                     <EmptyMessage>
-                        {emptyMessage ? emptyMessage : 'Désolé, il semblerait que nous n\'ayons rien à afficher ici...'}
+                        {emptyMessage ? emptyMessage : 'Désolé, il semblerait qu\'il n\'y ait rien à afficher ici pour le moment...'}
                     </EmptyMessage>
                 </FakeTableContainer>
             }
-            {(isEmpty(sortedData) && searchedValue !== '' && !loading) &&
+            {((isEmpty(sortedData) && searchedValue !== '') || (isEmpty(sortedData) && advancedSearch && searchedValue !== '')) &&
                 <FakeTableContainer>
                     <EmptyMessage>
                         {'Aucun résultat trouvé pour cette recherche'}
+                    </EmptyMessage>
+                </FakeTableContainer>
+            }
+            {
+                (isEmpty(sortedData) && advancedSearch && searchedValue === '') &&
+                <FakeTableContainer>
+                    <EmptyMessage>
+                        {'Nous attendons vos instructions pour lancer la recherche'}
                     </EmptyMessage>
                 </FakeTableContainer>
             }
