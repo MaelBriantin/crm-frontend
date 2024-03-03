@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { styled } from 'styled-components';
+import { keyframes, styled } from 'styled-components';
 import { theme } from '../../assets/themes';
 import { sortBy, extractBetween, isEmpty } from '../../utils/helpers/spells';
 import { RowType } from '../../types/DataTableTypes';
@@ -25,6 +25,7 @@ export const DataTable = <T extends RowDataType>({
     iconTopBar,
     topBar,
     buttonValueTopBar,
+    disabledRow,
 }: DataTableProps<T>): React.ReactElement => {
 
     const selectable = onClickOnRow !== undefined || onDoubleClickOnRow !== undefined;
@@ -98,6 +99,7 @@ export const DataTable = <T extends RowDataType>({
                     />
 
                     <DataTableBody
+                        disabledRow={disabledRow}
                         searchedValue={searchedValue}
                         data={dataOnPage as RowType[]}
                         columns={columns}
@@ -144,6 +146,16 @@ export const DataTable = <T extends RowDataType>({
     );
 };
 
+const emptyMessageDisplay = keyframes`
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+`;
+
+
 const Container = styled.div`
     padding: 10px 20px;
     width: 100%;
@@ -188,4 +200,5 @@ const EmptyMessage = styled.div`
     color: ${theme.colors.greyDark};
     /* font-weight: bold; */
     font-family: ${theme.fonts.family.source};
+    animation: ${emptyMessageDisplay} 0.5s;
 `;
