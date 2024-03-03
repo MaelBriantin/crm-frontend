@@ -1,13 +1,12 @@
 import styled from 'styled-components';
 import { useState, ChangeEvent, useEffect, useRef } from 'react';
-import { Button, Chip, Input } from '../global';
+import { Button, Chip, Input, DiscreteButton } from '../global';
 import { VscAdd, VscClose } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
 import { createSector, deleteSector, updateSector } from '../../services/api/sectors';
 import { useSectors, useToast, useModal, useDeleteAlert } from '../../contexts';
 import { SectorType, emptySector } from '../../types/SectorTypes';
 import { deepCompare } from '../../utils/helpers/spells';
-import { DiscreteButton } from '../global/DiscreteButton';
 import { useKeyboardShortcut } from '../../hooks/system/useKeyboardShortcut';
 
 type SectorFormProps = {
@@ -221,6 +220,7 @@ const CityForm = styled.form`
 `;
 
 const SaveAction = styled.div<{ $sector: boolean }>`
+    margin-top: 10px;
     gap: 10px;
     width: 100%;
     height: 10%;
