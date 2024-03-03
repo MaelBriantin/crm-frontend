@@ -48,7 +48,7 @@ export const CustomerPage: React.FC = () => {
     const handleDeleteAlert = (row: RowType) => {
         const customer = customers.find((customer: CustomerType) => customer.id === row.id);
         const message = `Êtes-vous sûr de vouloir supprimer les données concernant ${customer && customer.full_name} ?
-        <br>Cette action est définitive (les commandes liées à ce client resteront toutefois enregistrées).`
+        Cette action est définitive et entrainera la perte de toutes les données associées.`
         showDeleteAlert(message, () => handleDeleteCustomer(customer as CustomerType));
     }
 
@@ -111,6 +111,7 @@ export const CustomerPage: React.FC = () => {
                 searchbar={!!customers.length}
                 iconTopBar={<VscSmiley />}
                 onClickTopBar={newCustomer}
+                onDoubleClickOnRow={(row: RowType) => editCustomer(row)}
                 buttonValueTopBar='Ajouter un client'
                 hoverable
                 // emptyMessage={'Aucun client enregistré...'}
@@ -120,6 +121,7 @@ export const CustomerPage: React.FC = () => {
                 setSort={setSort}
                 sortDirection={sortDirection}
                 setSortDirection={setSortDirection}
+                disabledRow={(row: RowType) => row.is_active === false}
             />}
         </Container>
     );
