@@ -79,6 +79,7 @@ export type DataTableProps<T extends RowDataType> = {
   topBar?: boolean;
   search?: boolean;
   buttonValueTopBar?: string;
+  disabledRow?: (row: RowType) => boolean;
 };
 
 export type TableRowProps = {
