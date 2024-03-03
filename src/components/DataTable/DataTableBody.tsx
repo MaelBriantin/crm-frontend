@@ -9,13 +9,15 @@ type DataTableBodyProps = {
     selectable: boolean;
     hoverable: boolean;
     searchedValue?: string | number;
+    disabledRow?: (row: RowType) => boolean;
 };
 
-export const DataTableBody = ({ data, columns, onClickOnRow, onDoubleClickOnRow, selectable, hoverable, searchedValue }: DataTableBodyProps) => {
+export const DataTableBody = ({ data, columns, onClickOnRow, onDoubleClickOnRow, selectable, hoverable, searchedValue, disabledRow }: DataTableBodyProps) => {
     return (
         <tbody>
             {data.map((row, rowIndex) => (
                 <DataTableRow
+                    disabledRow={disabledRow}
                     key={rowIndex}
                     row={row}
                     rowIndex={rowIndex}

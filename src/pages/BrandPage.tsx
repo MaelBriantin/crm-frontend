@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useBrands, useDeleteAlert, useModal, useToast } from '../contexts';
 import { isEmpty } from '../utils/helpers/spells';
 import { DataTable } from '../components/DataTable';
-import { Loader } from '../components/global/Loader';
 import { RowDataType, RowType } from '../types/DataTableTypes';
 import styled from 'styled-components';
 import { deepCopy } from '../utils/helpers/spells';
@@ -13,6 +12,7 @@ import { VscEdit, VscChromeClose } from "react-icons/vsc";
 import { theme } from '../assets/themes';
 import { deleteBrand } from '../services/api/brands';
 import { useKeyboardShortcut } from '../hooks/system/useKeyboardShortcut';
+import { Loader } from '../components/global';
 
 export const BrandPage = () => {
 
@@ -43,7 +43,7 @@ export const BrandPage = () => {
     const handleDeleteAlert = (row: RowType) => {
         const brand = brands.find((brand: BrandType) => brand.id === row.id);
         const message = `Êtes-vous sûr de vouloir supprimer la marque ${brand?.name} ?
-        <br>Cette action est définitive et entrainera la perte de toutes les données produits associées.`
+        Cette action est définitive et entrainera la perte de toutes les données produits associées.`
         showDeleteAlert(message, () => handleDeleteSector(brand as BrandType));
     }
 
@@ -63,7 +63,8 @@ export const BrandPage = () => {
             text: 'Marque',
             value: 'name',
             sortable: true,
-            width: '1000px'
+            width: '1000px',
+            maxWidth: '250px',
         },
         {
             text: 'Contact',
@@ -90,7 +91,7 @@ export const BrandPage = () => {
             sortable: false,
             actions: [
                 { icon: <VscEdit />, onClick: (row: RowType) => editBrand(row), color: theme.colors.primary },
-                { icon: <VscChromeClose />, onClick: (row: RowType) => handleDeleteAlert(row as BrandType), color: theme.colors.error }
+                { icon: <VscChromeClose />, onClick: (row: RowType) => handleDeleteAlert(row), color: theme.colors.error }
             ],
             width: '2%'
         }
@@ -98,24 +99,23 @@ export const BrandPage = () => {
 
     return (
         <Container>
-            {(isEmpty(brands) || loadingBrands) && <Loader transparent />}
-            {(!isEmpty(brands)) &&
-                <DataTable
-                    topBar
-                    searchbar
-                    iconTopBar={<VscJersey />}
-                    buttonValueTopBar='Ajouter une marque'
-                    onClickTopBar={newBrand}
-                    onDoubleClickOnRow={editBrand}
-                    hoverable
-                    emptyMessage={'Aucune marque trouvée'}
-                    columns={columns}
-                    data={deepCopy(brands) as RowDataType[]}
-                    sort={sort}
-                    setSort={setSort}
-                    sortDirection={sortDirection}
-                    setSortDirection={setSortDirection}
-                />}
+            {(isEmpty(brands) && loadingBrands) && <Loader transparent />}
+            {(!isEmpty(brands) || !loadingBrands) && <DataTable
+                topBar
+                searchbar={!!brands.length}
+                iconTopBar={<VscJersey />}
+                buttonValueTopBar='Ajouter une marque'
+                onClickTopBar={newBrand}
+                onDoubleClickOnRow={editBrand}
+                hoverable
+                emptyMessage={'Aucune marque trouvée...'}
+                columns={columns}
+                data={deepCopy(brands) as RowDataType[]}
+                sort={sort}
+                setSort={setSort}
+                sortDirection={sortDirection}
+                setSortDirection={setSortDirection}
+            />}
         </Container>
     );
 }

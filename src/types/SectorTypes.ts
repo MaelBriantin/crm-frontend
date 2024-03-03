@@ -1,5 +1,5 @@
 export type SectorType = {
-    id: number;
+    id: number | null;
     name: string;
     postcodes: PostcodeType[];
     postcodes_count: number;
@@ -15,7 +15,7 @@ export type PostcodeType = {
 };
 
 export const emptySector: SectorType = {
-    id: 0,
+    id: null,
     name: '',
     postcodes: [],
     postcodes_count: 0,

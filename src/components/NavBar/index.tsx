@@ -1,13 +1,14 @@
-import { styled, RuleSet, css } from "styled-components";
+import { styled, RuleSet, css, keyframes } from "styled-components";
 import { theme } from "../../assets/themes";
 import { NavbarItem } from "./NavbarItem";
 import { VscSettingsGear, VscQuestion, VscSignOut, VscHome, VscSmiley, VscSymbolMethod, VscGift, VscPieChart, VscJersey, VscFiles } from "react-icons/vsc";
-import { PiButterflyThin } from "react-icons/pi";
+// import { PiButterflyThin } from "react-icons/pi";
 import { LiaMapMarkedAltSolid } from "react-icons/lia";
 import { useLogoutService } from "../../hooks/auth/useLogout";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Dispatch, SetStateAction } from "react";
 import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
+import { GiPotionBall } from "react-icons/gi";
 
 type NavbarProps = {
     showNavbar: boolean;
@@ -98,7 +99,8 @@ export const Navbar = (props: NavbarProps) => {
             <NavListContainer $showNavbar={showNavbar}>
 
                 <AppName>
-                    <PiButterflyThin className="logo" onClick={() => { }} />
+                    {/* <PiButterflyThin className="logo" onClick={() => { }} /> */}
+                    <GiPotionBall  className="logo" onClick={() => { }} />
                 </AppName>
 
                 <NavLinks>
@@ -174,6 +176,14 @@ const NavListContainer = styled.div<{ $showNavbar: boolean }>`
     width: 100%;
 `
 
+const Shake = keyframes`
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    50% { transform: rotate(10deg); }
+    75% { transform: rotate(-10deg); }
+    100% { transform: rotate(0deg); }
+`
+
 const AppName = styled.div`
     height: 10%;
     width: 100%;
@@ -183,7 +193,6 @@ const AppName = styled.div`
     align-items: center;
     gap: 10px;
     .logo{
-        // cursor: pointer;
         font-size: ${theme.fonts.size.P5};
         transition: all 450ms;
         opacity: 0.25;
@@ -191,7 +200,8 @@ const AppName = styled.div`
     .logo:hover{
         opacity: 1;
         color: ${theme.colors.primary};
-        transform: rotate(20deg);
+        /* transform: rotate(20deg); */
+        animation: ${Shake} 0.4s ease-in-out;
     }
 `
 

@@ -9,7 +9,7 @@ import { DropdownValueType } from '../global/Dropdown';
 import { firstOf } from '../../utils/helpers/spells';
 import { VscListFilter } from "react-icons/vsc";
 
-export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searchedValue, columns, clearable = true, advancedSearch = false }: DataTableSearchProps<T>): React.ReactElement => {
+export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searchedValue, columns, clearable = true, advancedSearch = false, isAdvancedSearchEnabled }: DataTableSearchProps<T>): React.ReactElement => {
 
     const [search, setSearch] = useState<string>('');
     const [activeAdvancedSearch, setActiveAdvancedSearch] = React.useState<boolean>(false);
@@ -19,8 +19,9 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
 
     useEffect(() => {
         onSearch(advancedFilter(data, searchedColumn, searchedOperator, search, columns) as T[]);
-        searchedValue(searchedOperator === '' ? search : '');
-    }, [search, data, onSearch, searchedValue, columns, searchedColumn, searchedOperator]);
+        searchedValue(search);
+        isAdvancedSearchEnabled(activeAdvancedSearch);
+    }, [search, data, onSearch, searchedValue, columns, searchedColumn, searchedOperator, activeAdvancedSearch, isAdvancedSearchEnabled]);
 
     const enableAdvancedSearch = () => {
         setSearchedColumn('');
@@ -38,7 +39,10 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
         { value: '<', label: 'Inférieur' },
         { value: '>', label: 'Supérieur' },
     ]
-    const columnFilter = columns.map((column) => { return { value: column.value, label: column.text } });
+
+    const columnFilter = columns
+        .filter(column => column.type !== 'rowActions')
+        .map(column => { return { value: column.value, label: column.text } });
     columnFilter.unshift({ value: '', label: 'Tout' });
     columnFilter.map((column) => {
         column.label = `Dans ${column.label}`;
@@ -48,6 +52,7 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
     return (
         <SearchbarContainer>
             <Input
+                name='search'
                 textColor={`${theme.colors.dark}`}
                 placeholder="Rechercher"
                 clearable={clearable}
@@ -69,6 +74,7 @@ export const DataTableSearch = <T extends RowDataType>({ data, onSearch, searche
                         options={operatorFilter}
                         width={'125px'}
                         onChange={(e: DropdownValueType) => setSearchedOperator((String(e.value)))}
+                        defaultValue={firstOf(operatorFilter) as DropdownValueType}
                     />}
                 {/* {activeAdvancedSearch && <span className='label'>Colonne :</span>} */}
                 {activeAdvancedSearch &&
@@ -138,7 +144,7 @@ const fromUpToDown = keyframes`
   }
 `;
 
-const AdvancedSearchToggle = styled.div<{$activeAdvancedSearch: boolean}>`
+const AdvancedSearchToggle = styled.div<{ $activeAdvancedSearch: boolean }>`
     font-size: ${theme.fonts.size.P3};
     display: flex;
     align-items: center;

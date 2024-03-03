@@ -19,6 +19,8 @@ export type DataTableCellProps = {
   column: ColumnType;
   columnIndex: number;
   columnWidth?: string;
+  columnMaxWidth?: string;
+  align?: AlignType | undefined;
   color?: { background: string | undefined, text: string | undefined } | undefined;
   searchedValue?: string | number;
   arrayLimit?: number;
@@ -31,6 +33,8 @@ export type TableCellProps = {
 
 export type ColumnColorProps = { value: string | number, background?: string, text?: string };
 
+export type AlignType = 'start' | 'end' | 'center';
+
 export type ColumnProps = {
   text: string;
   value: string;
@@ -39,6 +43,8 @@ export type ColumnProps = {
   limit?: number;
   color?: ColumnColorProps[] | undefined;
   width?: string;
+  maxWidth?: string;
+  align?: AlignType;
   actions?: ColumnActionType[] | undefined;
 };
 
@@ -73,6 +79,7 @@ export type DataTableProps<T extends RowDataType> = {
   topBar?: boolean;
   search?: boolean;
   buttonValueTopBar?: string;
+  disabledRow?: (row: RowType) => boolean;
 };
 
 export type TableRowProps = {
@@ -86,4 +93,5 @@ export type DataTableSearchProps<T extends RowDataType> = {
   columns: ColumnProps[];
   clearable?: boolean;
   advancedSearch?: boolean;
+  isAdvancedSearchEnabled: Dispatch<SetStateAction<boolean>>;
 };

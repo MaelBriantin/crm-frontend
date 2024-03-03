@@ -1,13 +1,16 @@
 import { Route, Routes } from "react-router-dom";
-import { HomePage } from "../pages/HomePage.tsx";
-import { LoginPage } from "../pages/auth/LoginPage.tsx";
-import { GuestLayout } from "../layouts/GuestLayout.tsx";
-import { AuthenticatedLayout } from "../layouts/AuthenticatedLayout.tsx";
-import { LoadingPage } from "../pages/LoadingPage.tsx";
 import { useCheckAuth } from "../hooks/auth/useCheckAuth.ts";
 import { useAuth } from "../contexts/auth/AuthContext.tsx";
-import { SectorPage } from "../pages/SectorPage.tsx";
-import { BrandPage } from "../pages/BrandPage.tsx";
+import {
+    HomePage,
+    LoginPage,
+    GuestLayout,
+    AuthenticatedLayout,
+    LoadingPage,
+    SectorPage,
+    BrandPage,
+    CustomerPage
+} from "../pages";
 
 export const Router = () => {
     useCheckAuth();
@@ -30,6 +33,7 @@ export const Router = () => {
                     <Route path={'/home'} element={<HomePage />} />
                     <Route path={'/sectors'} element={<SectorPage />} />
                     <Route path={'/brands'} element={<BrandPage />} />
+                    <Route path={'/customers'} element={<CustomerPage />} />
                     {/* Other routes to add */}
                 </Route>
 

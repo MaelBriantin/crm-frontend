@@ -25,7 +25,7 @@ export const DataTableHeader: React.FC<DataTableHeaderProps> = ({ columns, sort,
                         $sort={sort === column.value}
                         $sortable={column.sortable}
                     >
-                        <ColumnTitle $sort={sort === column.value}>
+                        <ColumnTitle $sort={sort === column.value} $align={column.align}>
                             <span className={'columnTitle'}>{column.text}</span>
                             {(column.sortable && column.value === sort) &&
                                 (column.type && filterOut(['chips', 'link', 'text', 'boolean'], dataTableTypeList).includes(column.type)
@@ -60,9 +60,9 @@ transition: all 250ms;
     font-size: ${theme.fonts.size.P0};
 `;
 
-const ColumnTitle = styled.div<{ $sort: boolean }>`
+const ColumnTitle = styled.div<{ $sort: boolean, $align: string | undefined }>`
     display: flex;
-    justify-content:flex-start;
+    justify-content: ${({ $align }): string => $align || 'start'};
     align-items: center;
     gap: 5px;
     min-width: 50px;

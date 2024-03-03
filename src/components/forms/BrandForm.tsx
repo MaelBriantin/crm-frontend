@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { BrandType, emptyBrand } from "../../types/BrandTypes";
 import styled from "styled-components";
-import { Chip, Input, Textarea, Button, Note } from "../global";
+import { Chip, Input, Textarea, Button, Note, DiscreteButton } from "../global";
 import { useModal, useBrands, useToast, useDeleteAlert } from "../../contexts";
 import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
 import { TbAlertSquare } from "react-icons/tb";
 import { theme } from "../../assets/themes";
 import { deepCompare } from "../../utils/helpers/spells";
-import { DiscreteButton } from "../global/DiscreteButton";
 import { createBrand, deleteBrand, updateBrand } from "../../services/api/brands";
 
 type BrandFormProps = {
@@ -69,8 +68,8 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
     }
 
     const handleDeleteAlert = () => {
-        const message = `Êtes-vous sûr de vouloir supprimer la marque ${brand?.name} ?
-        <br>Cette action est définitive et entrainera la perte de toutes les données produits associées.`
+        const message = `Êtes-vous sûr de vouloir supprimer la marque ${brand?.name} ? 
+        Cette action est définitive et entrainera la perte de toutes les données produits associées.`
         showDeleteAlert(message, handleDeleteBrand);
     }
 
@@ -91,6 +90,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                 />}
             <BrandName $brand={!!brand}>
                 <Input
+                    name="name"
                     ref={firstInputRef}
                     label="Nom"
                     width={`${brandForm.sku_code != '' ? '350px' : '444px'}`}
@@ -108,6 +108,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                 }
             </BrandName>
             <Input
+                name="address"
                 label="Adresse"
                 width="444px"
                 type="text"
@@ -117,6 +118,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
             />
             <BrandAddress>
                 <Input
+                    name="postcode"
                     label="Code postal"
                     width="140px"
                     type="number"
@@ -127,6 +129,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                     onChange={(e) => setBrandForm({ ...brandForm, postcode: e.target.value } as BrandType)}
                 />
                 <Input
+                    name="city"
                     label="Ville"
                     width="290px"
                     type="text"
@@ -136,6 +139,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                 />
             </BrandAddress>
             <Input
+                name="contact_name"
                 label="Contact"
                 width="444px"
                 type="text"
@@ -145,6 +149,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
             />
             <Contact>
                 <Input
+                    name="contact_email"
                     label="Email"
                     width="250px"
                     type="text"
@@ -153,6 +158,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                     onChange={(e) => setBrandForm({ ...brandForm, contact_email: e.target.value } as BrandType)}
                 />
                 <Input
+                    name="contact_phone"
                     label="Téléphone"
                     width="180px"
                     type="text"
@@ -162,6 +168,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                 />
             </Contact>
             <Textarea
+                name="notes"
                 label="Notes"
                 width="444px"
                 maxWidth="80vw"

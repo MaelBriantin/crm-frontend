@@ -6,11 +6,26 @@ import { DataTableCellProps, dataTableTypeList } from '../../types/DataTableType
 import { getRowValueAndHighlight } from '../../utils/dataTableUtils.ts';
 import { theme } from '../../assets/themes/index.ts';
 
-export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, columnWidth, columnIndex, color, searchedValue, arrayLimit = 4, isHovered }) => {
+export const DataTableCell: React.FC<DataTableCellProps> = ({ 
+        row, 
+        column, 
+        columnWidth, 
+        columnMaxWidth, 
+        columnIndex, 
+        color, 
+        searchedValue, 
+        arrayLimit = 4, 
+        isHovered,
+        align }) => {
 
     const { rowValue, highlight } = getRowValueAndHighlight(searchedValue, row[column.value], arrayLimit);
     return (
-        <TableCell key={columnIndex} $columnWidth={columnWidth}>
+        <TableCell 
+            key={columnIndex} 
+            $columnWidth={columnWidth} 
+            $columnMaxWidth={columnMaxWidth}
+            $align={align}
+            >
             {(column.type === 'rowActions') && (
                 <RowActions $isHovered={isHovered}>
                     {column.actions?.map((action, index) => (
@@ -47,20 +62,26 @@ export const DataTableCell: React.FC<DataTableCellProps> = ({ row, column, colum
                         <TableCellValue
                             key={index}
                             $color={{ background: color?.background || '', color: color?.text || '' }}
-                            dangerouslySetInnerHTML={{ __html: item + ' / ' }}
-                        />
+                            // dangerouslySetInnerHTML={{ __html: item + ' / ' }}
+                        >
+                            { `${item} / ` }
+                        </TableCellValue>
                         : <TableCellValue
                             key={index}
                             $color={{ background: color?.background || '', color: color?.text || '' }}
-                            dangerouslySetInnerHTML={{ __html: item }}
-                        />
+                            // dangerouslySetInnerHTML={{ __html: item }}
+                        >
+                            { item }
+                        </TableCellValue>
                 ))
             )}
             {(!column.type || filterOut(['chips', 'link'], dataTableTypeList).includes(column.type) && !Array.isArray(rowValue)) && (
                 <TableCellValue
                     $color={{ background: color?.background || '', color: color?.text || '' }}
-                    dangerouslySetInnerHTML={{ __html: rowValue }}
-                />
+                    // dangerouslySetInnerHTML={{ __html: rowValue }}
+                >
+                    { rowValue }
+                </TableCellValue>
             )}
         </TableCell>
     );
@@ -71,7 +92,8 @@ const RowActions = styled.div<{$isHovered: boolean | undefined}>`
     opacity: ${({ $isHovered }): string => $isHovered ? '1' : '0'};
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
+    gap: 6px;
     align-items: center;
     width: 100%;
     height: 100%;
@@ -79,20 +101,25 @@ const RowActions = styled.div<{$isHovered: boolean | undefined}>`
 `;
 
 const RowActionIcon = styled.div<{$color: string | undefined}>`
-        font-size: ${theme.fonts.size.P1};
-        cursor: pointer;
-        transition: all 250ms;
-        &:hover {
-            // transform: scale(1.2);
-            color: ${({ $color }): string => $color || theme.colors.greyDark}
-        }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: ${theme.fonts.size.P1};
+    cursor: pointer;
+    transition: all 250ms;
+    &:hover {
+        // transform: scale(1.2);
+        color: ${({ $color }): string => $color || theme.colors.greyDark}
+    }
 `;
 
 
-const TableCell = styled.td<{ $columnWidth: string | undefined }>`
+const TableCell = styled.td<{ $columnWidth: string | undefined, $columnMaxWidth: string | undefined, $align: string | undefined }>`
     padding: 8px;
     width: ${(props) => props.$columnWidth || 'auto'};
+    max-width: ${(props) => props.$columnMaxWidth || 'auto'};
     border-bottom: 1px solid #f9f9f9;
+    text-align: ${(props) => props.$align ? props.$align : 'left'};
     vertical-align: middle;
     overflow: hidden;
     text-overflow: ellipsis;

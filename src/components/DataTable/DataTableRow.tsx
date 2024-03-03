@@ -13,13 +13,15 @@ type DataTableRowProps = {
     selectable: boolean;
     hoverable: boolean;
     searchedValue?: string | number;
+    disabledRow?: (row: RowType) => boolean;
 };
 
-export const DataTableRow = ({ row, rowIndex, columns, onClickOnRow, onDoubleClickOnRow, selectable, hoverable, searchedValue }: DataTableRowProps) => {
+export const DataTableRow = ({ row, rowIndex, columns, onClickOnRow, onDoubleClickOnRow, selectable, hoverable, searchedValue, disabledRow }: DataTableRowProps) => {
     const [isHovered, setIsHovered] = useState(false);
-
+    
     return (
         <TableRowBody
+            $disableRow={disabledRow && disabledRow(row)}
             key={rowIndex}
             $selectable={selectable}
             $hoverable={hoverable}
@@ -36,7 +38,9 @@ export const DataTableRow = ({ row, rowIndex, columns, onClickOnRow, onDoubleCli
                     row={row}
                     column={column}
                     columnWidth={column?.width}
+                    columnMaxWidth={column?.maxWidth}
                     columnIndex={columnIndex}
+                    align={column?.align}
                     color={getColor(column.color, String(row[column.value]))}
                     arrayLimit={column.limit}
                 />
@@ -45,7 +49,8 @@ export const DataTableRow = ({ row, rowIndex, columns, onClickOnRow, onDoubleCli
     );
 };
 
-const TableRowBody = styled.tr <{ $selectable: boolean, $hoverable: boolean }>`
+const TableRowBody = styled.tr <{ $selectable: boolean, $hoverable: boolean, $disableRow: boolean | undefined }>`
+    opacity: ${({ $disableRow }): number => ($disableRow ? 0.5 : 1)};
     transition: all 250ms;
     background-color: white;
     height: 40px;
