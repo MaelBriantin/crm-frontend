@@ -1,9 +1,9 @@
 import { theme } from "../../assets/themes";
 import { RefObject, useEffect, useRef, useState, ReactNode, ChangeEvent, useCallback, forwardRef, useImperativeHandle } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import styled, { css } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { getVariantStyle } from "../../utils/inputUtils";
-import { VscChevronDown, VscChevronUp, VscChromeClose } from "react-icons/vsc";
+import { VscChevronDown, VscChevronUp, VscChromeClose, VscLoading } from "react-icons/vsc";
 
 type VariantStyleType = {
     fontSize: string;
@@ -28,6 +28,7 @@ export const Input = forwardRef((
         textColor?: string,
         onChange: (e: ChangeEvent<HTMLInputElement>) => void;
         label?: string;
+        loading?: boolean;
     }, ref) => {
     const {
         name,
@@ -43,7 +44,8 @@ export const Input = forwardRef((
         variant = 'regular',
         textColor = theme.colors.dark,
         onChange,
-        label
+        label,
+        loading
     } = props
 
     const inputRef: RefObject<HTMLInputElement> = useRef(null);
@@ -144,6 +146,12 @@ export const Input = forwardRef((
             {
                 (clearable && value)
                 && <ClearButton onClick={handleClear}><VscChromeClose /></ClearButton>
+            }
+            {
+                loading &&
+                <LoadingIcon>
+                    <VscLoading />
+                </LoadingIcon>
             }
             {
                 (type === 'number')
@@ -277,6 +285,24 @@ const ClearButton = styled.div`
     &:hover {
         color: ${theme.colors.error};
     }
+`;
+
+const inputLoading = keyframes`
+    0% {
+        transform: translateY(-50%) rotate(0deg);
+    }
+    100% {
+        transform: translateY(-50%) rotate(360deg);
+    }
+`;
+
+const LoadingIcon = styled.div`
+    color: ${theme.colors.primary};
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10px;
+    animation: ${inputLoading} 1s infinite;
 `;
 
 const CountButtons = styled.div<{ $variantStyle: VariantStyleType }>`
