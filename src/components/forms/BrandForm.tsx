@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { BrandType, emptyBrand } from "../../types/BrandTypes";
 import styled from "styled-components";
-import { Chip, Input, Textarea, Button, Note } from "../global";
+import { Chip, Input, Textarea, Button, Note, DiscreteButton } from "../global";
 import { useModal, useBrands, useToast, useDeleteAlert } from "../../contexts";
 import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
 import { TbAlertSquare } from "react-icons/tb";
 import { theme } from "../../assets/themes";
 import { deepCompare } from "../../utils/helpers/spells";
-import { DiscreteButton } from "../global/DiscreteButton";
 import { createBrand, deleteBrand, updateBrand } from "../../services/api/brands";
 
 type BrandFormProps = {
