@@ -8,7 +8,7 @@ import { CallToastProps } from '../../../contexts/global/ToastContext';
 export const updateCustomer = async (customer: CustomerType, callToast: CallToastProps, refreshCustomers: { (): Promise<void>; (): void; }, closeModal: { (): void; (): void; }) => {
     let customersResponse: CustomerType[] = [];
     try {
-        const response: APIResponseFormat<CustomerType> = await fetchAPI(`/api/brands/${customer.id}`, 'PATCH', customer);
+        const response: APIResponseFormat<CustomerType> = await fetchAPI(`/api/customers/${customer.id}`, 'PATCH', customer);
         handleAPIResponse<CustomerType>(
             response,
             async (customers) => {
