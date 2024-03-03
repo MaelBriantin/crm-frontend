@@ -57,7 +57,8 @@ export const CustomerPage: React.FC = () => {
             text: 'Nom',
             value: 'full_name',
             sortable: true,
-            maxWidth: '250px',
+            width: '1000px',
+            //maxWidth: '250px',
         },
         {
             text: 'Adresse',
@@ -79,14 +80,14 @@ export const CustomerPage: React.FC = () => {
             value: 'email',
             sortable: true,
             type: 'number',
-            width: '10%',
+            width: '15%',
         },
         {
             text: 'Téléphone',
             value: 'phone',
             sortable: true,
             type: 'number',
-            width: '10%',
+            width: '15%',
         },
         {
             text: '',

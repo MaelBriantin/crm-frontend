@@ -33,8 +33,8 @@ export const SectorPage: React.FC = () => {
 
     const handleDeleteAlert = (row: RowType) => {
         const sector = sectors.find((sector: SectorType) => sector.id === row.id);
-        const message = `Êtes-vous sûr de vouloir supprimer le secteur ${sector?.name} ?
-        <br>Cette action est irréversible et entrainera la perte de toutes les données statistiques associées.`
+        const message = `Êtes-vous sûr de vouloir supprimer le secteur ${sector?.name} ? 
+        Cette action est irréversible et entrainera la perte de toutes les données statistiques associées.`
         showDeleteAlert(message, () => handleDeleteSector(sector as SectorType));
     }
 

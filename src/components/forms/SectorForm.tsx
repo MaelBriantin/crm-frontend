@@ -56,8 +56,8 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     }
 
     const handleDeleteAlert = () => {
-        const message = `Êtes-vous sûr de vouloir supprimer le secteur ${sector?.name} ?
-                        <br>Cette action est irréversible et entrainera la perte de toutes les données statistiques associées.`
+        const message = `Êtes-vous sûr de vouloir supprimer le secteur ${sector?.name} ? 
+        Cette action est irréversible et entrainera la perte de toutes les données statistiques associées.`
         showDeleteAlert(message, handleDeleteSector);
     }
 

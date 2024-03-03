@@ -68,8 +68,8 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
     }
 
     const handleDeleteAlert = () => {
-        const message = `Êtes-vous sûr de vouloir supprimer la marque ${brand?.name} ?
-        <br>Cette action est définitive et entrainera la perte de toutes les données produits associées.`
+        const message = `Êtes-vous sûr de vouloir supprimer la marque ${brand?.name} ? 
+        Cette action est définitive et entrainera la perte de toutes les données produits associées.`
         showDeleteAlert(message, handleDeleteBrand);
     }
 

@@ -44,7 +44,9 @@ export const Toast = () => {
                 <IoMdClose className={'closeIcon'} onClick={resetToastContext} />
             </div>
             <div className="toastMessage">
-                <span dangerouslySetInnerHTML={{ __html: message }} />
+                <span 
+                    // dangerouslySetInnerHTML={{ __html: message }} 
+                >{ message }</span>
             </div>
         </ToastStyle>
     );

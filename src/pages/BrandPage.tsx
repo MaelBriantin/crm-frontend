@@ -43,7 +43,7 @@ export const BrandPage = () => {
     const handleDeleteAlert = (row: RowType) => {
         const brand = brands.find((brand: BrandType) => brand.id === row.id);
         const message = `Êtes-vous sûr de vouloir supprimer la marque ${brand?.name} ?
-        <br>Cette action est définitive et entrainera la perte de toutes les données produits associées.`
+        Cette action est définitive et entrainera la perte de toutes les données produits associées.`
         showDeleteAlert(message, () => handleDeleteSector(brand as BrandType));
     }
 
