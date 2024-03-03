@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { styled } from 'styled-components';
-import { VscChevronDown } from "react-icons/vsc";
+import { styled, keyframes } from 'styled-components';
+import { VscChevronDown, VscLoading  } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
 import { getVariantStyle } from '../../utils/dropdownUtils';
 
@@ -9,11 +9,14 @@ type DropdownProps = {
     variant?: 'large' | 'regular' | 'small';
     onChange: (selected: DropdownValueType) => void;
     defaultValue?: DropdownValueType;
+    value?: DropdownValueType;
     width?: string;
+    maxHeight?: string;
     openOnTop?: boolean;
     openOnBottom?: boolean;
     label?: string;
     placeholder?: string;
+    loading?: boolean;
 };
 
 export type DropdownValueType = {
@@ -34,7 +37,19 @@ type VariantStyleType = {
     height: string;
 };
 
-export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular', onChange, defaultValue, width = '200px', openOnTop = false, openOnBottom = false, label, placeholder }) => {
+export const Dropdown: React.FC<DropdownProps> = ({ 
+    options, 
+    variant = 'regular', 
+    onChange, 
+    defaultValue,
+    value,
+    width = '200px', 
+    openOnTop = false, 
+    openOnBottom = false, 
+    label, 
+    placeholder, 
+    maxHeight, 
+    loading }) => {
 
     if (openOnBottom) {
         openOnTop = false;
@@ -51,10 +66,10 @@ export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular'
     const dropdownRef = useRef(null);
 
     useEffect(() => {
-        setSelectedOption(defaultValue || null);
-    }, [defaultValue]);
+        value && setSelectedOption(value);
+    }, [value]);
 
-    const toggling = () => setIsOpen(!isOpen);
+    const toggling = () => !loading && setIsOpen(!isOpen);
 
     const onOptionClicked = (selectedElement: DropdownOptions) => () => {
         setSelectedOption(selectedElement as DropdownValueType);
@@ -84,10 +99,11 @@ export const Dropdown: React.FC<DropdownProps> = ({ options, variant = 'regular'
             <DropdownHeader $selectedOption={!!selectedOption && selectedOption.label !== ''} onClick={toggling} $isOpen={isOpen} $openOnBottom={openOnBottom} $openOnTop={openOnTop} $variantStyle={variantStyle} >
                 {label && <Label $selectedOption={!!selectedOption && selectedOption.label !== ''} $isOpen={isOpen} >{label}</Label>}
                 {selectedOption && selectedOption.label || placeholder || "Selectionnez une valeur..."}
-                <VscChevronDown className={'dropdownIcon'} />
+                {!loading && <VscChevronDown className={'dropdownIcon'} />}
+                {loading && <VscLoading className={'loadingIcon'} />}
             </DropdownHeader>
             {isOpen && (
-                <DropdownListContainer $openOnTop={openOnTop} $openOnBottom={openOnBottom} $variantStyle={variantStyle} >
+                <DropdownListContainer $maxHeight={maxHeight} $openOnTop={openOnTop} $openOnBottom={openOnBottom} $variantStyle={variantStyle} >
                     <DropdownList>
                         {options.map(option => (
                             <ListItem onClick={onOptionClicked(option)} key={Math.random()} $variantStyle={variantStyle} >
@@ -109,6 +125,15 @@ const DropdownContainer = styled.div<{ $width: string, $variantStyle: VariantSty
     color: ${theme.colors.greyDark};
     background-color: ${theme.colors.white};
     margin-right: calc(${({ $variantStyle }) => $variantStyle.padding * 2}px + ${({ $variantStyle }) => $variantStyle.borderSize * 2}px); // variant dependent
+`;
+
+const inputLoading = keyframes`
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 `;
 
 const DropdownHeader = styled.div<{ $isOpen: boolean, $openOnTop: boolean, $openOnBottom: boolean, $variantStyle: VariantStyleType, $selectedOption: boolean }>`
@@ -134,6 +159,10 @@ const DropdownHeader = styled.div<{ $isOpen: boolean, $openOnTop: boolean, $open
     &:hover .dropdownIcon{
         color: ${theme.colors.primary};
     }
+    .loadingIcon {
+        color: ${theme.colors.primary};
+        animation: ${inputLoading} 1s infinite;
+    }
 `;
 
 const Label = styled.div<{ $isOpen: boolean, $selectedOption: boolean | undefined }>`
@@ -147,20 +176,20 @@ const Label = styled.div<{ $isOpen: boolean, $selectedOption: boolean | undefine
     transition: all 0.25s ease-in-out;
 `;
 
-const DropdownListContainer = styled.div<{ $openOnTop: boolean, $openOnBottom: boolean, $variantStyle: VariantStyleType }>`
+const DropdownListContainer = styled.div<{ $openOnTop: boolean, $openOnBottom: boolean, $variantStyle: VariantStyleType, $maxHeight: string | undefined }>`
     width: calc(100% + ${({ $variantStyle }) => $variantStyle.padding * 2}px); // variant dependent
-    border: solid ${({ $variantStyle }) => $variantStyle.borderSize}px ${theme.colors.greyMedium}; // variant dependent
-    border-top: ${({ $openOnBottom, $variantStyle }: { $openOnBottom: boolean, $variantStyle: VariantStyleType }) => $openOnBottom ? 'none' : `${$variantStyle.borderSize}px solid ${theme.colors.greyMedium}`}; // variant dependent
-    border-bottom: ${({ $openOnTop, $variantStyle }: { $openOnTop: boolean, $variantStyle: VariantStyleType }) => $openOnTop ? 'none' : `${$variantStyle.borderSize}px solid ${theme.colors.greyMedium}`}; // variant dependent
+    border: solid ${({ $variantStyle }) => $variantStyle.borderSize}px ${theme.colors.primary}; // variant dependent
+    border-top: ${({ $openOnBottom, $variantStyle }: { $openOnBottom: boolean, $variantStyle: VariantStyleType }) => $openOnBottom ? 'none' : `${$variantStyle.borderSize}px solid ${theme.colors.primary}`}; // variant dependent
+    border-bottom: ${({ $openOnTop, $variantStyle }: { $openOnTop: boolean, $variantStyle: VariantStyleType }) => $openOnTop ? 'none' : `${$variantStyle.borderSize}px solid ${theme.colors.primary}`}; // variant dependent
     position: absolute; 
-    z-index: 99;
+    z-index: 9999;
     top: ${({ $openOnTop }) => $openOnTop ? 'auto' : '100%'};
     bottom: ${({ $openOnBottom }) => $openOnBottom ? 'auto' : '100%'};
     background-color: #fff;
     border-radius: ${theme.materialDesign.borderRadius.rounded};
     border-radius: ${({ $openOnTop }) => $openOnTop && `${theme.materialDesign.borderRadius.rounded} ${theme.materialDesign.borderRadius.rounded} 0 0`};
     border-radius: ${({ $openOnBottom }) => $openOnBottom && `0 0 ${theme.materialDesign.borderRadius.rounded} ${theme.materialDesign.borderRadius.rounded}`};
-    max-height: 150px;
+    max-height: ${({ $maxHeight }) => $maxHeight ? $maxHeight : '150px'};
     overflow-y: auto;
 `;
 
