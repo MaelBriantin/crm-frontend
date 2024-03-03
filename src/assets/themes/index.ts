@@ -6,9 +6,12 @@ const colors = {
     ancient_white: '#fdf5df',
     background_dark: "#292729",
     // primary: "#67b6b9",
-    primary: "#BB2649", // viva magenta 
+    // primary: "#BB2649", // viva magenta 
     // primary: "#317773", // teal
+    // primary: "#3fbac2", // blue
     // primary: "#4D4DFF", // neon blue
+    // primary: "#DC582A", // orange
+    primary: "#6667AB", // very peri
     primary_cake: "#3f7f8e",
     green: "green",
     success: "#60bd4f",
