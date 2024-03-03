@@ -6,7 +6,7 @@ import { useCustomers, useModal, useToast, useDeleteAlert, useSectors } from "..
 import { createCustomer, updateCustomer, deleteCustomer } from "../../services/api/customers";
 import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
 import { Dropdown, Input, Textarea, Button, DiscreteButton, Switch, Note } from "../global";
-import { isEmpty } from "../../utils/helpers/spells";
+import { deepCompare, isEmpty } from "../../utils/helpers/spells";
 import { sectorDropdownOptionFormat } from "../../utils/customerUtils";
 import { theme } from "../../assets/themes";
 import { SectorType } from "../../types/SectorTypes";
@@ -113,7 +113,8 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
     };
 
     const disableSave =
-        customerForm.firstname.length < 3
+        customer && deepCompare(customer as CustomerType, customerForm)
+        || customerForm.firstname.length < 3
         || customerForm.lastname.length < 3
         || customerForm.address.length < 3
         || customerForm.postcode.length < 5
