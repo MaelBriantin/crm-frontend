@@ -13,8 +13,9 @@ export type CustomerType = {
     postcode: string;
     createdAt: string;
     updatedAt: string;
-    sector: SectorType;
+    sector: SectorType | null;
     notes: string;
+    is_active: boolean;
 };
 
 export const emptyCustomer: CustomerType = {
@@ -30,12 +31,7 @@ export const emptyCustomer: CustomerType = {
     postcode: '',
     createdAt: '',
     updatedAt: '',
-    sector: {
-        id: null,
-        name: '',
-        postcodes: [],
-        postcodes_count: 0,
-        postcodes_list: ''
-    },
-    notes: ''
+    sector: null,
+    notes: '',
+    is_active: true
 };
