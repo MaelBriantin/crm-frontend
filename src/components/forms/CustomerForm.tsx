@@ -1,23 +1,22 @@
-import { useState, useEffect, useRef } from "react";
-import { CustomerType } from "../../types/CustomerTypes";
+import React, {useState, useEffect, useRef} from "react";
+import {CustomerType} from "../../types/CustomerTypes";
 import styled from "styled-components";
-import { emptyCustomer } from "../../types/CustomerTypes";
-import { useCustomers, useModal, useToast, useDeleteAlert, useSectors } from "../../contexts";
-import { createCustomer, updateCustomer, deleteCustomer } from "../../services/api/customers";
-import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
-import { Dropdown, Input, Textarea, Button, DiscreteButton, Switch } from "../global";
-import { deepCompare } from "../../utils/helpers/spells";
-import { sectorDropdownOptionFormat } from "../../utils/customerUtils";
-import { theme } from "../../assets/themes";
-import { SectorType } from "../../types/SectorTypes";
-import { DropdownOptions, DropdownValueType } from "../global/Dropdown";
-import { CustomerRelationshipSelector } from "./CustomerRelationshipSelector";
+import {emptyCustomer} from "../../types/CustomerTypes";
+import {useCustomers, useModal, useToast, useDeleteAlert, useSectors, useFormActions} from "../../contexts";
+import {createCustomer, updateCustomer, deleteCustomer} from "../../services/api/customers";
+import {useKeyboardShortcut} from "../../hooks/system/useKeyboardShortcut";
+import {Dropdown, Input, Textarea, Switch} from "../global";
+import {deepCompare} from "../../utils/helpers/spells";
+import {sectorDropdownOptionFormat} from "../../utils/customerUtils";
+import {SectorType} from "../../types/SectorTypes";
+import {DropdownOptions, DropdownValueType} from "../global/Dropdown";
+import {CustomerRelationshipSelector} from "./CustomerRelationshipSelector";
 
 type CustomerFormProps = {
-    customer?: CustomerType;
+    customer?: CustomerType,
 };
 
-export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
+export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
     const [customerForm, setCustomerForm] = useState(customer || emptyCustomer as CustomerType);
     const [saving, setSaving] = useState(false);
     const [suggestedSector, setSuggestedSector] = useState(customer
@@ -25,33 +24,34 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
         : null);
     const [inputLoading, setInputLoading] = useState(false);
 
-    const { refreshCustomers, loadingCustomers, visitFrequencies, relationships } = useCustomers();
-    const { sectors } = useSectors();
-    const { closeModal, setDisableClose } = useModal();
-    const { callToast } = useToast();
-    const { isOpenDeleteAlert, showDeleteAlert } = useDeleteAlert();
+    const {refreshCustomers, loadingCustomers, visitFrequencies, relationships} = useCustomers();
+    const {sectors} = useSectors();
+    const {closeModal, setDisableClose} = useModal();
+    const {callToast} = useToast();
+    const {isOpenDeleteAlert} = useDeleteAlert();
+    const {setDeleteMessage, setOnDelete, setData, setIsDisableSave, setOnSave, setIsLoading} = useFormActions();
 
     const firstInputRef = useRef<HTMLInputElement>(null);
 
     const sectorOptions = sectors.map((sector) => {
         return sectorDropdownOptionFormat(sector);
     });
-    sectorOptions.unshift({ value: '0', label: 'Hors secteur' });
+    sectorOptions.unshift({value: '0', label: 'Hors secteur'});
 
     const visitFrequenciesOptions = visitFrequencies.map((visitFrequency) => {
-        return { value: visitFrequency.id, label: visitFrequency.label };
+        return {value: visitFrequency.id, label: visitFrequency.label};
     });
-    visitFrequenciesOptions.unshift({ value: '', label: 'Aucune' });
+    visitFrequenciesOptions.unshift({value: '', label: 'Aucune'});
 
     const daysOfWeek = [
-        { value: '', label: 'Aucun' },
-        { value: 'monday', label: 'Lundi' },
-        { value: 'tuesday', label: 'Mardi' },
-        { value: 'wednesday', label: 'Mercredi' },
-        { value: 'thursday', label: 'Jeudi' },
-        { value: 'friday', label: 'Vendredi' },
-        { value: 'saturday', label: 'Samedi' },
-        { value: 'sunday', label: 'Dimanche' }
+        {value: '', label: 'Aucun'},
+        {value: 'monday', label: 'Lundi'},
+        {value: 'tuesday', label: 'Mardi'},
+        {value: 'wednesday', label: 'Mercredi'},
+        {value: 'thursday', label: 'Jeudi'},
+        {value: 'friday', label: 'Vendredi'},
+        {value: 'saturday', label: 'Samedi'},
+        {value: 'sunday', label: 'Dimanche'}
     ];
 
     useEffect(() => {
@@ -97,40 +97,39 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
         }
     }, [customerForm, customerForm.postcode, sectors]);
 
-    const save = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setSaving(true);
-        !disableSave && await createCustomer(customerForm, callToast, refreshCustomers, closeModal);
-        setSaving(false);
-    };
 
-    const update = async (e: React.FormEvent) => {
+    const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
-        setSaving(true);
-        !disableSave && await updateCustomer(customerForm, callToast, refreshCustomers, closeModal);
-        setSaving(false);
-    };
+        if (customer) {
+            setSaving(true);
+            !isSaveDisabled && await updateCustomer(customerForm, callToast, refreshCustomers, closeModal);
+            setSaving(false);
+        }
+        if (!customer) {
+            setSaving(true);
+            !isSaveDisabled && await createCustomer(customerForm, callToast, refreshCustomers, closeModal);
+            setSaving(false);
+        }
+    }
 
-    const handleDeleteCustomer = async () => {
-        if (customerForm.id) {
+    const deleteMessage = customer
+        && "Êtes-vous sûr de vouloir supprimer les données concernant " + (customer && customer.full_name) + " ? Cette action est définitive et entrainera la perte de toutes les données associées."
+        || "";
+
+    const handleDelete = async () => {
+        if (customer && customerForm.id) {
             setSaving(true);
             await deleteCustomer(customer as CustomerType, callToast, refreshCustomers, closeModal);
             setSaving(false);
         }
     };
 
-    const handleDeleteAlert = () => {
-        const message = `Êtes-vous sûr de vouloir supprimer les données concernant ${customer && customer.full_name} ?
-        Cette action est définitive et entrainera la perte de toutes les données associées.`;
-        showDeleteAlert(message, handleDeleteCustomer);
-    }
-
     const handleVisitFrequencyChange = (e: DropdownValueType) => {
         const visitFrequency = visitFrequencies.find((visitFrequency) => visitFrequency.id === e.value);
-        setCustomerForm({ ...customerForm, visit_frequency: visitFrequency || null });
+        setCustomerForm({...customerForm, visit_frequency: visitFrequency || null});
     }
 
-    const disableSave =
+    const isSaveDisabled =
         customer && deepCompare(customer as CustomerType, customerForm)
         || customerForm.firstname.length < 3
         || customerForm.lastname.length < 3
@@ -142,8 +141,18 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
         || saving
         || loadingCustomers;
 
+    useEffect(() => {
+        setData(!!customer);
+        setDeleteMessage(deleteMessage);
+        setOnDelete(() => handleDelete);
+        setIsDisableSave(isSaveDisabled);
+        setOnSave(() => handleSave);
+        setIsLoading(saving);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isSaveDisabled]);
+
     return (
-        <Container onSubmit={customer ? update : save}>
+        <Container onSubmit={handleSave}>
             <NameRow>
                 <Input
                     ref={firstInputRef}
@@ -151,7 +160,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
                     placeholder="Prénom"
                     type="text"
                     value={customerForm.firstname || ''}
-                    onChange={(e) => setCustomerForm({ ...customerForm, firstname: e.target.value })}
+                    onChange={(e) => setCustomerForm({...customerForm, firstname: e.target.value})}
                     width="200px"
                 />
                 <Input
@@ -160,7 +169,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
                     placeholder="Nom"
                     type="text"
                     value={customerForm.lastname || ''}
-                    onChange={(e) => setCustomerForm({ ...customerForm, lastname: e.target.value })}
+                    onChange={(e) => setCustomerForm({...customerForm, lastname: e.target.value})}
                     width="245px"
                 />
             </NameRow>
@@ -170,7 +179,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
                     placeholder="Adresse"
                     type="text"
                     value={customerForm.address || ''}
-                    onChange={(e) => setCustomerForm({ ...customerForm, address: e.target.value })}
+                    onChange={(e) => setCustomerForm({...customerForm, address: e.target.value})}
                     width="460px"
                 />
                 <CityRow>
@@ -181,7 +190,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
                         noNegativeNumber
                         maxLength={5}
                         value={customerForm.postcode || ''}
-                        onChange={(e) => setCustomerForm({ ...customerForm, postcode: e.target.value })}
+                        onChange={(e) => setCustomerForm({...customerForm, postcode: e.target.value})}
                         width="125px"
                     />
                     <Input
@@ -190,7 +199,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
                         placeholder="Ville"
                         type="text"
                         value={customerForm.city || ''}
-                        onChange={(e) => setCustomerForm({ ...customerForm, city: e.target.value })}
+                        onChange={(e) => setCustomerForm({...customerForm, city: e.target.value})}
                         width="320px"
                     />
                 </CityRow>
@@ -202,7 +211,10 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
                     maxHeight="208px"
                     options={sectorOptions}
                     value={suggestedSector || undefined}
-                    onChange={(e) => setCustomerForm({ ...customerForm, sector: sectors.find((sector) => sector.id === Number(e.value)) || { id: null } as SectorType })}
+                    onChange={(e) => setCustomerForm({
+                        ...customerForm,
+                        sector: sectors.find((sector) => sector.id === Number(e.value)) || {id: null} as SectorType
+                    })}
                     openOnBottom
                 />
             </AddressContainer>
@@ -212,7 +224,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
                     placeholder="Téléphone"
                     type="text"
                     value={customerForm.phone || ''}
-                    onChange={(e) => setCustomerForm({ ...customerForm, phone: e.target.value })}
+                    onChange={(e) => setCustomerForm({...customerForm, phone: e.target.value})}
                     width="150px"
                 />
                 <Input
@@ -220,7 +232,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
                     placeholder="Email"
                     type="email"
                     value={customerForm.email || ''}
-                    onChange={(e) => setCustomerForm({ ...customerForm, email: e.target.value })}
+                    onChange={(e) => setCustomerForm({...customerForm, email: e.target.value})}
                     width="296px"
                 />
             </ContactContainer>
@@ -230,7 +242,10 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
                     placeholder="Fréquence de visite"
                     width="203px"
                     options={visitFrequenciesOptions}
-                    value={customerForm.visit_frequency ? { value: customerForm.visit_frequency.id, label: customerForm.visit_frequency.label } : undefined}
+                    value={customerForm.visit_frequency ? {
+                        value: customerForm.visit_frequency.id,
+                        label: customerForm.visit_frequency.label
+                    } : undefined}
                     onChange={(e: DropdownValueType) => handleVisitFrequencyChange(e)}
                     openOnBottom
                 />
@@ -239,8 +254,14 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
                     placeholder="Jour de visite"
                     width="203px"
                     options={daysOfWeek as DropdownOptions[]}
-                    value={customerForm.visit_day ? { value: customerForm.visit_day, label: daysOfWeek.find(e => e.value === customerForm.visit_day)?.label } as DropdownOptions : undefined}
-                    onChange={(e) => setCustomerForm({ ...customerForm, visit_day: e.value as CustomerType['visit_day'] })}
+                    value={customerForm.visit_day ? {
+                        value: customerForm.visit_day,
+                        label: daysOfWeek.find(e => e.value === customerForm.visit_day)?.label
+                    } as DropdownOptions : undefined}
+                    onChange={(e) => setCustomerForm({
+                        ...customerForm,
+                        visit_day: e.value as CustomerType['visit_day']
+                    })}
                     openOnBottom
                 />
             </VisitContainer>
@@ -249,14 +270,14 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
                 placeholder="Horaire de visite"
                 type="text"
                 value={customerForm.visit_schedule || ''}
-                onChange={(e) => setCustomerForm({ ...customerForm, visit_schedule: e.target.value })}
+                onChange={(e) => setCustomerForm({...customerForm, visit_schedule: e.target.value})}
                 width="460px"
             />
             <Textarea
                 label="Notes"
                 placeholder="Notes"
                 value={customerForm.notes || ''}
-                onChange={(e) => setCustomerForm({ ...customerForm, notes: e.target.value })}
+                onChange={(e) => setCustomerForm({...customerForm, notes: e.target.value})}
                 width="460px"
                 maxWidth="40vw"
                 height="100px"
@@ -272,24 +293,10 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
                     <Switch
                         label={customerForm.is_active ? 'Client actif' : 'Client inactif'}
                         checked={customerForm.is_active}
-                        onChange={(e) => setCustomerForm({ ...customerForm, is_active: e.target.checked })}
+                        onChange={(e) => setCustomerForm({...customerForm, is_active: e.target.checked})}
                     />
                 </ActiveContainer>}
-            <SaveAction $customer={!!customer}>
-                {customer &&
-                    <DiscreteButton
-                        value='supprimer'
-                        onClick={handleDeleteAlert}
-                        color={`${theme.colors.error}`}
-                        disabled={isOpenDeleteAlert}
-                    />}
-                <Button
-                    loading={saving || loadingCustomers}
-                    disabled={disableSave}
-                    value='enregistrer'
-                    onClick={customer ? update : save}
-                />
-            </SaveAction>
+            <input type="submit" style={{display: 'none'}} />
         </Container>
     )
 };
@@ -318,7 +325,6 @@ const NameRow = styled.div`
 const AddressContainer = styled.div`
     position: relative;
     display: flex;
-    flex-direction: row;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
@@ -359,15 +365,5 @@ const ActiveContainer = styled.div`
     justify-content: space-between;
     gap: 10px;
     width: 100%;
-    padding-bottom: 20px;
-`;
-
-const SaveAction = styled.div<{ $customer: boolean }>`  
-    gap: 10px;
-    width: 100%;
-    height: 10%;
-    display: flex;
-    justify-content: ${({ $customer }) => $customer ? 'space-between' : 'flex-end'};
-    align-items: center;
     padding-bottom: 20px;
 `;
