@@ -8,14 +8,15 @@ import { VscSmiley, VscEdit, VscChromeClose } from 'react-icons/vsc';
 import { RowDataType, ColumnProps, RowType } from '../types/DataTableTypes';
 import { Loader } from '../components/global';
 import { CustomerForm } from '../components/forms/CustomerForm';
-import { useModal, useDeleteAlert, useToast } from '../contexts';
+import { useModal, useDeleteAlert, useToast, useSectors } from '../contexts';
 import { CustomerType } from '../types/CustomerTypes';
 import { deleteCustomer } from '../services/api/customers';
 import { useKeyboardShortcut } from '../hooks/system/useKeyboardShortcut';
 
 export const CustomerPage: React.FC = () => {
 
-    const { customers, refreshCustomers, loadingCustomers } = useCustomers();
+    const { customers, refreshCustomers, loadingCustomers, getVisitsOptions } = useCustomers();
+    const { refreshSectors } = useSectors();
 
     const [sort, setSort] = React.useState<string | null>(null);
     const [sortDirection, setSortDirection] = React.useState<boolean>(true);
@@ -26,17 +27,23 @@ export const CustomerPage: React.FC = () => {
 
 
     useEffect(() => {
-        isEmpty(customers) && refreshCustomers();
+        if(isEmpty(customers)) {
+            getVisitsOptions();
+            refreshSectors();
+            refreshCustomers();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const newCustomer = () => {
-        showModal(<CustomerForm />, 'Ajouter un client');
+        showModal(<CustomerForm />, 'Nouveau client');
     }
 
     const editCustomer = (row: RowType) => {
         const customer = customers.find((customer: CustomerType) => customer.id === row.id);
-        showModal(<CustomerForm customer={customer as CustomerType} />, 'Modifier les informations d\'un client');
+        showModal(
+            <CustomerForm customer={customer as CustomerType} />, 
+            'Modifier les informations d\'un client');
     }
 
     useKeyboardShortcut({ 'Control+Alt+n': () => newCustomer() });
@@ -113,7 +120,7 @@ export const CustomerPage: React.FC = () => {
                 iconTopBar={<VscSmiley />}
                 onClickTopBar={newCustomer}
                 onDoubleClickOnRow={(row: RowType) => editCustomer(row)}
-                buttonValueTopBar='Ajouter un client'
+                buttonValueTopBar='Nouveau client'
                 hoverable
                 // emptyMessage={'Aucun client enregistré...'}
                 columns={columns}
