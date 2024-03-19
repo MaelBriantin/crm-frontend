@@ -10,10 +10,11 @@ type ModalProps = {
     title: string;
     onClose: () => void;
     children: React.ReactNode;
+    actions?: React.ReactNode;
     disableClose?: boolean;
 };
 
-export const Modal: React.FC<ModalProps> = ({ height, width, title, children, disableClose }) => {
+export const Modal: React.FC<ModalProps> = ({ height, width, title, children, disableClose, actions }) => {
 
     const { isOpen, closeModal, startCloseAnimation, setStartCloseAnimation } = useModal();
 
@@ -31,13 +32,26 @@ export const Modal: React.FC<ModalProps> = ({ height, width, title, children, di
             <ModalStructure $closeModalAnimation={startCloseAnimation} $style={{ height, width }}>
                 <ModalTitle>
                     <span className='title'>{title}</span>
-                    <CloseButton $disableClose={disableClose} onClick={!disableClose ? closeModal : () => {}} >
+                    <CloseButton $disableClose={disableClose} onClick={!disableClose ? closeModal : () => { }} >
                         <VscChromeClose />
                     </CloseButton>
                 </ModalTitle>
-                <ModalContent>
+                <ModalContent $actions={!!actions}>
                     {children}
                 </ModalContent>
+                {actions && 
+                <Actions>
+                    {/* <DiscreteButton
+                        value='supprimer'
+                        onClick={() => { }}
+                        color={`${theme.colors.error}`}
+                    />
+                    <Button
+                        value='enregistrer'
+                        onClick={() => { }}
+                    /> */}
+                    { actions }
+                </Actions>}
             </ModalStructure>
         </Container>
     );
@@ -105,33 +119,36 @@ const Container = styled.div<{ $closeModalAnimation: boolean, $isOpen: boolean }
 `;
 
 const ModalStructure = styled.div<{ $closeModalAnimation: boolean, $style: { height: string | undefined, width: string | undefined } }>`
-    padding: 20px;
+    padding: 10px;
     animation: all 250ms ease-out;
     width: ${({ $style }) => $style.width};
     height: ${({ $style }) => $style.height};
     max-height: 80%;
-    overflow: auto;
     background: white;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     flex-direction: column;
     border-radius: ${theme.materialDesign.borderRadius.rounded};
+    background: ${theme.colors.white};
     box-shadow: ${theme.shadows.default};
     animation: ${ModalDisplayAnimation} 200ms;
     ${({ $closeModalAnimation }) => $closeModalAnimation ? css`animation: ${ModalCloseAnimation} 250ms;` : ''};
 `;
 
 const ModalTitle = styled.div`
+    border-radius: ${theme.materialDesign.borderRadius.rounded};
+    border-radius: ${theme.materialDesign.borderRadius.rounded} ${theme.materialDesign.borderRadius.rounded} 0 0;
+    // padding: 10px 0;
     width: 100%;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     gap: 10px;
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
     font-size: ${theme.fonts.size.P2};
     color: ${theme.colors.greyDark};
-    background: ${theme.colors.white};
+    // background: ${theme.colors.white};
     .title {
         ${theme.fonts.size.P3};
         text-transform: uppercase;
@@ -149,10 +166,29 @@ const CloseButton = styled.div<{ $disableClose: boolean | undefined }>`
     `};
 `;
 
-const ModalContent = styled.div`
+const ModalContent = styled.div<{$actions: boolean}>`
+    padding: 20px 0;
+    margin: 10px 20px;
+    ${({$actions}) => !$actions && css`margin-bottom: 0;`};
     width: 100%;
     /* height: 90%; */
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: auto;
+    /* box-shadow: inset 0px 0px 10px 0px rgba(0,0,0,0.1); */
+    /* border-bottom: solid 1px ${theme.colors.greyLight};
+    border-top: solid 1px ${theme.colors.greyLight}; */
+    outline: solid 1px ${theme.colors.greyLight};
+    background: ${theme.colors.white};
+    border-radius: ${theme.materialDesign.borderRadius.rounded};
+`;
+
+const Actions = styled.div`  
+    background: ${theme.colors.white};
+    border-radius: 0 0 ${theme.materialDesign.borderRadius.rounded} ${theme.materialDesign.borderRadius.rounded};
+    padding: 5px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
 `;

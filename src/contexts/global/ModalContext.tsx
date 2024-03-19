@@ -3,7 +3,7 @@ import { Modal } from '../../components/Modal';
 
 type ModalContextType = {
   isOpen: boolean;
-  showModal: (content: ReactNode, title: string) => void;
+  showModal: (content: ReactNode, title: string, actions?: ReactNode) => void;
   closeModal: () => void;
   startCloseAnimation: boolean;
   setStartCloseAnimation: (value: boolean) => void;
@@ -29,6 +29,7 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [disableClose, setDisableClose] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [content, setContent] = useState<ReactNode>(null);
+  const [actions, setActions] = useState<ReactNode>(null);
   const [title, setTitle] = useState('');
   const [startCloseAnimation, setStartCloseAnimation] = useState(false);
 
@@ -39,8 +40,9 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }, 225);
   };
 
-  const showModal = (content: ReactNode, title: string) => {
+  const showModal = (content: ReactNode, title: string, actions?: ReactNode) => {
     setContent(content);
+    setActions(actions);
     setTitle(title);
     setIsOpen(true);
   };
@@ -49,7 +51,7 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     <ModalContext.Provider value={{ isOpen, closeModal, showModal, startCloseAnimation, setStartCloseAnimation, disableClose, setDisableClose }}>
       {children}
       {isOpen &&
-        <Modal title={title} onClose={closeModal} children={content} disableClose={disableClose} />}
+        <Modal title={title} onClose={closeModal} children={content} disableClose={disableClose} actions={actions} />}
     </ModalContext.Provider>
   );
 };
