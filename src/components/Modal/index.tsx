@@ -41,15 +41,6 @@ export const Modal: React.FC<ModalProps> = ({ height, width, title, children, di
                 </ModalContent>
                 {actions && 
                 <Actions>
-                    {/* <DiscreteButton
-                        value='supprimer'
-                        onClick={() => { }}
-                        color={`${theme.colors.error}`}
-                    />
-                    <Button
-                        value='enregistrer'
-                        onClick={() => { }}
-                    /> */}
                     { actions }
                 </Actions>}
             </ModalStructure>
