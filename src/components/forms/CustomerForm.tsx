@@ -1,22 +1,22 @@
-import React, {useState, useEffect, useRef} from "react";
-import {CustomerType} from "../../types/CustomerTypes";
+import React, { useState, useEffect, useRef } from "react";
+import { CustomerType } from "../../types/CustomerTypes";
 import styled from "styled-components";
-import {emptyCustomer} from "../../types/CustomerTypes";
-import {useCustomers, useModal, useToast, useDeleteAlert, useSectors, useFormActions} from "../../contexts";
-import {createCustomer, updateCustomer, deleteCustomer} from "../../services/api/customers";
-import {useKeyboardShortcut} from "../../hooks/system/useKeyboardShortcut";
-import {Dropdown, Input, Textarea, Switch} from "../global";
-import {deepCompare} from "../../utils/helpers/spells";
-import {sectorDropdownOptionFormat} from "../../utils/customerUtils";
-import {SectorType} from "../../types/SectorTypes";
-import {DropdownOptions, DropdownValueType} from "../global/Dropdown";
-import {CustomerRelationshipSelector} from "./CustomerRelationshipSelector";
+import { emptyCustomer } from "../../types/CustomerTypes";
+import { useCustomers, useModal, useToast, useDeleteAlert, useSectors, useFormActions } from "../../contexts";
+import { createCustomer, updateCustomer, deleteCustomer } from "../../services/api/customers";
+import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
+import { Dropdown, Input, Textarea, Switch } from "../global";
+import { deepCompare } from "../../utils/helpers/spells";
+import { sectorDropdownOptionFormat } from "../../utils/customerUtils";
+import { SectorType } from "../../types/SectorTypes";
+import { DropdownOptions, DropdownValueType } from "../global/Dropdown";
+import { CustomerRelationshipSelector } from "./CustomerRelationshipSelector";
 
 type CustomerFormProps = {
     customer?: CustomerType,
 };
 
-export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
+export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
     const [customerForm, setCustomerForm] = useState(customer || emptyCustomer as CustomerType);
     const [saving, setSaving] = useState(false);
     const [suggestedSector, setSuggestedSector] = useState(customer
@@ -24,34 +24,34 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
         : null);
     const [inputLoading, setInputLoading] = useState(false);
 
-    const {refreshCustomers, loadingCustomers, visitFrequencies, relationships} = useCustomers();
-    const {sectors} = useSectors();
-    const {closeModal, setDisableClose} = useModal();
-    const {callToast} = useToast();
-    const {isOpenDeleteAlert} = useDeleteAlert();
-    const {setDeleteMessage, setOnDelete, setData, setIsDisableSave, setOnSave, setIsLoading} = useFormActions();
+    const { refreshCustomers, loadingCustomers, visitFrequencies, relationships } = useCustomers();
+    const { sectors } = useSectors();
+    const { closeModal, setDisableClose } = useModal();
+    const { callToast } = useToast();
+    const { isOpenDeleteAlert } = useDeleteAlert();
+    const { setDeleteMessage, setOnDelete, setData, setIsDisableSave, setOnSave, setIsLoading } = useFormActions();
 
     const firstInputRef = useRef<HTMLInputElement>(null);
 
     const sectorOptions = sectors.map((sector) => {
         return sectorDropdownOptionFormat(sector);
     });
-    sectorOptions.unshift({value: '0', label: 'Hors secteur'});
+    sectorOptions.unshift({ value: '0', label: 'Hors secteur' });
 
     const visitFrequenciesOptions = visitFrequencies.map((visitFrequency) => {
-        return {value: visitFrequency.id, label: visitFrequency.label};
+        return { value: visitFrequency.id, label: visitFrequency.label };
     });
-    visitFrequenciesOptions.unshift({value: '', label: 'Aucune'});
+    visitFrequenciesOptions.unshift({ value: '', label: 'Aucune' });
 
     const daysOfWeek = [
-        {value: '', label: 'Aucun'},
-        {value: 'monday', label: 'Lundi'},
-        {value: 'tuesday', label: 'Mardi'},
-        {value: 'wednesday', label: 'Mercredi'},
-        {value: 'thursday', label: 'Jeudi'},
-        {value: 'friday', label: 'Vendredi'},
-        {value: 'saturday', label: 'Samedi'},
-        {value: 'sunday', label: 'Dimanche'}
+        { value: '', label: 'Aucun' },
+        { value: 'monday', label: 'Lundi' },
+        { value: 'tuesday', label: 'Mardi' },
+        { value: 'wednesday', label: 'Mercredi' },
+        { value: 'thursday', label: 'Jeudi' },
+        { value: 'friday', label: 'Vendredi' },
+        { value: 'saturday', label: 'Samedi' },
+        { value: 'sunday', label: 'Dimanche' }
     ];
 
     useEffect(() => {
@@ -126,7 +126,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
 
     const handleVisitFrequencyChange = (e: DropdownValueType) => {
         const visitFrequency = visitFrequencies.find((visitFrequency) => visitFrequency.id === e.value);
-        setCustomerForm({...customerForm, visit_frequency: visitFrequency || null});
+        setCustomerForm({ ...customerForm, visit_frequency: visitFrequency || null });
     }
 
     const isSaveDisabled =
@@ -148,7 +148,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
         setIsDisableSave(isSaveDisabled);
         setOnSave(() => handleSave);
         setIsLoading(saving || loadingCustomers);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isSaveDisabled, saving, loadingCustomers]);
 
     return (
@@ -160,7 +160,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
                     placeholder="Prénom"
                     type="text"
                     value={customerForm.firstname || ''}
-                    onChange={(e) => setCustomerForm({...customerForm, firstname: e.target.value})}
+                    onChange={(e) => setCustomerForm({ ...customerForm, firstname: e.target.value })}
                     width="200px"
                 />
                 <Input
@@ -169,7 +169,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
                     placeholder="Nom"
                     type="text"
                     value={customerForm.lastname || ''}
-                    onChange={(e) => setCustomerForm({...customerForm, lastname: e.target.value})}
+                    onChange={(e) => setCustomerForm({ ...customerForm, lastname: e.target.value })}
                     width="245px"
                 />
             </NameRow>
@@ -179,7 +179,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
                     placeholder="Adresse"
                     type="text"
                     value={customerForm.address || ''}
-                    onChange={(e) => setCustomerForm({...customerForm, address: e.target.value})}
+                    onChange={(e) => setCustomerForm({ ...customerForm, address: e.target.value })}
                     width="460px"
                 />
                 <CityRow>
@@ -190,7 +190,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
                         noNegativeNumber
                         maxLength={5}
                         value={customerForm.postcode || ''}
-                        onChange={(e) => setCustomerForm({...customerForm, postcode: e.target.value})}
+                        onChange={(e) => setCustomerForm({ ...customerForm, postcode: e.target.value })}
                         width="125px"
                     />
                     <Input
@@ -199,7 +199,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
                         placeholder="Ville"
                         type="text"
                         value={customerForm.city || ''}
-                        onChange={(e) => setCustomerForm({...customerForm, city: e.target.value})}
+                        onChange={(e) => setCustomerForm({ ...customerForm, city: e.target.value })}
                         width="320px"
                     />
                 </CityRow>
@@ -213,7 +213,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
                     value={suggestedSector || undefined}
                     onChange={(e) => setCustomerForm({
                         ...customerForm,
-                        sector: sectors.find((sector) => sector.id === Number(e.value)) || {id: null} as SectorType
+                        sector: sectors.find((sector) => sector.id === Number(e.value)) || { id: null } as SectorType
                     })}
                     openOnBottom
                 />
@@ -224,7 +224,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
                     placeholder="Téléphone"
                     type="text"
                     value={customerForm.phone || ''}
-                    onChange={(e) => setCustomerForm({...customerForm, phone: e.target.value})}
+                    onChange={(e) => setCustomerForm({ ...customerForm, phone: e.target.value })}
                     width="150px"
                 />
                 <Input
@@ -232,7 +232,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
                     placeholder="Email"
                     type="email"
                     value={customerForm.email || ''}
-                    onChange={(e) => setCustomerForm({...customerForm, email: e.target.value})}
+                    onChange={(e) => setCustomerForm({ ...customerForm, email: e.target.value })}
                     width="296px"
                 />
             </ContactContainer>
@@ -270,19 +270,21 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
                 placeholder="Horaire de visite"
                 type="text"
                 value={customerForm.visit_schedule || ''}
-                onChange={(e) => setCustomerForm({...customerForm, visit_schedule: e.target.value})}
+                onChange={(e) => setCustomerForm({ ...customerForm, visit_schedule: e.target.value })}
                 width="460px"
             />
-            <Textarea
-                label="Notes"
-                placeholder="Notes"
-                value={customerForm.notes || ''}
-                onChange={(e) => setCustomerForm({...customerForm, notes: e.target.value})}
-                width="460px"
-                maxWidth="40vw"
-                height="100px"
-                maxHeight="200px"
-            />
+            <TextareaContainer $customer={!customer}>
+                <Textarea
+                    label="Notes"
+                    placeholder="Notes"
+                    value={customerForm.notes || ''}
+                    onChange={(e) => setCustomerForm({ ...customerForm, notes: e.target.value })}
+                    width="460px"
+                    maxWidth="40vw"
+                    height="100px"
+                    maxHeight="200px"
+                />
+            </TextareaContainer>
             {customer &&
                 <ActiveContainer>
                     <CustomerRelationshipSelector
@@ -293,10 +295,10 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
                     <Switch
                         label={customerForm.is_active ? 'Client actif' : 'Client inactif'}
                         checked={customerForm.is_active}
-                        onChange={(e) => setCustomerForm({...customerForm, is_active: e.target.checked})}
+                        onChange={(e) => setCustomerForm({ ...customerForm, is_active: e.target.checked })}
                     />
                 </ActiveContainer>}
-            <input type="submit" style={{display: 'none'}} />
+            <input type="submit" style={{ display: 'none' }} />
         </Container>
     )
 };
@@ -356,6 +358,14 @@ const VisitContainer = styled.div`
     justify-content: flex-start;
     gap: 10px;
     width: 100%;
+`;
+
+const TextareaContainer = styled.div<{$customer: boolean}>`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: ${({ $customer }) => $customer ? '10px' : '0'};
 `;
 
 const ActiveContainer = styled.div`
