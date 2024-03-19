@@ -5,6 +5,7 @@ import {
     ModalProvider,
     AppLoadingProvider,
     DeleteAlertProvider,
+    FormActionsProvider,
 } from ".";
 import { DataProvider } from "./DataProvider";
 
@@ -19,9 +20,11 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) =>
                 <DataProvider>
                     <ToastProvider>
                         <DeleteAlertProvider>
-                            <ModalProvider>
-                                {children}
-                            </ModalProvider>
+                            <FormActionsProvider>
+                                <ModalProvider>
+                                    {children}
+                                </ModalProvider>
+                            </FormActionsProvider>
                         </DeleteAlertProvider>
                     </ToastProvider>
                 </DataProvider>

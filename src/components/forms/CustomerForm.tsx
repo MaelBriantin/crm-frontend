@@ -1,19 +1,19 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { CustomerType } from "../../types/CustomerTypes";
 import styled from "styled-components";
 import { emptyCustomer } from "../../types/CustomerTypes";
-import { useCustomers, useModal, useToast, useDeleteAlert, useSectors } from "../../contexts";
+import { useCustomers, useModal, useToast, useDeleteAlert, useSectors, useFormActions } from "../../contexts";
 import { createCustomer, updateCustomer, deleteCustomer } from "../../services/api/customers";
 import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
-import { Dropdown, Input, Textarea, Button, DiscreteButton, Switch, Note } from "../global";
-import { deepCompare, isEmpty } from "../../utils/helpers/spells";
+import { Dropdown, Input, Textarea, Switch } from "../global";
+import { deepCompare } from "../../utils/helpers/spells";
 import { sectorDropdownOptionFormat } from "../../utils/customerUtils";
-import { theme } from "../../assets/themes";
 import { SectorType } from "../../types/SectorTypes";
-import { CiSquareCheck } from "react-icons/ci";
+import { DropdownOptions, DropdownValueType } from "../global/Dropdown";
+import { CustomerRelationshipSelector } from "./CustomerRelationshipSelector";
 
 type CustomerFormProps = {
-    customer?: CustomerType;
+    customer?: CustomerType,
 };
 
 export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
@@ -24,22 +24,35 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
         : null);
     const [inputLoading, setInputLoading] = useState(false);
 
-    const { refreshCustomers, loadingCustomers } = useCustomers();
-    const { sectors, refreshSectors } = useSectors();
+    const { refreshCustomers, loadingCustomers, visitFrequencies, relationships } = useCustomers();
+    const { sectors } = useSectors();
     const { closeModal, setDisableClose } = useModal();
     const { callToast } = useToast();
-    const { showDeleteAlert, isOpenDeleteAlert } = useDeleteAlert();
+    const { isOpenDeleteAlert } = useDeleteAlert();
+    const { setDeleteMessage, setOnDelete, setData, setIsDisableSave, setOnSave, setIsLoading } = useFormActions();
 
     const firstInputRef = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-        isEmpty(sectors) && refreshSectors();
-    }, [sectors, refreshSectors])
 
     const sectorOptions = sectors.map((sector) => {
         return sectorDropdownOptionFormat(sector);
     });
     sectorOptions.unshift({ value: '0', label: 'Hors secteur' });
+
+    const visitFrequenciesOptions = visitFrequencies.map((visitFrequency) => {
+        return { value: visitFrequency.id, label: visitFrequency.label };
+    });
+    visitFrequenciesOptions.unshift({ value: '', label: 'Aucune' });
+
+    const daysOfWeek = [
+        { value: '', label: 'Aucun' },
+        { value: 'monday', label: 'Lundi' },
+        { value: 'tuesday', label: 'Mardi' },
+        { value: 'wednesday', label: 'Mercredi' },
+        { value: 'thursday', label: 'Jeudi' },
+        { value: 'friday', label: 'Vendredi' },
+        { value: 'saturday', label: 'Samedi' },
+        { value: 'sunday', label: 'Dimanche' }
+    ];
 
     useEffect(() => {
         setDisableClose(saving || loadingCustomers);
@@ -84,48 +97,62 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
         }
     }, [customerForm, customerForm.postcode, sectors]);
 
-    const save = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setSaving(true);
-        !disableSave && await createCustomer(customerForm, callToast, refreshCustomers, closeModal);
-        setSaving(false);
-    };
 
-    const update = async (e: React.FormEvent) => {
+    const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
-        setSaving(true);
-        !disableSave && await updateCustomer(customerForm, callToast, refreshCustomers, closeModal);
-        setSaving(false);
-    };
-
-    const handleDeleteCustomer = async () => {
-        if (customerForm.id) {
+        if (customer) {
             setSaving(true);
-            await deleteCustomer(customer as CustomerType, callToast, refreshCustomers, closeModal);
+            !isSaveDisabled && await updateCustomer(customerForm, callToast, refreshCustomers, closeModal);
+            setSaving(false);
+        }
+        if (!customer) {
+            setSaving(true);
+            !isSaveDisabled && await createCustomer(customerForm, callToast, refreshCustomers, closeModal);
             setSaving(false);
         }
     }
 
-    const handleDeleteAlert = () => {
-        const message = `Êtes-vous sûr de vouloir supprimer les données concernant ${customer && customer.full_name} ?
-        Cette action est définitive et entrainera la perte de toutes les données associées.`
-        showDeleteAlert(message, handleDeleteCustomer);
+    const deleteMessage = customer
+        && "Êtes-vous sûr de vouloir supprimer les données concernant " + (customer && customer.full_name) + " ? Cette action est définitive et entrainera la perte de toutes les données associées."
+        || "";
+
+    const handleDelete = async () => {
+        if (customer && customerForm.id) {
+            setSaving(true);
+            await deleteCustomer(customer as CustomerType, callToast, refreshCustomers, closeModal);
+            setSaving(false);
+        }
     };
 
-    const disableSave =
+    const handleVisitFrequencyChange = (e: DropdownValueType) => {
+        const visitFrequency = visitFrequencies.find((visitFrequency) => visitFrequency.id === e.value);
+        setCustomerForm({ ...customerForm, visit_frequency: visitFrequency || null });
+    }
+
+    const isSaveDisabled =
         customer && deepCompare(customer as CustomerType, customerForm)
         || customerForm.firstname.length < 3
         || customerForm.lastname.length < 3
         || customerForm.address.length < 3
         || customerForm.postcode.length < 5
         || customerForm.city.length < 3
-        || !customerForm.sector
+        // || !customerForm.sector // Disabled to allow for customers outside of sectors
         || customerForm.sector && customerForm.sector.id === 0
         || saving
         || loadingCustomers;
 
+    useEffect(() => {
+        setData(!!customer);
+        setDeleteMessage(deleteMessage);
+        setOnDelete(() => handleDelete);
+        setIsDisableSave(isSaveDisabled);
+        setOnSave(() => handleSave);
+        setIsLoading(saving || loadingCustomers);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isSaveDisabled, saving, loadingCustomers]);
+
     return (
-        <Container onSubmit={customer ? update : save}>
+        <Container onSubmit={handleSave}>
             <NameRow>
                 <Input
                     ref={firstInputRef}
@@ -184,7 +211,10 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
                     maxHeight="208px"
                     options={sectorOptions}
                     value={suggestedSector || undefined}
-                    onChange={(e) => setCustomerForm({ ...customerForm, sector: sectors.find((sector) => sector.id === Number(e.value)) || { id: null } as SectorType })}
+                    onChange={(e) => setCustomerForm({
+                        ...customerForm,
+                        sector: sectors.find((sector) => sector.id === Number(e.value)) || { id: null } as SectorType
+                    })}
                     openOnBottom
                 />
             </AddressContainer>
@@ -206,45 +236,69 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
                     width="296px"
                 />
             </ContactContainer>
-            <Textarea
-                label="Notes"
-                placeholder="Notes"
-                value={customerForm.notes || ''}
-                onChange={(e) => setCustomerForm({ ...customerForm, notes: e.target.value })}
+            <VisitContainer>
+                <Dropdown
+                    label="Fréquence de visite"
+                    placeholder="Fréquence de visite"
+                    width="203px"
+                    options={visitFrequenciesOptions}
+                    value={customerForm.visit_frequency ? {
+                        value: customerForm.visit_frequency.id,
+                        label: customerForm.visit_frequency.label
+                    } : undefined}
+                    onChange={(e: DropdownValueType) => handleVisitFrequencyChange(e)}
+                    openOnBottom
+                />
+                <Dropdown
+                    label="Jour de visite"
+                    placeholder="Jour de visite"
+                    width="203px"
+                    options={daysOfWeek as DropdownOptions[]}
+                    value={customerForm.visit_day ? {
+                        value: customerForm.visit_day,
+                        label: daysOfWeek.find(e => e.value === customerForm.visit_day)?.label
+                    } as DropdownOptions : undefined}
+                    onChange={(e) => setCustomerForm({
+                        ...customerForm,
+                        visit_day: e.value as CustomerType['visit_day']
+                    })}
+                    openOnBottom
+                />
+            </VisitContainer>
+            <Input
+                label="Horaire de visite"
+                placeholder="Horaire de visite"
+                type="text"
+                value={customerForm.visit_schedule || ''}
+                onChange={(e) => setCustomerForm({ ...customerForm, visit_schedule: e.target.value })}
                 width="460px"
-                maxWidth="40vw"
-                height="100px"
-                maxHeight="200px"
             />
-            {customer && 
-            <ActiveContainer>
-                <Note
-                    width="300px"
-                    message='Les clients inactifs ne seront pas pris en compte dans les statistiques de leurs secteurs.'
-                    iconColor={theme.colors.blue}
-                    icon={<CiSquareCheck />}
+            <TextareaContainer $customer={!customer}>
+                <Textarea
+                    label="Notes"
+                    placeholder="Notes"
+                    value={customerForm.notes || ''}
+                    onChange={(e) => setCustomerForm({ ...customerForm, notes: e.target.value })}
+                    width="460px"
+                    maxWidth="40vw"
+                    height="100px"
+                    maxHeight="200px"
                 />
-                <Switch
-                    label={customerForm.is_active ? 'Client actif' : 'Client inactif'}
-                    checked={customerForm.is_active}
-                    onChange={(e) => setCustomerForm({ ...customerForm, is_active: e.target.checked })}
+            </TextareaContainer>
+            {customer &&
+                <ActiveContainer>
+                    <CustomerRelationshipSelector
+                        relationships={relationships}
+                        customer={customerForm}
+                        setCustomer={setCustomerForm}
                     />
-            </ActiveContainer>}
-            <SaveAction $customer={!!customer}>
-                {customer &&
-                    <DiscreteButton
-                        value='supprimer'
-                        onClick={handleDeleteAlert}
-                        color={`${theme.colors.error}`}
-                        disabled={isOpenDeleteAlert}
-                    />}
-                <Button
-                    loading={saving || loadingCustomers}
-                    disabled={disableSave}
-                    value='enregistrer'
-                    onClick={customer ? update : save}
-                />
-            </SaveAction>
+                    <Switch
+                        label={customerForm.is_active ? 'Client actif' : 'Client inactif'}
+                        checked={customerForm.is_active}
+                        onChange={(e) => setCustomerForm({ ...customerForm, is_active: e.target.checked })}
+                    />
+                </ActiveContainer>}
+            <input type="submit" style={{ display: 'none' }} />
         </Container>
     )
 };
@@ -256,12 +310,12 @@ const Container = styled.form`
     align-items: flex-start;
     justify-content: space-between;
     height: 100%;
-    width: 100%;
+    //width: 100%;
     gap: 30px;
 `;
 
 const NameRow = styled.div`
-    margin-top: 20px;
+    margin-top: 10px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -273,7 +327,6 @@ const NameRow = styled.div`
 const AddressContainer = styled.div`
     position: relative;
     display: flex;
-    flex-direction: row;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
@@ -299,6 +352,22 @@ const ContactContainer = styled.div`
     width: 100%;
 `;
 
+const VisitContainer = styled.div`
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
+`;
+
+const TextareaContainer = styled.div<{$customer: boolean}>`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: ${({ $customer }) => $customer ? '10px' : '0'};
+`;
+
 const ActiveContainer = styled.div`
     margin-top: -10px;
     display: flex;
@@ -306,13 +375,5 @@ const ActiveContainer = styled.div`
     justify-content: space-between;
     gap: 10px;
     width: 100%;
-`;
-
-const SaveAction = styled.div<{ $customer: boolean }>`  
-    gap: 10px;
-    width: 100%;
-    height: 10%;
-    display: flex;
-    justify-content: ${({ $customer }) => $customer ? 'space-between' : 'flex-end'};
-    align-items: center;
+    padding-bottom: 20px;
 `;

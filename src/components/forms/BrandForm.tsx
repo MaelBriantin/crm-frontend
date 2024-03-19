@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { BrandType, emptyBrand } from "../../types/BrandTypes";
 import styled from "styled-components";
-import { Chip, Input, Textarea, Button, Note, DiscreteButton } from "../global";
-import { useModal, useBrands, useToast, useDeleteAlert } from "../../contexts";
+import { Chip, Input, Textarea, Note } from "../global";
+import { useModal, useBrands, useToast, useDeleteAlert, useFormActions } from "../../contexts";
 import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
 import { TbAlertSquare } from "react-icons/tb";
 import { theme } from "../../assets/themes";
@@ -20,7 +20,8 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
     const { refreshBrands, loadingBrands } = useBrands();
     const { closeModal, setDisableClose } = useModal();
     const { callToast } = useToast();
-    const { showDeleteAlert, isOpenDeleteAlert } = useDeleteAlert();
+    const { isOpenDeleteAlert } = useDeleteAlert();
+    const { setData, setDeleteMessage, setIsDisableSave, setIsLoading, setOnDelete, setOnSave } = useFormActions();
     
     const firstInputRef = useRef<HTMLInputElement>(null);
 
@@ -47,17 +48,28 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
 
     const save = async (e: React.FormEvent) => {
         e.preventDefault();
-        setSaving(true);
+        //setSaving(true);
         !disableSave && await createBrand(brandForm, callToast, refreshBrands, closeModal);
-        setSaving(false);
-    }
+        //setSaving(false);
+    };
 
     const update = async (e: React.FormEvent) => {
         e.preventDefault();
-        setSaving(true);
+        //setSaving(true);
         !disableSave && await updateBrand(brandForm, callToast, refreshBrands, closeModal);
+        //setSaving(false);
+    };
+
+    const handleSave = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSaving(true);
+        if (brandForm.id) {
+            await update(e);
+        } else {
+            await save(e);
+        }
         setSaving(false);
-    }
+    };
 
     const handleDeleteBrand = async () => {
         if (brandForm.id) {
@@ -65,13 +77,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
             await deleteBrand(brand as BrandType, callToast, refreshBrands, closeModal);
             setSaving(false);
         }
-    }
-
-    const handleDeleteAlert = () => {
-        const message = `Êtes-vous sûr de vouloir supprimer la marque ${brand?.name} ? 
-        Cette action est définitive et entrainera la perte de toutes les données produits associées.`
-        showDeleteAlert(message, handleDeleteBrand);
-    }
+    };
 
     const disableSave =
         brand
@@ -79,8 +85,20 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
             || brandForm.name.length < 3 || brandForm.address.length === 0 || brandForm.postcode.length < 5 || Number(brandForm.postcode) < 0 || brandForm.city.length === 0 || isOpenDeleteAlert
             : brandForm.name.length < 3 || brandForm.address.length === 0 || brandForm.postcode.length < 5 || Number(brandForm.postcode) < 0 || brandForm.city.length === 0 || isOpenDeleteAlert;
 
+
+    useEffect(() => {
+        setData(!!brand);
+        setDeleteMessage(`Êtes-vous sûr de vouloir supprimer la marque ${brand?.name} ? 
+        Cette action est définitive et entrainera la perte de toutes les données produits associées.`);
+        setOnDelete(() => handleDeleteBrand);
+        setOnSave(() => handleSave);
+        setIsDisableSave(disableSave);
+        setIsLoading(saving || loadingBrands);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [disableSave, saving, setSaving, loadingBrands]);
+
     return (
-        <Container onSubmit={brand ? update : save}>
+        <Container onSubmit={handleSave}>
             {brand &&
                 <Note
                     message="Attention, afin de préserver l'intégrité des données produits, modifier le nom de la marque ne modifiera pas le code SKU associé."
@@ -167,33 +185,21 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
                     onChange={(e) => setBrandForm({ ...brandForm, contact_phone: e.target.value } as BrandType)}
                 />
             </Contact>
-            <Textarea
-                name="notes"
-                label="Notes"
-                width="444px"
-                maxWidth="80vw"
-                height="100px"
-                maxHeight="400px"
-                placeholder="Notes"
-                maxLength={255}
-                value={brandForm.notes || ''}
-                onChange={(e: { target: { value: unknown; }; }) => setBrandForm({ ...brandForm, notes: e.target.value } as BrandType)}
-            />
-            <SaveAction $brand={!!brand}>
-                {brand &&
-                    <DiscreteButton
-                        value='supprimer'
-                        onClick={handleDeleteAlert}
-                        color={`${theme.colors.error}`}
-                        disabled={isOpenDeleteAlert}
-                    />}
-                <Button
-                    loading={saving || loadingBrands}
-                    disabled={disableSave}
-                    value='enregistrer'
-                    onClick={brand ? update : save}
+            <TextareaContainer>
+                <Textarea
+                    name="notes"
+                    label="Notes"
+                    width="444px"
+                    maxWidth="400px"
+                    height="100px"
+                    maxHeight="400px"
+                    placeholder="Notes"
+                    maxLength={255}
+                    value={brandForm.notes || ''}
+                    onChange={(e) => setBrandForm({ ...brandForm, notes: e.target.value } as BrandType)}
                 />
-            </SaveAction>
+            </TextareaContainer>
+            <input type="submit" style={{ display: 'none' }} />
         </Container>
     );
 }
@@ -201,7 +207,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
 const Container = styled.form`
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     height: 100%;
     width: 100%;
@@ -209,7 +215,7 @@ const Container = styled.form`
 `;
 
 const BrandName = styled.div<{ $brand: boolean }>`
-    margin-top: ${({ $brand }) => $brand ? '0' : '20px'};
+    margin-top: ${({ $brand }) => $brand ? '0' : '10px'};
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -224,19 +230,18 @@ const BrandAddress = styled.div`
     width: 444px;
 `;
 
-const SaveAction = styled.div<{ $brand: boolean }>`
-    gap: 10px;
-    width: 100%;
-    height: 10%;
-    display: flex;
-    justify-content: ${({ $brand }) => $brand ? 'space-between' : 'flex-end'};
-    align-items: center;
-`;
-
 const Contact = styled.div` 
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     gap: 10px;
     width: 100%;
+`;
+
+const TextareaContainer = styled.div`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 10px;
 `;

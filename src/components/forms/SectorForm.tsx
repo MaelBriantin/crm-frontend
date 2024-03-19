@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import { useState, ChangeEvent, useEffect, useRef } from 'react';
-import { Button, Chip, Input, DiscreteButton } from '../global';
+import { Button, Chip, Input } from '../global';
 import { VscAdd, VscClose } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
 import { createSector, deleteSector, updateSector } from '../../services/api/sectors';
-import { useSectors, useToast, useModal, useDeleteAlert } from '../../contexts';
+import { useSectors, useToast, useModal, useDeleteAlert, useFormActions } from '../../contexts';
 import { SectorType, emptySector } from '../../types/SectorTypes';
 import { deepCompare } from '../../utils/helpers/spells';
 import { useKeyboardShortcut } from '../../hooks/system/useKeyboardShortcut';
@@ -21,7 +21,8 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     const { callToast } = useToast();
     const { loadingSectors, refreshSectors } = useSectors();
     const { closeModal, setDisableClose } = useModal();
-    const { showDeleteAlert, isOpenDeleteAlert } = useDeleteAlert();
+    const { isOpenDeleteAlert } = useDeleteAlert();
+    const { setData, setDeleteMessage, setIsDisableSave, setIsLoading, setOnDelete, setOnSave } = useFormActions();
 
     const firstInputRef = useRef<HTMLInputElement>(null);
 
@@ -49,32 +50,33 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         if (sectorForm.name !== '' && sectorForm.postcodes.length > 0) {
-            setSaving(true);
             await createSector(sectorForm as SectorType, callToast, refreshSectors, closeModal);
-            setSaving(false);
         }
     }
 
-    const handleDeleteAlert = () => {
-        const message = `Êtes-vous sûr de vouloir supprimer le secteur ${sector?.name} ? 
-        Cette action est irréversible et entrainera la perte de toutes les données statistiques associées.`
-        showDeleteAlert(message, handleDeleteSector);
-    }
-
     const handleDeleteSector = async () => {
-        if (sectorForm.id) {
+        if (sector && sectorForm.id) {
             setSaving(true);
             await deleteSector({ id: sectorForm.id, name: sectorForm.name } as SectorType, callToast, refreshSectors, closeModal);
             setSaving(false);
         }
     }
 
+    const onSave = (e: React.FormEvent) => {
+        e.preventDefault();
+        setSaving(true);
+        if (sector) {
+            handleUpdate(e);
+        } else {
+            handleSave(e);
+        }
+        setSaving(false);
+    }
+
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         if (sectorForm && sectorForm.postcodes.length > 0 && sectorForm.name !== '') {
-            setSaving(true);
             await updateSector(sectorForm as SectorType, callToast, refreshSectors, closeModal);
-            setSaving(false);
         }
     }
 
@@ -116,6 +118,17 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         || Number(newPostcode.postcode) < 0
         || loadingSectors
         || isOpenDeleteAlert;
+
+    useEffect(() => {
+        setData(!!sector);
+        setDeleteMessage(`Êtes-vous sûr de vouloir supprimer le secteur ${sector?.name} ? 
+        Cette action est irréversible et entrainera la perte de toutes les données statistiques associées.`);
+        setIsDisableSave(disableSave || loadingSectors);
+        setIsLoading(saving || loadingSectors);
+        setOnDelete(() => handleDeleteSector);
+        setOnSave(() => onSave);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [disableSave, saving, setSaving, loadingSectors]);
 
     return (
         <Form>
@@ -172,21 +185,6 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
                     ))}
                 </ChipContainer>
             </InputSection>
-            <SaveAction $sector={!!sector}>
-                {sector &&
-                    <DiscreteButton
-                        value='supprimer'
-                        onClick={handleDeleteAlert}
-                        color={theme.colors.error}
-                        disabled={isOpenDeleteAlert}
-                    />}
-                <Button
-                    disabled={disableSave}
-                    loading={loadingSectors || saving}
-                    value='enregistrer'
-                    onClick={sector ? handleUpdate : handleSave}
-                />
-            </SaveAction>
         </Form >
     );
 };
@@ -200,7 +198,7 @@ const Form = styled.div`
 `;
 
 const InputSection = styled.div`
-    padding-top: 20px;
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -208,6 +206,7 @@ const InputSection = styled.div`
     gap: 20px;
     height: 100%;
     width: 100%;
+    padding-bottom: 10px;
 `;
 
 const CityForm = styled.form`
@@ -217,16 +216,6 @@ const CityForm = styled.form`
     justify-content: flex-start;
     gap: 10px;
     width: 100%;
-`;
-
-const SaveAction = styled.div<{ $sector: boolean }>`
-    margin-top: 10px;
-    gap: 10px;
-    width: 100%;
-    height: 10%;
-    display: flex;
-    justify-content: ${({ $sector }) => $sector ? 'space-between' : 'flex-end'};
-    align-items: center;
 `;
 
 const ChipContainer = styled.div`

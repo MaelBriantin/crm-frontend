@@ -16,6 +16,23 @@ export type CustomerType = {
     sector: SectorType | null;
     notes: string;
     is_active: boolean;
+    visit_frequency: VisitFrequencyType | null;
+    visit_day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday' | '' | null;
+    visit_day_label: string | null;
+    visit_schedule: string | null;
+    relationship: RelationshipType | null;
+};
+
+export type VisitFrequencyType = {
+    id: string;
+    label: string;
+    value: string;
+};
+
+export type RelationshipType = {
+    id: string;
+    label: string;
+    value: string;
 };
 
 export const emptyCustomer: CustomerType = {
@@ -33,5 +50,10 @@ export const emptyCustomer: CustomerType = {
     updatedAt: '',
     sector: null,
     notes: '',
-    is_active: true
+    is_active: true,
+    visit_frequency: null,
+    visit_day: null,
+    visit_day_label: null,
+    visit_schedule: null,
+    relationship: null
 };

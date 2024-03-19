@@ -1,45 +1,59 @@
 import styled from 'styled-components';
-import React, { useEffect } from 'react';
-import { theme } from '../assets/themes';
-import { DataTable } from '../components/DataTable';
-import { useCustomers } from '../contexts/data/customers';
-import { isEmpty, deepCopy } from '../utils/helpers/spells';
-import { VscSmiley, VscEdit, VscChromeClose } from 'react-icons/vsc';
-import { RowDataType, ColumnProps, RowType } from '../types/DataTableTypes';
-import { Loader } from '../components/global';
-import { CustomerForm } from '../components/forms/CustomerForm';
-import { useModal, useDeleteAlert, useToast } from '../contexts';
-import { CustomerType } from '../types/CustomerTypes';
-import { deleteCustomer } from '../services/api/customers';
-import { useKeyboardShortcut } from '../hooks/system/useKeyboardShortcut';
+import React, {useEffect} from 'react';
+import {theme} from '../assets/themes';
+import {DataTable} from '../components/DataTable';
+import {isEmpty, deepCopy} from '../utils/helpers/spells';
+import {VscSmiley, VscEdit, VscChromeClose} from 'react-icons/vsc';
+import {RowDataType, ColumnProps, RowType} from '../types/DataTableTypes';
+import {Loader} from '../components/global';
+import {CustomerForm} from '../components/forms/CustomerForm';
+import {useModal, useDeleteAlert, useToast, useSectors, useCustomers} from '../contexts';
+import {CustomerType} from '../types/CustomerTypes';
+import {deleteCustomer} from '../services/api/customers';
+import {useKeyboardShortcut} from '../hooks/system/useKeyboardShortcut';
+import {FormActions} from "../components/forms/FormActions.tsx";
 
 export const CustomerPage: React.FC = () => {
 
-    const { customers, refreshCustomers, loadingCustomers } = useCustomers();
+    const {customers, refreshCustomers, loadingCustomers, getVisitsOptions} = useCustomers();
+    const {refreshSectors} = useSectors();
 
     const [sort, setSort] = React.useState<string | null>(null);
     const [sortDirection, setSortDirection] = React.useState<boolean>(true);
 
-    const { showModal } = useModal();
-    const { showDeleteAlert } = useDeleteAlert();
-    const { callToast } = useToast();
+    const {showModal} = useModal();
+    const {showDeleteAlert} = useDeleteAlert();
+    const {callToast} = useToast();
 
 
     useEffect(() => {
-        isEmpty(customers) && refreshCustomers();
+        if (isEmpty(customers)) {
+            getVisitsOptions();
+            refreshSectors();
+            refreshCustomers();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const newCustomer = () => {
-        showModal(<CustomerForm />, 'Ajouter un client');
+        showModal(
+            <CustomerForm/>,
+            'Nouveau client',
+            <FormActions/>
+        );
     }
 
     const editCustomer = (row: RowType) => {
         const customer = customers.find((customer: CustomerType) => customer.id === row.id);
-        showModal(<CustomerForm customer={customer as CustomerType} />, 'Modifier les informations d\'un client');
+
+        showModal(
+            <CustomerForm customer={customer as CustomerType}/>,
+            "Modifier les informations du client",
+            <FormActions/>
+        );
     }
 
-    useKeyboardShortcut({ 'Control+Alt+n': () => newCustomer() });
+    useKeyboardShortcut({'Control+Alt+n': () => newCustomer()});
 
     const handleDeleteCustomer = async (customer: CustomerType) => {
         await deleteCustomer(customer, callToast, refreshCustomers);
@@ -95,8 +109,8 @@ export const CustomerPage: React.FC = () => {
             type: 'rowActions',
             sortable: false,
             actions: [
-                { icon: <VscEdit />, onClick: (row: RowType) => editCustomer(row), color: theme.colors.primary },
-                { icon: <VscChromeClose />, onClick: (row: RowType) => handleDeleteAlert(row), color: theme.colors.error }
+                {icon: <VscEdit/>, onClick: (row: RowType) => editCustomer(row), color: theme.colors.primary},
+                {icon: <VscChromeClose/>, onClick: (row: RowType) => handleDeleteAlert(row), color: theme.colors.error}
             ],
             width: '5%',
             align: "start"
@@ -105,25 +119,25 @@ export const CustomerPage: React.FC = () => {
 
     return (
         <Container>
-            {(isEmpty(customers) || loadingCustomers) && <Loader transparent />}
-            {(!isEmpty(customers) || !loadingCustomers) && 
-            <DataTable
-                topBar
-                searchbar={!!customers.length}
-                iconTopBar={<VscSmiley />}
-                onClickTopBar={newCustomer}
-                onDoubleClickOnRow={(row: RowType) => editCustomer(row)}
-                buttonValueTopBar='Ajouter un client'
-                hoverable
-                // emptyMessage={'Aucun client enregistré...'}
-                columns={columns}
-                data={deepCopy(customers) as RowDataType[]}
-                sort={sort}
-                setSort={setSort}
-                sortDirection={sortDirection}
-                setSortDirection={setSortDirection}
-                disabledRow={(row: RowType) => row.is_active === false}
-            />}
+            {(isEmpty(customers) || loadingCustomers) && <Loader transparent/>}
+            {(!isEmpty(customers) || !loadingCustomers) &&
+                <DataTable
+                    topBar
+                    searchbar={!!customers.length}
+                    iconTopBar={<VscSmiley/>}
+                    onClickTopBar={newCustomer}
+                    onDoubleClickOnRow={(row: RowType) => editCustomer(row)}
+                    buttonValueTopBar='Nouveau client'
+                    hoverable
+                    // emptyMessage={'Aucun client enregistré...'}
+                    columns={columns}
+                    data={deepCopy(customers) as RowDataType[]}
+                    sort={sort}
+                    setSort={setSort}
+                    sortDirection={sortDirection}
+                    setSortDirection={setSortDirection}
+                    disabledRow={(row: RowType) => row.is_active === false}
+                />}
         </Container>
     );
 }

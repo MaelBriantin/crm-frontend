@@ -13,6 +13,7 @@ import { theme } from '../assets/themes';
 import { deleteBrand } from '../services/api/brands';
 import { useKeyboardShortcut } from '../hooks/system/useKeyboardShortcut';
 import { Loader } from '../components/global';
+import { FormActions } from '../components/forms/FormActions';
 
 export const BrandPage = () => {
 
@@ -30,14 +31,14 @@ export const BrandPage = () => {
     }, []);
 
     const newBrand = () => {
-        showModal(<BrandForm />, 'Ajouter une marque');
+        showModal(<BrandForm />, 'Nouvelle marque', <FormActions />);
     }
 
     useKeyboardShortcut({ 'Control+Alt+n': () => newBrand() });
 
     const editBrand = (row: RowType) => {
         const brand = brands.find((brand: BrandType) => brand.id === row.id);
-        showModal(<BrandForm brand={brand as BrandType} />, 'Modifier une marque');
+        showModal(<BrandForm brand={brand as BrandType} />, 'Modifier une marque', <FormActions />);
     }
 
     const handleDeleteAlert = (row: RowType) => {
@@ -104,7 +105,7 @@ export const BrandPage = () => {
                 topBar
                 searchbar={!!brands.length}
                 iconTopBar={<VscJersey />}
-                buttonValueTopBar='Ajouter une marque'
+                buttonValueTopBar='Nouvelle marque'
                 onClickTopBar={newBrand}
                 onDoubleClickOnRow={editBrand}
                 hoverable

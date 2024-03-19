@@ -12,6 +12,7 @@ import { theme } from '../assets/themes/index.ts';
 import { deleteSector } from '../services/api/sectors/deleteSector.ts';
 import { useKeyboardShortcut } from '../hooks/system/useKeyboardShortcut';
 import { Loader } from '../components/global';
+import { FormActions } from '../components/forms/FormActions.tsx';
 
 export const SectorPage: React.FC = () => {
 
@@ -105,12 +106,12 @@ export const SectorPage: React.FC = () => {
     const handleDoubleClick = (row: RowType) => {
         setAppLoading(true);
         const sector = sectors.find((sector: SectorType) => sector.id === row.id);
-        showModal(<SectorForm sector={sector as SectorType} />, `Modifier un secteur`);
+        showModal(<SectorForm sector={sector as SectorType} />, `Modifier un secteur`, <FormActions />);
         setAppLoading(false);
     };
 
     const newSector = () => {
-        showModal(<SectorForm />, 'Ajouter un secteur');
+        showModal(<SectorForm />, 'Ajouter un secteur', <FormActions />);
     };
 
     return (

@@ -62,26 +62,20 @@ export const DataTableCell: React.FC<DataTableCellProps> = ({
                         <TableCellValue
                             key={index}
                             $color={{ background: color?.background || '', color: color?.text || '' }}
-                            // dangerouslySetInnerHTML={{ __html: item + ' / ' }}
-                        >
-                            { `${item} / ` }
-                        </TableCellValue>
+                            dangerouslySetInnerHTML={{ __html: item + ' / ' }}
+                        />
                         : <TableCellValue
                             key={index}
                             $color={{ background: color?.background || '', color: color?.text || '' }}
-                            // dangerouslySetInnerHTML={{ __html: item }}
-                        >
-                            { item }
-                        </TableCellValue>
+                            dangerouslySetInnerHTML={{ __html: item }}
+                        />
                 ))
             )}
             {(!column.type || filterOut(['chips', 'link'], dataTableTypeList).includes(column.type) && !Array.isArray(rowValue)) && (
                 <TableCellValue
                     $color={{ background: color?.background || '', color: color?.text || '' }}
-                    // dangerouslySetInnerHTML={{ __html: rowValue }}
-                >
-                    { rowValue }
-                </TableCellValue>
+                    dangerouslySetInnerHTML={{ __html: rowValue }}
+                />
             )}
         </TableCell>
     );
@@ -143,6 +137,7 @@ const TableCellValue = styled.span<{ $color: { background: string, color: string
         color: white;
     }
     span{
+        font-weight: bold;
         color: ${theme.colors.primary};
     }
 `;
