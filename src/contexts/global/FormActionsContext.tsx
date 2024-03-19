@@ -1,65 +1,57 @@
-import React, { createContext, useContext, useState, FormEvent, Dispatch, SetStateAction } from 'react';
+import React, { createContext, useContext, useState, Dispatch, SetStateAction } from 'react';
 
 interface FormActionsContextProps {
-    loadingData: boolean;
-    setLoadingData: (value: boolean) => void;
-    disableSave: boolean;
-    setDisableSave: (value: boolean) => void;
-    saving: boolean;
-    setSaving: (value: boolean) => void;
-    saveMethod: (e: React.FormEvent) => void;
-    setSaveMethod: (method: (e: React.FormEvent) => void) => void;
-    updateMethod: (e: FormEvent<Element>) => void;
-    setUpdateMethod: Dispatch<SetStateAction<(e: FormEvent<Element>) => void>>;
-    deleteMethod: () => void;
-    setDeleteMethod: (method: () => void) => void;
+    data: boolean;
+    setData: Dispatch<SetStateAction<boolean>>;
     deleteMessage: string;
-    setDeleteMessage: (message: string) => void;
+    setDeleteMessage: Dispatch<SetStateAction<string>>;
+    onSave: (e: React.MouseEvent<HTMLDivElement>) => void | object;
+    setOnSave: Dispatch<SetStateAction<(e: React.MouseEvent<HTMLDivElement>) => void | object>>;
+    onDelete: () => void;
+    setOnDelete: Dispatch<SetStateAction<() => void>>;
+    isDisableSave: boolean;
+    setIsDisableSave: Dispatch<SetStateAction<boolean>>;
+    isLoading: boolean;
+    setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
 
 export const FormActionsContext = createContext<FormActionsContextProps>({
-    loadingData: false,
-    setLoadingData: () => { },
-    disableSave: false,
-    setDisableSave: () => { },
-    saving: false,
-    setSaving: () => { },
-    saveMethod: () => { },
-    setSaveMethod: () => { },
-    updateMethod: () => { },
-    setUpdateMethod: () => { },
-    deleteMethod: () => { },
-    setDeleteMethod: () => { },
+    data: false,
+    setData: () => false,
     deleteMessage: '',
-    setDeleteMessage: () => { },
+    setDeleteMessage: () => '',
+    onSave: () => {},
+    setOnSave: () => () => {},
+    onDelete: () => {},
+    setOnDelete: () => () => {},
+    isDisableSave: false,
+    setIsDisableSave: () => false,
+    isLoading: false,
+    setIsLoading: () => false,
 });
 
 export const FormActionsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [loadingData, setLoadingData] = useState(false);
-    const [disableSave, setDisableSave] = useState(false);
-    const [saving, setSaving] = useState(false);
-    const [saveMethod, setSaveMethod] = useState<(e: React.FormEvent) => void>(() => () => {});
-
-    const [updateMethod, setUpdateMethod] = useState<(e: FormEvent<Element>) => void>(() => () => {});
-    const [deleteMethod, setDeleteMethod] = useState(() => () => {});
-    const [deleteMessage, setDeleteMessage] = useState('');
+    const [data, setData] = useState<boolean>(false);
+    const [deleteMessage, setDeleteMessage] = useState<string>('');
+    const [onSave, setOnSave] = useState<(e: React.MouseEvent<HTMLDivElement>) => void | object>(() => () => {});
+    const [onDelete, setOnDelete] = useState<() => void>(() => () => {});
+    const [isDisableSave, setIsDisableSave] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     return (
         <FormActionsContext.Provider value={{
-            loadingData,
-            setLoadingData,
-            disableSave,
-            setDisableSave,
-            saving,
-            setSaving,
-            saveMethod,
-            setSaveMethod,
-            updateMethod,
-            setUpdateMethod,
-            deleteMethod,
-            setDeleteMethod,
+            data,
+            setData,
             deleteMessage,
             setDeleteMessage,
+            onSave,
+            setOnSave,
+            onDelete,
+            setOnDelete,
+            isDisableSave,
+            setIsDisableSave,
+            isLoading,
+            setIsLoading
         }}>
             {children}
         </FormActionsContext.Provider>

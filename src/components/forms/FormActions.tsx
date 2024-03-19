@@ -1,25 +1,24 @@
 import styled from 'styled-components';
 import { theme } from '../../assets/themes';
 import { DiscreteButton, Button } from '../global';
-import { useDeleteAlert, useFormActions } from '../../contexts';
+import {useDeleteAlert, useFormActions} from '../../contexts';
 import React from 'react';
 
 type FormActionsProps = {
-    data: boolean;
+    //
 };
 
-export const FormActions: React.FC<FormActionsProps> = ({ data }) => {
+export const FormActions: React.FC<FormActionsProps> = () => {
 
     const { showDeleteAlert, isOpenDeleteAlert } = useDeleteAlert();
-
-    const { loadingData, disableSave, saveMethod, updateMethod, deleteMethod, deleteMessage, saving } = useFormActions();
+    const { deleteMessage, onDelete, isLoading, onSave, data, isDisableSave } = useFormActions();
 
     const handleDeleteAlert = () => {
-        showDeleteAlert(deleteMessage, deleteMethod);
+        deleteMessage && onDelete && showDeleteAlert(deleteMessage, onDelete);
     };
 
     return (
-        <SaveAction $data={!!data}>
+        <SaveAction $data={data}>
             {data &&
                 <DiscreteButton
                     value='supprimer'
@@ -28,10 +27,10 @@ export const FormActions: React.FC<FormActionsProps> = ({ data }) => {
                     disabled={isOpenDeleteAlert}
                 />}
             <Button
-                disabled={disableSave}
-                loading={loadingData || saving}
-                value='enregistrer'
-                onClick={data ? updateMethod : saveMethod}
+                disabled={isDisableSave}
+                loading={isLoading}
+                value="Enregistrer"
+                onClick={(e: React.MouseEvent<HTMLDivElement>) => onSave(e)}
             />
         </SaveAction>
     );
@@ -39,7 +38,7 @@ export const FormActions: React.FC<FormActionsProps> = ({ data }) => {
 
 const SaveAction = styled.div<{ $data: boolean }>`
     gap: 10px;
-    width: 100%;    
+    width: 100%;
     display: flex;
     justify-content: ${({ $data }) => $data ? 'space-between' : 'flex-end'};
     align-items: center;
