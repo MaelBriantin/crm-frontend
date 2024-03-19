@@ -147,9 +147,9 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
         setOnDelete(() => handleDelete);
         setIsDisableSave(isSaveDisabled);
         setOnSave(() => handleSave);
-        setIsLoading(saving);
+        setIsLoading(saving || loadingCustomers);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isSaveDisabled]);
+    }, [isSaveDisabled, saving, loadingCustomers]);
 
     return (
         <Container onSubmit={handleSave}>
