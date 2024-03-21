@@ -95,7 +95,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
         setIsDisableSave(disableSave);
         setIsLoading(saving || loadingBrands);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [disableSave, saving, setSaving, loadingBrands]);
+    }, [disableSave, saving, setSaving, loadingBrands, brandForm]);
 
     return (
         <Container onSubmit={handleSave}>
