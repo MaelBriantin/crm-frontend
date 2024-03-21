@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, Dispatch, SetStateAction } from 'react';
 
-interface FormActionsContextProps {
+type FormActionsContextProps = {
     data: boolean;
     setData: Dispatch<SetStateAction<boolean>>;
     deleteMessage: string;
@@ -11,6 +11,8 @@ interface FormActionsContextProps {
     setOnDelete: Dispatch<SetStateAction<() => void>>;
     isDisableSave: boolean;
     setIsDisableSave: Dispatch<SetStateAction<boolean>>;
+    isDisableDelete: boolean;
+    setIsDisableDelete: Dispatch<SetStateAction<boolean>>;
     isLoading: boolean;
     setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
@@ -26,6 +28,8 @@ export const FormActionsContext = createContext<FormActionsContextProps>({
     setOnDelete: () => () => {},
     isDisableSave: false,
     setIsDisableSave: () => false,
+    isDisableDelete: false,
+    setIsDisableDelete: () => false,
     isLoading: false,
     setIsLoading: () => false,
 });
@@ -36,6 +40,7 @@ export const FormActionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [onSave, setOnSave] = useState<(e: React.MouseEvent<HTMLDivElement>) => void | object>(() => () => {});
     const [onDelete, setOnDelete] = useState<() => void>(() => () => {});
     const [isDisableSave, setIsDisableSave] = useState<boolean>(false);
+    const [isDisableDelete, setIsDisableDelete] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     return (
@@ -50,6 +55,8 @@ export const FormActionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
             setOnDelete,
             isDisableSave,
             setIsDisableSave,
+            isDisableDelete,
+            setIsDisableDelete,
             isLoading,
             setIsLoading
         }}>

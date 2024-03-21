@@ -7,17 +7,13 @@ import {VscSmiley, VscEdit, VscChromeClose} from 'react-icons/vsc';
 import {RowDataType, ColumnProps, RowType} from '../types/DataTableTypes';
 import {Loader} from '../components/global';
 import {CustomerForm} from '../components/forms/CustomerForm';
-import {useModal, useDeleteAlert, useToast, useSectors, useCustomers} from '../contexts';
+import {useModal, useDeleteAlert, useToast} from '../contexts';
 import {CustomerType} from '../types/CustomerTypes';
 import {deleteCustomer} from '../services/api/customers';
 import {useKeyboardShortcut} from '../hooks/system/useKeyboardShortcut';
 import {FormActions} from "../components/forms/FormActions.tsx";
-
+import {useStoreCustomers} from "../stores/useStoreCustomers.ts";
 export const CustomerPage: React.FC = () => {
-
-    const {customers, refreshCustomers, loadingCustomers, getVisitsOptions} = useCustomers();
-    const {refreshSectors} = useSectors();
-
     const [sort, setSort] = React.useState<string | null>(null);
     const [sortDirection, setSortDirection] = React.useState<boolean>(true);
 
@@ -25,12 +21,13 @@ export const CustomerPage: React.FC = () => {
     const {showDeleteAlert} = useDeleteAlert();
     const {callToast} = useToast();
 
+    const { customers, fetchCustomers, loadingCustomers } = useStoreCustomers();
 
     useEffect(() => {
         if (isEmpty(customers)) {
-            getVisitsOptions();
-            refreshSectors();
-            refreshCustomers();
+            // getVisitsOptions();
+            // fetchSectors();
+            fetchCustomers();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -56,7 +53,7 @@ export const CustomerPage: React.FC = () => {
     useKeyboardShortcut({'Control+Alt+n': () => newCustomer()});
 
     const handleDeleteCustomer = async (customer: CustomerType) => {
-        await deleteCustomer(customer, callToast, refreshCustomers);
+        await deleteCustomer(customer, callToast, fetchCustomers);
     }
 
     const handleDeleteAlert = (row: RowType) => {

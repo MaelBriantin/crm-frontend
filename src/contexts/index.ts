@@ -8,14 +8,5 @@ export { useDeleteAlert, DeleteAlertProvider } from './global/DeleteAlertContext
 // auth contexts
 export { useAuth, AuthProvider } from './auth/AuthContext';
 
-// sector contexts
-export { useSectors, SectorsProvider } from './data/sectors';
-
-// brand contexts
-export { useBrands, BrandsProvider } from './data/brands';
-
-// customer contexts
-export { useCustomers, CustomersProvider } from './data/customers';
-
 // use all contexts
 export { ContextProvider } from './ContextProvider';

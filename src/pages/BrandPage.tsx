@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useBrands, useDeleteAlert, useModal, useToast } from '../contexts';
+import { useDeleteAlert, useModal, useToast } from '../contexts';
 import { isEmpty } from '../utils/helpers/spells';
 import { DataTable } from '../components/DataTable';
 import { RowDataType, RowType } from '../types/DataTableTypes';
@@ -14,6 +14,7 @@ import { deleteBrand } from '../services/api/brands';
 import { useKeyboardShortcut } from '../hooks/system/useKeyboardShortcut';
 import { Loader } from '../components/global';
 import { FormActions } from '../components/forms/FormActions';
+import {useStoreBrands} from "../stores/useStoreBrands.ts";
 
 export const BrandPage = () => {
 
@@ -21,12 +22,14 @@ export const BrandPage = () => {
     const [sortDirection, setSortDirection] = useState<boolean>(true);
 
     const { showModal } = useModal();
-    const { refreshBrands, brands, loadingBrands } = useBrands();
+    // const { refreshBrands, brands, loadingBrands } = useBrands();
     const { showDeleteAlert } = useDeleteAlert();
     const { callToast } = useToast();
 
+    const { brands, fetchBrands, loadingBrands } = useStoreBrands();
+
     useEffect(() => {
-        isEmpty(brands) && refreshBrands();
+        isEmpty(brands) && fetchBrands();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -49,7 +52,7 @@ export const BrandPage = () => {
     }
 
     const handleDeleteSector = async (brand: BrandType) => {
-        await deleteBrand(brand, callToast, refreshBrands);
+        await deleteBrand(brand, callToast, fetchBrands);
     }
 
     const columns = [

@@ -11,7 +11,7 @@ type FormActionsProps = {
 export const FormActions: React.FC<FormActionsProps> = () => {
 
     const { showDeleteAlert, isOpenDeleteAlert } = useDeleteAlert();
-    const { deleteMessage, onDelete, isLoading, onSave, data, isDisableSave } = useFormActions();
+    const { deleteMessage, onDelete, isLoading, onSave, data, isDisableSave, isDisableDelete } = useFormActions();
 
     const handleDeleteAlert = () => {
         deleteMessage && onDelete && showDeleteAlert(deleteMessage, onDelete);
@@ -24,7 +24,7 @@ export const FormActions: React.FC<FormActionsProps> = () => {
                     value='supprimer'
                     onClick={handleDeleteAlert}
                     color={theme.colors.error}
-                    disabled={isOpenDeleteAlert}
+                    disabled={isOpenDeleteAlert || isDisableDelete}
                 />}
             <Button
                 disabled={isDisableSave}
