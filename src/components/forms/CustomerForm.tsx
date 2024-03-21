@@ -95,19 +95,19 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
         if (!customerForm.sector && customerForm.postcode && customerForm.postcode.length === 5) {
             findMatchingSector(customerForm.postcode);
         }
-    }, [customerForm, customerForm.postcode, sectors]);
+    }, [customerForm, customerForm.postcode, sectors, setCustomerForm]);
 
 
     const handleSave = async (e: React.FormEvent) => {
+        console.log(customerForm);
         e.preventDefault();
         if (customer) {
             setSaving(true);
-            !isSaveDisabled && await updateCustomer(customerForm, callToast, refreshCustomers, closeModal);
+            await updateCustomer(customerForm, callToast, refreshCustomers, closeModal);
             setSaving(false);
-        }
-        if (!customer) {
+        } else {
             setSaving(true);
-            !isSaveDisabled && await createCustomer(customerForm, callToast, refreshCustomers, closeModal);
+            await createCustomer(customerForm, callToast, refreshCustomers, closeModal);
             setSaving(false);
         }
     }
@@ -149,7 +149,11 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ customer }) => {
         setOnSave(() => handleSave);
         setIsLoading(saving || loadingCustomers);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isSaveDisabled, saving, loadingCustomers]);
+    }, [isSaveDisabled, saving, loadingCustomers, customerForm, customer]);
+
+    useEffect(() => {
+        console.log('customerForm', customerForm);
+    }, [customerForm]);
 
     return (
         <Container onSubmit={handleSave}>

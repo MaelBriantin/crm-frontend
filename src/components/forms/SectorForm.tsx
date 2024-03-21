@@ -128,7 +128,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         setOnDelete(() => handleDeleteSector);
         setOnSave(() => onSave);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [disableSave, saving, setSaving, loadingSectors]);
+    }, [disableSave, saving, setSaving, loadingSectors, sectorForm]);
 
     return (
         <Form>
