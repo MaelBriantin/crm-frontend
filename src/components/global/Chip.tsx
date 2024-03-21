@@ -38,9 +38,10 @@ export const Chip: React.FC<ChipProps> = ({ text, color, highlight, startIcon, e
                 <Icon $disabled={disabled} onClick={!disabled ? onClickOnIcon : () => {}} $iconColor={iconColor}>{startIcon}</Icon>}
             <ChipText 
                 $text={color?.text ?? ''} 
-                onClick={onClickOnChip} 
-                dangerouslySetInnerHTML={{ __html: text }} 
-            />
+                onClick={onClickOnChip}
+            >
+                {text}
+            </ChipText>
             {endIcon &&
                 <Icon $disabled={disabled} onClick={!disabled ? onClickOnIcon : () => {}} $iconColor={iconColor}>{endIcon}</Icon>}
         </ChipContainer>

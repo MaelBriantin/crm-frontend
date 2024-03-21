@@ -1,31 +1,32 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Chip } from '../global/Chip.tsx';
-import { filterOut } from '../../utils/helpers/spells.ts';
-import { DataTableCellProps, dataTableTypeList } from '../../types/DataTableTypes.ts';
-import { getRowValueAndHighlight } from '../../utils/dataTableUtils.ts';
-import { theme } from '../../assets/themes/index.ts';
+import {Chip} from '../global';
+import {filterOut} from '../../utils/helpers/spells.ts';
+import {DataTableCellProps, dataTableTypeList} from '../../types/DataTableTypes.ts';
+import {getRowValueAndHighlight} from '../../utils/dataTableUtils.ts';
+import {theme} from '../../assets/themes';
 
-export const DataTableCell: React.FC<DataTableCellProps> = ({ 
-        row, 
-        column, 
-        columnWidth, 
-        columnMaxWidth, 
-        columnIndex, 
-        color, 
-        searchedValue, 
-        arrayLimit = 4, 
-        isHovered,
-        align }) => {
+export const DataTableCell: React.FC<DataTableCellProps> = ({
+                                                                row,
+                                                                column,
+                                                                columnWidth,
+                                                                columnMaxWidth,
+                                                                columnIndex,
+                                                                color,
+                                                                searchedValue,
+                                                                arrayLimit = 4,
+                                                                isHovered,
+                                                                align
+                                                            }) => {
 
-    const { rowValue, highlight } = getRowValueAndHighlight(searchedValue, row[column.value], arrayLimit);
+    const {rowValue, highlight} = getRowValueAndHighlight(searchedValue, row[column.value], arrayLimit);
     return (
-        <TableCell 
-            key={columnIndex} 
-            $columnWidth={columnWidth} 
+        <TableCell
+            key={columnIndex}
+            $columnWidth={columnWidth}
             $columnMaxWidth={columnMaxWidth}
             $align={align}
-            >
+        >
             {(column.type === 'rowActions') && (
                 <RowActions $isHovered={isHovered}>
                     {column.actions?.map((action, index) => (
@@ -61,29 +62,30 @@ export const DataTableCell: React.FC<DataTableCellProps> = ({
                     item !== '...' ?
                         <TableCellValue
                             key={index}
-                            $color={{ background: color?.background || '', color: color?.text || '' }}
-                            dangerouslySetInnerHTML={{ __html: item + ' / ' }}
-                        />
+                            $color={{background: color?.background || '', color: color?.text || ''}}
+                        >
+                            {item}
+                        </TableCellValue>
                         : <TableCellValue
                             key={index}
-                            $color={{ background: color?.background || '', color: color?.text || '' }}
-                            dangerouslySetInnerHTML={{ __html: item }}
-                        />
+                            $color={{background: color?.background || '', color: color?.text || ''}}
+                        >
+                            {item}
+                        </TableCellValue>
                 ))
             )}
             {(!column.type || filterOut(['chips', 'link'], dataTableTypeList).includes(column.type) && !Array.isArray(rowValue)) && (
                 <TableCellValue
-                    $color={{ background: color?.background || '', color: color?.text || '' }}
-                    dangerouslySetInnerHTML={{ __html: rowValue }}
-                />
+                    $color={{background: color?.background || '', color: color?.text || ''}}
+                >{ String(rowValue) }</TableCellValue>
             )}
         </TableCell>
     );
 }
 
-const RowActions = styled.div<{$isHovered: boolean | undefined}>`
+const RowActions = styled.div<{ $isHovered: boolean | undefined }>`
     transition: opacity 250ms;
-    opacity: ${({ $isHovered }): string => $isHovered ? '1' : '0'};
+    opacity: ${({$isHovered}): string => $isHovered ? '1' : '0'};
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -94,21 +96,26 @@ const RowActions = styled.div<{$isHovered: boolean | undefined}>`
     color: ${theme.colors.greyDark};
 `;
 
-const RowActionIcon = styled.div<{$color: string | undefined}>`
+const RowActionIcon = styled.div<{ $color: string | undefined }>`
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: ${theme.fonts.size.P1};
     cursor: pointer;
     transition: all 250ms;
+
     &:hover {
         // transform: scale(1.2);
-        color: ${({ $color }): string => $color || theme.colors.greyDark}
+        color: ${({$color}): string => $color || theme.colors.greyDark}
     }
 `;
 
 
-const TableCell = styled.td<{ $columnWidth: string | undefined, $columnMaxWidth: string | undefined, $align: string | undefined }>`
+const TableCell = styled.td<{
+    $columnWidth: string | undefined,
+    $columnMaxWidth: string | undefined,
+    $align: string | undefined
+}>`
     padding: 8px;
     width: ${(props) => props.$columnWidth || 'auto'};
     max-width: ${(props) => props.$columnMaxWidth || 'auto'};
@@ -128,15 +135,17 @@ const ChipContainer = styled.div`
     flex-wrap: wrap;
     /* overflow-x: hidden; */
     gap: 5px;
-    `;
+`;
 
 const TableCellValue = styled.span<{ $color: { background: string, color: string } }>`
-    color: ${({ $color }): string => $color.color};
+    color: ${({$color}): string => $color.color};
+
     .highlight {
         background-color: ${theme.colors.primary};
         color: white;
     }
-    span{
+
+    span {
         font-weight: bold;
         color: ${theme.colors.primary};
     }

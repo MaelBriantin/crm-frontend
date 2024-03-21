@@ -40,7 +40,7 @@ export const DeleteAlert: React.FC<DeleteAlertProps> = ({ message, confirmAction
             absolute
             position='bottom'
         >
-            <span dangerouslySetInnerHTML={{ __html: message }} />
+            <span>{ message }</span>
             <Button loading={confirmed} value='Confirmer' onClick={handleConfirm} variant='small' color={theme.colors.error} />
             <Button value='Annuler' onClick={handleClose} variant='small' color={theme.colors.error} />
         </Alert>
