@@ -7,7 +7,6 @@ import {
     DeleteAlertProvider,
     FormActionsProvider,
 } from ".";
-import { DataProvider } from "./DataProvider";
 
 interface ContextProviderProps {
     children: React.ReactNode;
@@ -17,17 +16,15 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) =>
     return (
         <AuthProvider>
             <AppLoadingProvider>
-                <DataProvider>
-                    <ToastProvider>
-                        <DeleteAlertProvider>
-                            <FormActionsProvider>
-                                <ModalProvider>
-                                    {children}
-                                </ModalProvider>
-                            </FormActionsProvider>
-                        </DeleteAlertProvider>
-                    </ToastProvider>
-                </DataProvider>
+                <ToastProvider>
+                    <DeleteAlertProvider>
+                        <FormActionsProvider>
+                            <ModalProvider>
+                                {children}
+                            </ModalProvider>
+                        </FormActionsProvider>
+                    </DeleteAlertProvider>
+                </ToastProvider>
             </AppLoadingProvider>
         </AuthProvider>
     );
