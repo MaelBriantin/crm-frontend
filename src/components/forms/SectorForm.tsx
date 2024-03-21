@@ -4,10 +4,11 @@ import { Button, Chip, Input } from '../global';
 import { VscAdd, VscClose } from "react-icons/vsc";
 import { theme } from '../../assets/themes';
 import { createSector, deleteSector, updateSector } from '../../services/api/sectors';
-import { useSectors, useToast, useModal, useDeleteAlert, useFormActions } from '../../contexts';
+import { useToast, useModal, useDeleteAlert, useFormActions } from '../../contexts';
 import { SectorType, emptySector } from '../../types/SectorTypes';
 import { deepCompare } from '../../utils/helpers/spells';
 import { useKeyboardShortcut } from '../../hooks/system/useKeyboardShortcut';
+import {useStoreSectors} from "../../stores/useStoreSectors.ts";
 
 type SectorFormProps = {
     sector?: SectorType;
@@ -19,10 +20,11 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     const [saving, setSaving] = useState(false);
 
     const { callToast } = useToast();
-    const { loadingSectors, refreshSectors } = useSectors();
     const { closeModal, setDisableClose } = useModal();
     const { isOpenDeleteAlert } = useDeleteAlert();
     const { setData, setDeleteMessage, setIsDisableSave, setIsLoading, setOnDelete, setOnSave } = useFormActions();
+
+    const { loadingSectors, fetchSectors } = useStoreSectors();
 
     const firstInputRef = useRef<HTMLInputElement>(null);
 
@@ -50,14 +52,14 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         if (sectorForm.name !== '' && sectorForm.postcodes.length > 0) {
-            await createSector(sectorForm as SectorType, callToast, refreshSectors, closeModal);
+            await createSector(sectorForm as SectorType, callToast, fetchSectors, closeModal);
         }
     }
 
     const handleDeleteSector = async () => {
         if (sector && sectorForm.id) {
             setSaving(true);
-            await deleteSector({ id: sectorForm.id, name: sectorForm.name } as SectorType, callToast, refreshSectors, closeModal);
+            await deleteSector({ id: sectorForm.id, name: sectorForm.name } as SectorType, callToast, fetchSectors, closeModal);
             setSaving(false);
         }
     }
@@ -76,7 +78,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         if (sectorForm && sectorForm.postcodes.length > 0 && sectorForm.name !== '') {
-            await updateSector(sectorForm as SectorType, callToast, refreshSectors, closeModal);
+            await updateSector(sectorForm as SectorType, callToast, fetchSectors, closeModal);
         }
     }
 

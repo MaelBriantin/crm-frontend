@@ -2,12 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { BrandType, emptyBrand } from "../../types/BrandTypes";
 import styled from "styled-components";
 import { Chip, Input, Textarea, Note } from "../global";
-import { useModal, useBrands, useToast, useDeleteAlert, useFormActions } from "../../contexts";
+import { useModal, useToast, useDeleteAlert, useFormActions } from "../../contexts";
 import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
 import { TbAlertSquare } from "react-icons/tb";
 import { theme } from "../../assets/themes";
 import { deepCompare } from "../../utils/helpers/spells";
 import { createBrand, deleteBrand, updateBrand } from "../../services/api/brands";
+import {useStoreBrands} from "../../stores/useStoreBrands.ts";
 
 type BrandFormProps = {
     brand?: BrandType;
@@ -17,13 +18,14 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
     const [brandForm, setBrandForm] = useState(brand || emptyBrand as BrandType);
     const [saving, setSaving] = useState(false);
 
-    const { refreshBrands, loadingBrands } = useBrands();
     const { closeModal, setDisableClose } = useModal();
     const { callToast } = useToast();
     const { isOpenDeleteAlert } = useDeleteAlert();
     const { setData, setDeleteMessage, setIsDisableSave, setIsLoading, setOnDelete, setOnSave } = useFormActions();
     
     const firstInputRef = useRef<HTMLInputElement>(null);
+
+    const { fetchBrands, loadingBrands } = useStoreBrands();
 
     useEffect(() => {
         setDisableClose(saving || loadingBrands);
@@ -49,14 +51,14 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
     const save = async (e: React.FormEvent) => {
         e.preventDefault();
         //setSaving(true);
-        !disableSave && await createBrand(brandForm, callToast, refreshBrands, closeModal);
+        !disableSave && await createBrand(brandForm, callToast, fetchBrands, closeModal);
         //setSaving(false);
     };
 
     const update = async (e: React.FormEvent) => {
         e.preventDefault();
         //setSaving(true);
-        !disableSave && await updateBrand(brandForm, callToast, refreshBrands, closeModal);
+        !disableSave && await updateBrand(brandForm, callToast, fetchBrands, closeModal);
         //setSaving(false);
     };
 
@@ -74,7 +76,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
     const handleDeleteBrand = async () => {
         if (brandForm.id) {
             setSaving(true);
-            await deleteBrand(brand as BrandType, callToast, refreshBrands, closeModal);
+            await deleteBrand(brand as BrandType, callToast, fetchBrands, closeModal);
             setSaving(false);
         }
     };

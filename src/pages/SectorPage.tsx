@@ -4,29 +4,32 @@ import { deepCopy, isEmpty } from '../utils/helpers/spells.ts';
 import { DataTable } from '../components/DataTable';
 import { ColumnProps, RowDataType, RowType } from '../types/DataTableTypes.ts';
 import { SectorType } from '../types/SectorTypes.ts';
-import { useSectors, useModal, useAppLoading, useDeleteAlert, useToast } from '../contexts';
+import { useModal, useAppLoading, useDeleteAlert, useToast } from '../contexts';
 import { SectorForm } from '../components/forms/SectorForm.tsx';
 import { LiaMapMarkedAltSolid } from "react-icons/lia";
 import { VscEdit, VscChromeClose } from "react-icons/vsc";
-import { theme } from '../assets/themes/index.ts';
-import { deleteSector } from '../services/api/sectors/deleteSector.ts';
+import { theme } from '../assets/themes';
+import { deleteSector } from '../services/api/sectors';
 import { useKeyboardShortcut } from '../hooks/system/useKeyboardShortcut';
 import { Loader } from '../components/global';
 import { FormActions } from '../components/forms/FormActions.tsx';
+import {useStoreSectors} from "../stores/useStoreSectors.ts";
 
 export const SectorPage: React.FC = () => {
 
     const [sort, setSort] = React.useState<string | null>(null);
     const [sortDirection, setSortDirection] = React.useState<boolean>(true);
 
-    const { sectors, refreshSectors, loadingSectors, setLoadingSectors } = useSectors();
+    // const { sectors, refreshSectors, loadingSectors, setLoadingSectors } = useSectors();
     const { showModal } = useModal();
     const { setAppLoading } = useAppLoading();
     const { showDeleteAlert } = useDeleteAlert();
     const { callToast } = useToast();
 
+    const { sectors, fetchSectors, loadingSectors, setLoadingSectors } = useStoreSectors();
+
     useEffect(() => {
-        isEmpty(sectors) && refreshSectors();
+        isEmpty(sectors) && fetchSectors();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -41,7 +44,7 @@ export const SectorPage: React.FC = () => {
 
     const handleDeleteSector = async (sector: SectorType) => {
         setLoadingSectors(true);
-        await deleteSector(sector, callToast, refreshSectors);
+        await deleteSector(sector, callToast, fetchSectors);
         setLoadingSectors(false);
     }
 
