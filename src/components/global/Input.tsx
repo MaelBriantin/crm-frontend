@@ -29,6 +29,7 @@ export const Input = forwardRef((
         onChange: (e: ChangeEvent<HTMLInputElement>) => void;
         label?: string;
         loading?: boolean;
+        symbol?: string;
     }, ref) => {
     const {
         name,
@@ -45,7 +46,8 @@ export const Input = forwardRef((
         textColor = theme.colors.dark,
         onChange,
         label,
-        loading
+        loading,
+        symbol
     } = props
 
     const inputRef: RefObject<HTMLInputElement> = useRef(null);
@@ -111,7 +113,7 @@ export const Input = forwardRef((
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (type === 'number') {
             if (!isNaN(Number(e.target.value))) {
-                if(noNegativeNumber && Number(e.target.value) < 0) {
+                if (noNegativeNumber && Number(e.target.value) < 0) {
                     return;
                 }
                 if (maxLength && e.target.value.length <= maxLength) {
@@ -129,7 +131,14 @@ export const Input = forwardRef((
     };
 
     return (
-        <InputStyle $value={!!value || !!count} $label={!!label} $width={width} $type={type} $icon={!!icon} $variantStyle={variantStyle} $clearable={clearable}>
+        <InputStyle
+            $value={!!value || !!count}
+            $label={!!label} $width={width}
+            $type={type} $icon={!!icon}
+            $variantStyle={variantStyle}
+            $clearable={clearable}
+            $symbol={!!symbol}
+        >
             {label &&
                 <label className="label">{label}</label>
             }
@@ -162,6 +171,10 @@ export const Input = forwardRef((
                     </CountButtons>
                 )
             }
+            {
+                symbol &&
+                <Symbol $type={type} className="symbol">{symbol}</Symbol>
+            }
             <input
                 name={name}
                 ref={inputRef}
@@ -180,7 +193,15 @@ export const Input = forwardRef((
     )
 });
 
-const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $variantStyle: VariantStyleType, $clearable: boolean, $label: boolean, $value: boolean }>`
+const InputStyle = styled.div<{ 
+    $width: string, 
+    $type: string, 
+    $icon: boolean, 
+    $variantStyle: VariantStyleType, 
+    $clearable: boolean, 
+    $label: boolean, 
+    $value: boolean, 
+    $symbol: boolean }>`
 
     // Remove arrows from input number
     // Chrome
@@ -234,8 +255,13 @@ const InputStyle = styled.div<{ $width: string, $type: string, $icon: boolean, $
         width: 100%;
         height: 100%;
         font-family: ${theme.fonts.family.source};
-        padding-right: ${({ $type, $clearable }): string => $type === 'password' || $type === 'number' || $clearable ? ' 35px' : '10px'};
-        border-radius: ${theme.materialDesign.borderRadius.default};
+        padding-right: ${({ $type, $clearable, $symbol }): string =>
+        ($type === 'password' || $type === 'number' || $clearable) && $symbol
+            ? ' 42px'
+            : ($type === 'password' || $type === 'number' || $clearable)
+                ? ' 35px'
+                : '10px'};        
+            border-radius: ${theme.materialDesign.borderRadius.default};
         background: ${theme.colors.transparent};
     }
 
@@ -329,4 +355,13 @@ const CountButtons = styled.div<{ $variantStyle: VariantStyleType }>`
     .addButton:hover, .removeButton:hover{
         color: ${theme.colors.primary};
     }
+`
+
+const Symbol = styled.div<{ $type: string, }>`
+    color: ${theme.colors.greyDark};
+    font-size: ${theme.fonts.size.P2};
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: ${({ $type }) => $type === 'number' || $type === 'password' ? '30px' : '10px'};
 `
