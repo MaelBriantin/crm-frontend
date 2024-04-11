@@ -19,6 +19,19 @@ export type ProductType = {
     image: string;
     createdAt: string;
     updatedAt: string;
+    product_sizes?: ProductSizeType[] | null;
+};
+
+export type ProductSizeType = {
+    product_id: number | null;
+    size: string | null;
+    stock: number | null;
+};
+
+export const emptyProductSize = {
+    product_id: null,
+    size: '',
+    stock: null
 };
 
 export const emptyProduct: ProductType = {
@@ -38,7 +51,8 @@ export const emptyProduct: ProductType = {
     brand_id: 0,
     image: '',
     createdAt: '',
-    updatedAt: ''
+    updatedAt: '',
+    product_sizes: null
 };
 
 export type ProductOptionsType = {
