@@ -3,7 +3,7 @@ import { RefObject, useEffect, useRef, useState, ReactNode, ChangeEvent, useCall
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import styled, { css, keyframes } from "styled-components";
 import { getVariantStyle } from "../../utils/inputUtils";
-import { VscChevronDown, VscChevronUp, VscChromeClose, VscLoading } from "react-icons/vsc";
+import { VscChromeClose, VscLoading } from "react-icons/vsc";
 
 type VariantStyleType = {
     fontSize: string;
@@ -96,19 +96,19 @@ export const Input = forwardRef((
         inputRef.current && inputRef.current.focus();
     };
 
-    const handleCount = (operator: 'plus' | 'minus') => {
-        if (String(count) === '' || count === undefined) setCount(0);
-        if (noNegativeNumber
-            && operator === 'minus'
-            && (count === 0 || count < 0
-                || (String(count) === '' || count === undefined)))
-            return;
-
-        operator === 'plus' && setCount(prevCount => prevCount + 1);
-        operator === 'minus' && setCount(prevCount => prevCount - 1);
-
-        inputRef.current && inputRef.current.focus();
-    };
+    // const handleCount = (operator: 'plus' | 'minus') => {
+    //     if (String(count) === '' || count === undefined) setCount(0);
+    //     if (noNegativeNumber
+    //         && operator === 'minus'
+    //         && (count === 0 || count < 0
+    //             || (String(count) === '' || count === undefined)))
+    //         return;
+    //
+    //     operator === 'plus' && setCount(prevCount => prevCount + 1);
+    //     operator === 'minus' && setCount(prevCount => prevCount - 1);
+    //
+    //     inputRef.current && inputRef.current.focus();
+    // };
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (type === 'number') {
@@ -162,15 +162,15 @@ export const Input = forwardRef((
                     <VscLoading />
                 </LoadingIcon>
             }
-            {
-                (type === 'number')
-                && (
-                    <CountButtons $variantStyle={variantStyle}>
-                        <VscChevronUp className="addButton" onClick={() => handleCount('plus')} />
-                        <VscChevronDown className="removeButton" onClick={() => handleCount('minus')} />
-                    </CountButtons>
-                )
-            }
+            {/*{*/}
+            {/*    (type === 'number')*/}
+            {/*    && (*/}
+            {/*        <CountButtons $variantStyle={variantStyle}>*/}
+            {/*            <VscChevronUp className="addButton" onClick={() => handleCount('plus')} />*/}
+            {/*            <VscChevronDown className="removeButton" onClick={() => handleCount('minus')} />*/}
+            {/*        </CountButtons>*/}
+            {/*    )*/}
+            {/*}*/}
             {
                 symbol &&
                 <Symbol $type={type} className="symbol">{symbol}</Symbol>
@@ -256,9 +256,9 @@ const InputStyle = styled.div<{
         height: 100%;
         font-family: ${theme.fonts.family.source};
         padding-right: ${({ $type, $clearable, $symbol }): string =>
-        ($type === 'password' || $type === 'number' || $clearable) && $symbol
+        ($type === 'password' || $clearable) && $symbol
             ? ' 42px'
-            : ($type === 'password' || $type === 'number' || $clearable)
+            : ($type === 'password' || $clearable)
                 ? ' 35px'
                 : '10px'};        
             border-radius: ${theme.materialDesign.borderRadius.default};
@@ -331,31 +331,31 @@ const LoadingIcon = styled.div`
     animation: ${inputLoading} 1s infinite;
 `;
 
-const CountButtons = styled.div<{ $variantStyle: VariantStyleType }>`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 10px;
-    color: ${theme.colors.greyDark};
-    font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
-    .addButton, .removeButton {
-        cursor: pointer;
-        transition: all 250ms;
-    }
-    .addButton {
-        margin-bottom: -2.5px;
-    }
-    .removeButton {
-        margin-top: -2.5px;
-    }
-    .addButton:hover, .removeButton:hover{
-        color: ${theme.colors.primary};
-    }
-`
+// const CountButtons = styled.div<{ $variantStyle: VariantStyleType }>`
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     justify-content: center;
+//     position: absolute;
+//     top: 50%;
+//     transform: translateY(-50%);
+//     right: 10px;
+//     color: ${theme.colors.greyDark};
+//     font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
+//     .addButton, .removeButton {
+//         cursor: pointer;
+//         transition: all 250ms;
+//     }
+//     .addButton {
+//         margin-bottom: -2.5px;
+//     }
+//     .removeButton {
+//         margin-top: -2.5px;
+//     }
+//     .addButton:hover, .removeButton:hover{
+//         color: ${theme.colors.primary};
+//     }
+// `
 
 const Symbol = styled.div<{ $type: string, }>`
     color: ${theme.colors.greyDark};
@@ -363,5 +363,6 @@ const Symbol = styled.div<{ $type: string, }>`
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    right: ${({ $type }) => $type === 'number' || $type === 'password' ? '30px' : '10px'};
+    // right: ${({ $type }) => $type === 'number' || $type === 'password' ? '30px' : '10px'};
+    right: ${({ $type }) => $type === 'number' || $type === 'password' ? '10px' : '10px'};
 `
