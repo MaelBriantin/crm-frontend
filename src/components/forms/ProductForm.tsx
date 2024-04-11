@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import React, {useEffect, useState} from 'react';
+import styled from 'styled-components';
 import { Dropdown, Input, Textarea, Text } from '../global';
 import { ProductType, emptyProduct } from '../../types/ProductType';
 import { useStoreProducts } from '../../stores/useStoreProducts';
@@ -10,6 +10,7 @@ import { useFormActions, useModal } from '../../contexts';
 import { useStoreBrands } from '../../stores/useStoreBrands';
 import { useKeyboardShortcut } from '../../hooks/system/useKeyboardShortcut';
 import { theme } from '../../assets/themes';
+import { ProductSizeForm } from './ProductSizeForm.tsx';
 
 type ProductFormProps = {
     product?: ProductType;
@@ -19,6 +20,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
 
     const [productForm, setProductForm] = useState(product || emptyProduct as ProductType);
     const [vatPrice, setVatPrice] = useState('');
+    const [totalProductSizeStock, setTotalProductSizeStock] = useState(0);
 
     const { productOptions, fetchProductOptions, productTypes, vatRates, measurementUnits, loadingOptions } = useStoreProducts();
     const { brandsOptions, fetchBrands, loadingBrands } = useStoreBrands();
@@ -59,9 +61,21 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
         }
     }, [product?.selling_price, productForm.selling_price, productForm.vat_rate]);
 
-    useEffect(() => {
+    const productSizeTotal = React.useCallback(() => {
+        let total = 0;
+        if (productForm.product_sizes) {
+            productForm.product_sizes.forEach((s) => {
+                const stock = s.stock || 0;
+                total += stock;
+            });
+        }
+        setTotalProductSizeStock(total);
+    }, [productForm.product_sizes, setTotalProductSizeStock]);
+
+    React.useEffect(() => {
+        productSizeTotal();
         setData(!!product);
-    }, [product, setData]);
+    }, [product, setData, productSizeTotal]);
 
     return (
         <Container>
@@ -132,26 +146,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
                         label='Prix TTC'
                     />
                 </PriceContainer>
-                <StockContainer>
-                    <Input
-                        name='stock'
-                        label={product ? 'Stock actuel' : 'Stock de départ'}
-                        type='number'
-                        placeholder={product ? 'Stock actuel' : 'Stock de départ'}
-                        width='150px'
-                        value={productForm.stock || ''}
-                        onChange={(e) => setProductForm({ ...productForm, stock: Number(e.target.value) })}
-                    />
-                    <Input
-                        name="stock_alert"
-                        label="Alerte de stock"
-                        type='number'
-                        placeholder='Alerte de stock'
-                        width='150px'
-                        value={productForm.alert_stock || ''}
-                        onChange={(e) => setProductForm({ ...productForm, alert_stock: Number(e.target.value) })}
-                    />
-                </StockContainer>
                 <Textarea
                     name='description'
                     label='Description'
@@ -205,53 +199,40 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
                     </MeasurementContainer>}
                 {productForm.product_type && productForm.product_type.value === 'clothes'
                     &&
-                    <SizeContainer>
-                        <AddSize>
-                            {/* <Input
-                                name='size'
-                                label='Taille'
-                                type='text'
-                                placeholder='Taille'
-                                width='140px'
-                                value={productForm.size || ''}
-                                onChange={(e) => setProductForm({ ...productForm, size: e.target.value })}
-                            />
-                            <Input
-                                name="quantity"
-                                label="Stock"
-                                type="number"
-                                placeholder="Stock"
-                                noNegativeNumber
-                                width="100px"
-                                value={productForm.size_stock || ""}
-                                onChange={(e) => setProductForm({ ...productForm, size_stock: Number(e.target.value) })}
-                            />
-                            <Button
-                                icon={<VscAdd />}
-                                onClick={() => {}}
-                                color={theme.colors.primary}
-                            /> */}
-                        </AddSize>
-                        <RegisteredSizes>
-                            
-                        </RegisteredSizes>
-                    </SizeContainer>
+                    <ProductSizeForm
+                        productForm={productForm}
+                        setProductForm={setProductForm}
+                    />
                 }
+                <StockContainer>
+                    { productForm.product_type?.value === 'default' && <Input
+                        name='stock'
+                        label={'Stock actuel'}
+                        type='number'
+                        placeholder={'Stock actuel'}
+                        width='120px'
+                        value={productForm.stock || ''}
+                        onChange={(e) => setProductForm({...productForm, stock: Number(e.target.value)})}
+                    />}
+                    { productForm.product_type?.value !== 'default' && <Text
+                        label={'Stock total'}
+                        text={String(totalProductSizeStock)}
+                        width='125px'
+                    />}
+                    <Input
+                        name="stock_alert"
+                        label="Alerte de stock"
+                        type='number'
+                        placeholder='Alerte de stock'
+                        width='120px'
+                        value={productForm.alert_stock || ''}
+                        onChange={(e) => setProductForm({ ...productForm, alert_stock: Number(e.target.value) })}
+                    />
+                </StockContainer>
             </RightContainer>
         </Container>
     );
 };
-
-const MeasurementContainerFadeIn = keyframes`
-    from {
-        opacity: 0;
-        transform: translateY(-100%);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-`;
 
 const Container = styled.div`
     position: relative;
@@ -302,8 +283,6 @@ const MeasurementContainer = styled.div`
     display: flex;
     align-items: center;
     gap: 10px;
-    transform: translateY(0);
-    /* animation: ${MeasurementContainerFadeIn} 250ms; */
 `;
 
 const PriceContainer = styled.div`
@@ -313,30 +292,6 @@ const PriceContainer = styled.div`
 `;
 
 const StockContainer = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 10px;
-`;
-
-const SizeContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-`;
-
-const RegisteredSizes = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-
-    .size {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-`;
-
-const AddSize = styled.div`
     display: flex;
     align-items: center;
     gap: 10px;
