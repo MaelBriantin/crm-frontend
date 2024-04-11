@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import styled from 'styled-components';
 import { Dropdown, Input, Textarea, Text } from '../global';
 import { ProductType, emptyProduct } from '../../types/ProductType';
 import { useStoreProducts } from '../../stores/useStoreProducts';
 import { DropdownOptions } from '../global/Dropdown';
 import { isEmpty } from '../../utils/helpers/spells';
-import { roundPrice } from '../../utils/productUtils';
+import { roundPrice,validateProductForm } from '../../utils/productUtils';
 import { useFormActions, useModal } from '../../contexts';
 import { useStoreBrands } from '../../stores/useStoreBrands';
 import { useKeyboardShortcut } from '../../hooks/system/useKeyboardShortcut';
@@ -26,13 +26,23 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
     const { brandsOptions, fetchBrands, loadingBrands } = useStoreBrands();
 
     const { closeModal } = useModal();
-    const { setData } = useFormActions();
+    const { setData, setIsDisableSave } = useFormActions();
+
+    const firstInputRef = useRef<HTMLInputElement>(null);
 
     useKeyboardShortcut({
         'Escape': () => {
             closeModal();
         }
     });
+
+    useEffect(() => {
+        if (firstInputRef.current) {
+            setTimeout(() => {
+                firstInputRef.current?.focus();
+            }, 250);
+        }
+    }, []);
 
     useEffect(() => {
         isEmpty(productOptions) && fetchProductOptions();
@@ -54,10 +64,19 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
     useEffect(() => {
         if (product?.selling_price == 0 || product?.selling_price === undefined) {
             setVatPrice('0.00');
+            setProductForm(prevProductForm => ({
+                ...prevProductForm,
+                selling_price_with_vat: 0,
+            }))
         }
         if (productForm.selling_price && productForm.vat_rate) {
             const multiplication = Number(productForm.selling_price) * (Number(productForm.vat_rate) / 100);
-            setVatPrice(String(roundPrice(productForm.selling_price + multiplication)));
+            const priceWithVat = roundPrice(productForm.selling_price + multiplication);
+            setVatPrice(String(priceWithVat));
+            setProductForm(prevProductForm => ({
+                ...prevProductForm,
+                selling_price_with_vat: priceWithVat,
+            }))
         }
     }, [product?.selling_price, productForm.selling_price, productForm.vat_rate]);
 
@@ -72,16 +91,19 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
         setTotalProductSizeStock(total);
     }, [productForm.product_sizes, setTotalProductSizeStock]);
 
+
     React.useEffect(() => {
         productSizeTotal();
+        setIsDisableSave(!validateProductForm(productForm));
         setData(!!product);
-    }, [product, setData, productSizeTotal]);
+    }, [product, setData, productSizeTotal, productForm, setIsDisableSave]);
 
     return (
         <Container>
             <LeftContainer>
                 <NameContainer>
                     <Input
+                        ref={firstInputRef}
                         name='name'
                         label='Nom du produit'
                         type='text'
