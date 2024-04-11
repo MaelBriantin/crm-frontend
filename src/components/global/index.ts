@@ -9,3 +9,5 @@ export { Alert } from "./Alert";
 export { Textarea } from "./Textarea";
 export { Note } from "./Note";
 export { DiscreteButton } from "./DiscreteButton";
+export { Text } from "./Text";
+export { Icon } from "./Icon";
