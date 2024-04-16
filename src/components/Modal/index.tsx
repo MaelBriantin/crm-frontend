@@ -68,7 +68,7 @@ const ContainerCloseAnimation = keyframes`
 `;
 
 const ModalDisplayAnimation = keyframes`
-    0% {
+    /* 0% {
         transform: translate(0, 250%);
     }
     75% {
@@ -76,11 +76,19 @@ const ModalDisplayAnimation = keyframes`
     }
     100% {
         transform: translate(0);
+    } */
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
     }
 `;
 
 const ModalCloseAnimation = keyframes`
-    0% {
+    /* 0% {
         transform: translateY(0);
     }
     25% {
@@ -88,6 +96,14 @@ const ModalCloseAnimation = keyframes`
     }
     100% {
         transform: translate(0, -250%);
+    } */
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.8);
     }
 `;
 
@@ -103,18 +119,20 @@ const Container = styled.div<{ $closeModalAnimation: boolean, $isOpen: boolean }
     z-index: 99999;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba(0, 0, 0, 0.10);
     animation: ${ContainerDisplayAnimation} 250ms ease-in-out forwards;
     ${({ $closeModalAnimation }) => $closeModalAnimation ? css`animation: ${ContainerCloseAnimation} 250ms;` : ''};    
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(1px);
 `;
 
 const ModalStructure = styled.div<{ $closeModalAnimation: boolean, $style: { height: string | undefined, width: string | undefined } }>`
+    transition: all 250ms ease-out;
     padding: 10px;
     animation: all 250ms ease-out;
     width: ${({ $style }) => $style.width};
     height: ${({ $style }) => $style.height};
     max-height: 80%;
+    max-width: 80%;
     background: white;
     display: flex;
     justify-content: flex-start;
