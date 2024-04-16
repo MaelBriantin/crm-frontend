@@ -6,6 +6,7 @@ type TextProps = {
     text: string;
     symbol?: string;
     width?: string;
+    maxWidth?: string;
     label?: string;
 };
 
@@ -13,6 +14,7 @@ export const Text: React.FC<TextProps> = ({
     text,
     symbol,
     width,
+    maxWidth,
     label
 }) => {
     return (
@@ -20,6 +22,7 @@ export const Text: React.FC<TextProps> = ({
             $value={!!text}
             $symbol={!!symbol}
             $width={width ?? ''}
+            $maxWidth={maxWidth ?? ''}
         >
             {text}
             {symbol && <div className='symbol'>{symbol}</div>}
@@ -28,7 +31,7 @@ export const Text: React.FC<TextProps> = ({
     )
 };
 
-const TextView = styled.div<{ $symbol: boolean, $width: string, $value: boolean }>`
+const TextView = styled.div<{ $symbol: boolean, $width: string, $maxWidth:string, $value: boolean }>`
 position: relative;
 font-weight: 500;
 height: ${theme.materialDesign.height.medium};
@@ -43,6 +46,10 @@ border: solid 2px ${theme.colors.greyMedium};
 font-size: ${theme.fonts.size.P0};
 ${({ $width }) => $width && css`
     min-width: ${$width};
+    justify-content: space-between;
+`}
+${({ $maxWidth }) => $maxWidth && css`
+    max-width: ${$maxWidth};
     justify-content: space-between;
 `}
 
