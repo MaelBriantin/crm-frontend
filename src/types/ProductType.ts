@@ -1,20 +1,17 @@
-import { BrandType } from "./BrandTypes";
-
 export type ProductType = {
     id: string;
     name: string;
     description?: string;
     reference: string;
-    purchase_price: number;
+    purchase_price?: number;
     selling_price: number;
     selling_price_with_vat: number;
-    product_type: {label: string, value: string} | null;
+    product_type: {label: string, value: string} | null | string;
     measurement_quantity: number;
     measurement_unit: string;
     vat_rate?: number | null | string;
     stock: number;
     alert_stock?: number;
-    brand: BrandType | null;
     brand_id: number;
     image: string;
     createdAt: string;
@@ -47,7 +44,6 @@ export const emptyProduct: ProductType = {
     vat_rate: 0,
     stock: 0,
     alert_stock: 0,
-    brand: null,
     brand_id: 0,
     image: '',
     createdAt: '',

@@ -34,7 +34,7 @@ export const validateProductForm = (product: ProductType): boolean => {
       return false;
     }
   }
-  if (product.product_type?.value === "default") {
+  if (product.product_type === "default") {
     for (const field of requiredDefaultProductFields) {
       const value = product[field];
       if (
@@ -47,7 +47,7 @@ export const validateProductForm = (product: ProductType): boolean => {
       }
     }
   }
-  if (product.product_type?.value === "clothes") {
+  if (product.product_type === "clothes") {
     if (product.product_sizes) {
       for (const size of product.product_sizes) {
         for (const field of requiredProductSizeFields) {
