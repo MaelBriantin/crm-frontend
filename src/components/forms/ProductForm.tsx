@@ -1,16 +1,16 @@
 import React, {useEffect, useState, useRef} from 'react';
 import styled from 'styled-components';
-import { Dropdown, Input, Textarea, Text } from '../global';
+import { Dropdown, Input, Textarea, Text, Loader } from '../global';
 import { ProductType, emptyProduct } from '../../types/ProductType';
 import { useStoreProducts } from '../../stores/useStoreProducts';
-import { DropdownOptions } from '../global/Dropdown';
 import { isEmpty } from '../../utils/helpers/spells';
 import { roundPrice,validateProductForm } from '../../utils/productUtils';
-import { useFormActions, useModal } from '../../contexts';
+import { useFormActions, useModal, useToast } from '../../contexts';
 import { useStoreBrands } from '../../stores/useStoreBrands';
 import { useKeyboardShortcut } from '../../hooks/system/useKeyboardShortcut';
 import { theme } from '../../assets/themes';
 import { ProductSizeForm } from './ProductSizeForm.tsx';
+import { createProduct } from '../../services/api/products/createProduct.ts';
 
 type ProductFormProps = {
     product?: ProductType;
@@ -22,11 +22,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
     const [vatPrice, setVatPrice] = useState('');
     const [totalProductSizeStock, setTotalProductSizeStock] = useState(0);
 
-    const { productOptions, fetchProductOptions, productTypes, vatRates, measurementUnits, loadingOptions } = useStoreProducts();
+    const { productOptions, fetchProductOptions, productTypes, vatRates, measurementUnits, loadingOptions, fetchProducts } = useStoreProducts();
     const { brandsOptions, fetchBrands, loadingBrands } = useStoreBrands();
 
     const { closeModal } = useModal();
-    const { setData, setIsDisableSave } = useFormActions();
+    const {callToast} = useToast();
+    const { setData, setIsDisableSave, setOnSave } = useFormActions();
 
     const firstInputRef = useRef<HTMLInputElement>(null);
 
@@ -37,12 +38,33 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
     });
 
     useEffect(() => {
-        if (firstInputRef.current) {
+        if (productForm.product_type === 'default') {
+            setProductForm(prevProductForm => ({
+                ...prevProductForm,
+                product_sizes: null,
+            }));
+        }
+        setProductForm(prevProductForm => ({
+            ...prevProductForm,
+            stock: 0,
+        }));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [productForm.product_type]);
+
+    const handleSave = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (validateProductForm(productForm)) {
+            await createProduct(productForm, callToast, fetchProducts, closeModal);
+        }
+    }
+
+    useEffect(() => {
+        if (firstInputRef.current && !loadingOptions && !loadingBrands) {
             setTimeout(() => {
                 firstInputRef.current?.focus();
             }, 250);
         }
-    }, []);
+    }, [loadingBrands, loadingOptions]);
 
     useEffect(() => {
         isEmpty(productOptions) && fetchProductOptions();
@@ -52,9 +74,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
 
     useEffect(() => {
         if (!product) {
+            const defaultProductType = productTypes.find(e => e.value === 'default')?.value as string;
             setProductForm(prevProductForm => ({
                 ...prevProductForm,
-                product_type: productTypes.find(e => e.value === 'default') as DropdownOptions,
+                product_type: defaultProductType,
                 vat_rate: vatRates.find(e => e.value === '20')?.value as string,
             }));
         }
@@ -89,17 +112,27 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
             });
         }
         setTotalProductSizeStock(total);
+        return total;
     }, [productForm.product_sizes, setTotalProductSizeStock]);
 
 
     React.useEffect(() => {
-        productSizeTotal();
+        const total = productSizeTotal();
+        console.log(total);
+        setProductForm(prevProductForm => ({
+            ...prevProductForm,
+            stock: total,
+        }));
         setIsDisableSave(!validateProductForm(productForm));
+        setOnSave(() => handleSave);
         setData(!!product);
-    }, [product, setData, productSizeTotal, productForm, setIsDisableSave]);
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [product, productSizeTotal, setIsDisableSave, setOnSave, setData]);
+    
     return (
         <Container>
+            {loadingOptions
+                && <Loader transparent />}
             <LeftContainer>
                 <NameContainer>
                     <Input
@@ -182,20 +215,29 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
             </LeftContainer>
             <Divider />
             <RightContainer>
+                {!product && 
                 <Dropdown
                     loading={loadingOptions}
                     openOnBottom
                     placeholder='Type de produit'
                     label='Type de produit'
                     options={productTypes || []}
-                    value={productTypes.find(e => e.value === productForm.product_type?.value) || undefined}
+                    value={productTypes.find(e => e.value === productForm.product_type) || undefined}
                     onChange={(e) => setProductForm({
                         ...productForm,
-                        product_type: e as DropdownOptions
+                        product_type: String(e.value)
                     })}
                     maxHeight='200px'
-                />
-                {productForm.product_type && productForm.product_type.value === 'default'
+                    width='200px'
+                />}
+                {product &&
+                    <Text
+                        label='Type de produit'
+                        text={String(productTypes.find(e => e.value === productForm.product_type)?.label) || ''}
+                        maxWidth='200px'
+                    />        
+                }
+                {productForm.product_type && productForm.product_type === 'default'
                     &&
                     <MeasurementContainer>
                         <Input
@@ -219,7 +261,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
                             width='160px'
                         />
                     </MeasurementContainer>}
-                {productForm.product_type && productForm.product_type.value === 'clothes'
+                {productForm.product_type && productForm.product_type === 'clothes'
                     &&
                     <ProductSizeForm
                         productForm={productForm}
@@ -227,7 +269,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
                     />
                 }
                 <StockContainer>
-                    { productForm.product_type?.value === 'default' && <Input
+                    { productForm.product_type === 'default' && <Input
                         name='stock'
                         label={'Stock actuel'}
                         type='number'
@@ -236,7 +278,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
                         value={productForm.stock || ''}
                         onChange={(e) => setProductForm({...productForm, stock: Number(e.target.value)})}
                     />}
-                    { productForm.product_type?.value !== 'default' && <Text
+                    { productForm.product_type === 'clothes' 
+                    && <Text
                         label={'Stock total'}
                         text={String(totalProductSizeStock)}
                         width='125px'
@@ -256,7 +299,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
     );
 };
 
-const Container = styled.div`
+const Container = styled.form`
     position: relative;
     display: flex;
     /* flex-direction: column; */
