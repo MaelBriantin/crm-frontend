@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
-import { useModal, useAppLoading } from "../contexts";
+import { VscEdit, VscChromeClose } from "react-icons/vsc";
+import { theme } from "../assets/themes";
+import { useModal, useAppLoading, useToast, useDeleteAlert } from "../contexts";
 import { useStoreProducts } from "../stores/useStoreProducts";
 import { isEmpty, deepCopy } from "../utils/helpers/spells";
 import { DataTable } from "../components/DataTable";
@@ -9,6 +11,7 @@ import { useKeyboardShortcut } from "../hooks/system/useKeyboardShortcut";
 import { Loader } from "../components/global";
 import styled from "styled-components";
 import { ProductType } from "../types/ProductTypes";
+import { deleteProduct } from "../services/api/products";
 
 export const ProductPage: React.FC = () => {
   const [sort, setSort] = React.useState<string | null>(null);
@@ -16,10 +19,13 @@ export const ProductPage: React.FC = () => {
 
   const { showModal } = useModal();
   const { setAppLoading } = useAppLoading();
+  const { callToast } = useToast();
+  const { showDeleteAlert } = useDeleteAlert();
 
-  const { products, fetchProducts, loadingProducts } = useStoreProducts();
+  const { products, fetchProducts, loadingProducts, setLoadingProducts } =
+    useStoreProducts();
 
-  useKeyboardShortcut({ 'Control+Alt+n': () => newProduct() });
+  useKeyboardShortcut({ "Control+Alt+n": () => newProduct() });
 
   useEffect(() => {
     isEmpty(products) && fetchProducts();
@@ -30,12 +36,35 @@ export const ProductPage: React.FC = () => {
     showModal(<ProductForm />, "Nouveau produit", <FormActions />);
   };
 
-  const handleDoubleClick = (row: RowType) => {
+  const handleEditProduct = (row: RowType) => {
     setAppLoading(true);
-    const product = products.find((product: ProductType) => product.id === row.id);
-    showModal(<ProductForm product={product as ProductType} />, `Modifier un produit`, <FormActions />);
+    const product = products.find(
+      (product: ProductType) => product.id === row.id
+    );
+    showModal(
+      <ProductForm product={product as ProductType} />,
+      `Modifier un produit`,
+      <FormActions />
+    );
     setAppLoading(false);
-};
+  };
+
+  const handleDeleteAlert = (row: RowType) => {
+    const product = products.find(
+      (product: ProductType) => product.id === row.id
+    );
+    const message = `Êtes-vous sûr de vouloir supprimer le secteur ${product?.name} ? 
+    Cette action est irréversible et entrainera la perte de toutes les données statistiques associées.`;
+    showDeleteAlert(message, () => handleDeleteProduct(product as ProductType));
+  };
+
+  const handleDeleteProduct = async (product: ProductType) => {
+    setAppLoading(true);
+    setLoadingProducts(true);
+    await deleteProduct(product, callToast, fetchProducts);
+    setLoadingProducts(false);
+    setAppLoading(false);
+  };
 
   const columns: ColumnProps[] = [
     {
@@ -82,25 +111,38 @@ export const ProductPage: React.FC = () => {
       maxWidth: "200px",
     },
     {
-      text: "Actions",
-      value: "actions",
+      text: "",
+      value: "",
+      type: "rowActions",
       sortable: false,
+      actions: [
+        {
+          icon: <VscEdit />,
+          onClick: (row: RowType) => handleEditProduct(row),
+          color: theme.colors.primary,
+        },
+        {
+          icon: <VscChromeClose />,
+          onClick: (row: RowType) => handleDeleteAlert(row),
+          color: theme.colors.error,
+        },
+      ],
       width: "5%",
-      maxWidth: "5%",
+      maxWidth: "100px",
       align: "start",
     },
   ];
 
   return (
     <Container>
-      {(isEmpty(products) && loadingProducts) && <Loader transparent />}
+      {isEmpty(products) && loadingProducts && <Loader transparent />}
       {(!isEmpty(products) || !loadingProducts) && (
         <DataTable
           topBar
           searchbar={!!products.length}
           buttonValueTopBar="Nouveau produit"
           columns={columns}
-          onDoubleClickOnRow={handleDoubleClick}
+          onDoubleClickOnRow={handleEditProduct}
           onClickTopBar={newProduct}
           data={deepCopy(products) as unknown as RowDataType[]}
           emptyMessage={"Aucun produit trouvé"}
