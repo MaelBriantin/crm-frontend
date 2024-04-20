@@ -38,10 +38,22 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
     });
 
     useEffect(() => {
+        setIsDisableSave(!validateProductForm(productForm));
+    }, [productForm, setIsDisableSave]);
+
+    useEffect(() => {
         if (productForm.product_type === 'default') {
             setProductForm(prevProductForm => ({
                 ...prevProductForm,
                 product_sizes: null,
+            }));
+        }
+        if (productForm.product_type === 'clothes') {
+            setProductForm(prevProductForm => ({
+                ...prevProductForm,
+                stock: 0,
+                measurement_quantity: 0,
+                measurement_unit: '',
             }));
         }
         setProductForm(prevProductForm => ({
@@ -118,12 +130,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
 
     React.useEffect(() => {
         const total = productSizeTotal();
-        console.log(total);
         setProductForm(prevProductForm => ({
             ...prevProductForm,
             stock: total,
         }));
-        setIsDisableSave(!validateProductForm(productForm));
         setOnSave(() => handleSave);
         setData(!!product);
         // eslint-disable-next-line react-hooks/exhaustive-deps

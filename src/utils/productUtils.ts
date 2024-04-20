@@ -46,6 +46,7 @@ export const validateProductForm = (product: ProductType): boolean => {
         return false;
       }
     }
+    return true;
   }
   if (product.product_type === "clothes") {
     if (product.product_sizes) {

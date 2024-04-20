@@ -39,6 +39,13 @@ export const ProductPage: React.FC = () => {
 
   const columns: ColumnProps[] = [
     {
+      text: "Référence",
+      value: "reference",
+      sortable: true,
+      width: "5%",
+      maxWidth: "100px",
+    },
+    {
       text: "Nom du produit",
       value: "name",
       sortable: true,
