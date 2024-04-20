@@ -1,4 +1,4 @@
-import { ProductType } from '../../../types/ProductType';
+import { ProductType } from '../../../types/ProductTypes';
 import { fetchAPI, handleAPIResponse } from '../fetchApi.config';
 import { APIResponseFormat } from '../../../types/FetchTypes';
 import { CallToastProps } from '../../../contexts/global/ToastContext';

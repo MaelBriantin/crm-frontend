@@ -1,4 +1,4 @@
-import { ProductSizeType, ProductType } from "../types/ProductType";
+import { ProductSizeType, ProductType } from "../types/ProductTypes";
 
 /**
  * Rounds the given price to two decimal places.

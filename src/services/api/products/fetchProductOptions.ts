@@ -1,4 +1,4 @@
-import { ProductOptionsType } from '../../../types/ProductType';
+import { ProductOptionsType } from '../../../types/ProductTypes';
 import { fetchAPI, handleAPIResponse } from '../fetchApi.config';
 
 export const fetchProductOptions = async () => {

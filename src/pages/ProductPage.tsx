@@ -8,7 +8,7 @@ import { ProductForm, FormActions } from "../components/forms";
 import { useKeyboardShortcut } from "../hooks/system/useKeyboardShortcut";
 import { Loader } from "../components/global";
 import styled from "styled-components";
-import { ProductType } from "../types/ProductType";
+import { ProductType } from "../types/ProductTypes";
 
 export const ProductPage: React.FC = () => {
   const [sort, setSort] = React.useState<string | null>(null);

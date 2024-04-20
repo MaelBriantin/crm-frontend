@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {emptyProductSize, ProductType} from '../../types/ProductType';
+import {emptyProductSize, ProductType} from '../../types/ProductTypes';
 import {Icon, Input} from '../global';
 import {VscAdd, VscRemove} from "react-icons/vsc";
 import {theme} from "../../assets/themes";

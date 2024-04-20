@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from 'react';
 import styled from 'styled-components';
 import { Dropdown, Input, Textarea, Text, Loader } from '../global';
-import { ProductType, emptyProduct } from '../../types/ProductType';
+import { ProductType, emptyProduct } from '../../types/ProductTypes.ts';
 import { useStoreProducts } from '../../stores/useStoreProducts';
 import { isEmpty } from '../../utils/helpers/spells';
 import { roundPrice,validateProductForm } from '../../utils/productUtils';

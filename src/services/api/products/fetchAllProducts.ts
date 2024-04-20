@@ -1,4 +1,4 @@
-import { ProductType } from '../../../types/ProductType.ts';
+import { ProductType } from '../../../types/ProductTypes.ts';
 import { fetchAPI, handleAPIResponse } from '../fetchApi.config.ts';
 
 export const fetchAllProducts = async () => {

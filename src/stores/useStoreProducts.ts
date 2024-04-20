@@ -1,7 +1,7 @@
 import {create} from "zustand";
-import {ProductType} from "../types/ProductType.ts";
+import {ProductType} from "../types/ProductTypes.ts";
 import {fetchAllProducts, fetchProductOptions} from "../services/api/products";
-import {ProductOptionsType} from "../types/ProductType";
+import {ProductOptionsType} from "../types/ProductTypes.ts";
 import { firstOf } from "../utils/helpers/spells.ts";
 
 type createSectorsStore = {
