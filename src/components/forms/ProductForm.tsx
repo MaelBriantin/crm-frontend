@@ -3,14 +3,21 @@ import styled from "styled-components";
 import { Dropdown, Input, Textarea, Text, Loader } from "../global";
 import { ProductType, emptyProduct } from "../../types/ProductTypes.ts";
 import { useStoreProducts } from "../../stores/useStoreProducts";
-import { isEmpty } from "../../utils/helpers/spells";
-import { roundPrice, validateProductForm } from "../../utils/productUtils";
+import { deepCompare, isEmpty } from "../../utils/helpers/spells";
+import {
+  roundPrice,
+  validateProductForm,
+} from "../../utils/productUtils";
 import { useFormActions, useModal, useToast } from "../../contexts";
 import { useStoreBrands } from "../../stores/useStoreBrands";
 import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
 import { theme } from "../../assets/themes";
 import { ProductSizeForm } from "./ProductSizeForm.tsx";
-import { deleteProduct, createProduct, updateProduct } from "../../services/api/products";
+import {
+  deleteProduct,
+  createProduct,
+  updateProduct,
+} from "../../services/api/products";
 
 type ProductFormProps = {
   product?: ProductType;
@@ -57,14 +64,30 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
   });
 
   useEffect(() => {
-    setIsDisableSave(!validateProductForm(productForm) || saving || loadingOptions || loadingBrands);
-  }, [loadingBrands, loadingOptions, productForm, saving, setIsDisableSave]);
+    console.log("productForm", productForm);
+    console.log("product", product);
+    const editing = product ? deepCompare(productForm, product as ProductType) : false;
+    setIsDisableSave(
+      !validateProductForm(productForm) ||
+        saving ||
+        loadingOptions ||
+        loadingBrands ||
+        editing
+      );
+  }, [
+    loadingBrands,
+    loadingOptions,
+    product,
+    productForm,
+    saving,
+    setIsDisableSave,
+  ]);
 
   useEffect(() => {
     if (productForm.product_type === "default") {
       setProductForm((prevProductForm) => ({
         ...prevProductForm,
-        product_sizes: null,
+        product_sizes: [],
       }));
     }
     if (productForm.product_type === "clothes") {
@@ -72,7 +95,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
         ...prevProductForm,
         stock: 0,
         measurement_quantity: 0,
-        measurement_unit: "",
+        measurement_unit: null,
       }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -211,7 +234,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
     saving,
     loadingOptions,
     loadingBrands,
-    loadingProducts
+    loadingProducts,
   ]);
 
   return (
@@ -291,8 +314,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
             label="TVA"
             options={vatRates || []}
             value={
-              vatRates.find((e) => String(e.value) === String(productForm.vat_rate)) ||
-              undefined
+              vatRates.find(
+                (e) => String(e.value) === String(productForm.vat_rate)
+              ) || undefined
             }
             onChange={(e) =>
               setProductForm({ ...productForm, vat_rate: e.value })

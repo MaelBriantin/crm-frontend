@@ -8,7 +8,7 @@ export type ProductType = {
     selling_price_with_vat: number;
     product_type: {label: string, value: string} | null | string;
     measurement_quantity: number;
-    measurement_unit: string;
+    measurement_unit: string | null;
     vat_rate?: number | null | string;
     stock: number;
     alert_stock?: number;

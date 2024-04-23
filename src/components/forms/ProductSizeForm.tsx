@@ -12,7 +12,7 @@ type ProductSizeProps = {
 
 export const ProductSizeForm: React.FC<ProductSizeProps> = ({ productForm, setProductForm }) => {
 
-    const productSizesInit = productForm.product_sizes || [{...emptyProductSize}];
+    const productSizesInit = (productForm.product_sizes && productForm.product_sizes.length ) ? productForm.product_sizes : [{...emptyProductSize}];
     const [productSizes, setProductSizes] = useState(productSizesInit);
 
     useEffect(() => {
