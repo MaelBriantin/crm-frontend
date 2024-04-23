@@ -10,7 +10,7 @@ import { useStoreBrands } from "../../stores/useStoreBrands";
 import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
 import { theme } from "../../assets/themes";
 import { ProductSizeForm } from "./ProductSizeForm.tsx";
-import { deleteProduct, createProduct } from "../../services/api/products";
+import { deleteProduct, createProduct, updateProduct } from "../../services/api/products";
 
 type ProductFormProps = {
   product?: ProductType;
@@ -57,8 +57,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
   });
 
   useEffect(() => {
-    setIsDisableSave(!validateProductForm(productForm));
-  }, [productForm, setIsDisableSave]);
+    setIsDisableSave(!validateProductForm(productForm) || saving || loadingOptions || loadingBrands);
+  }, [loadingBrands, loadingOptions, productForm, saving, setIsDisableSave]);
 
   useEffect(() => {
     if (productForm.product_type === "default") {
@@ -75,18 +75,41 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
         measurement_unit: "",
       }));
     }
-    setProductForm((prevProductForm) => ({
-      ...prevProductForm,
-      stock: 0,
-    }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productForm.product_type]);
 
+  useEffect(() => {
+    if (productForm.product_type === "clothes") {
+      setProductForm((prevProductForm) => ({
+        ...prevProductForm,
+        stock: totalProductSizeStock,
+      }));
+    }
+  }, [totalProductSizeStock, productForm.product_type]);
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateProductForm(productForm)) {
-      await createProduct(productForm, callToast, fetchProducts, closeModal);
+    setSaving(true);
+    await createProduct(productForm, callToast, fetchProducts, closeModal);
+    setSaving(false);
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    await updateProduct(productForm, callToast, fetchProducts, closeModal);
+    setSaving(false);
+  };
+
+  const onSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    if (product) {
+      handleUpdate(e);
+    } else {
+      handleSave(e);
     }
+    setSaving(false);
   };
 
   useEffect(() => {
@@ -103,6 +126,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // set default values for the product form
   useEffect(() => {
     if (!product) {
       const defaultProductType = productTypes.find((e) => e.value === "default")
@@ -112,10 +136,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
         product_type: defaultProductType,
         vat_rate: vatRates.find((e) => e.value === "20")?.value as string,
       }));
+      if (productForm.product_type === "clothes") {
+        setProductForm((prevProductForm) => ({
+          ...prevProductForm,
+          stock: totalProductSizeStock,
+        }));
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product, productTypes]);
 
+  // handle the vat price
   useEffect(() => {
     if (product?.selling_price == 0 || product?.selling_price === undefined) {
       setVatPrice("0.00");
@@ -160,24 +191,19 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
   };
 
   React.useEffect(() => {
-    const total = productSizeTotal();
-    setProductForm((prevProductForm) => ({
-      ...prevProductForm,
-      stock: total,
-    }));
-    setOnSave(() => handleSave);
+    productSizeTotal();
     setData(!!product);
-    setIsDisableSave(
-      !validateProductForm(productForm) || loadingOptions || loadingBrands
-    );
     setIsDisableDelete(!product || saving || loadingOptions || loadingBrands);
     setDeleteMessage(`Êtes-vous sûr de vouloir supprimer le produit ${product?.name} ?
-        Cette action est définitive et entrainera la perte de toutes les données associées.`);
+    Cette action est définitive et entrainera la perte de toutes les données associées.`);
+    setOnSave(() => onSave);
     setOnDelete(() => handleDelete);
     setIsLoading(saving || loadingProducts);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     product,
+    validateProductForm,
+    productForm,
     productSizeTotal,
     setIsDisableSave,
     setOnSave,
@@ -185,6 +211,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
     saving,
     loadingOptions,
     loadingBrands,
+    loadingProducts
   ]);
 
   return (
@@ -264,7 +291,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
             label="TVA"
             options={vatRates || []}
             value={
-              vatRates.find((e) => e.value === productForm.vat_rate) ||
+              vatRates.find((e) => String(e.value) === String(productForm.vat_rate)) ||
               undefined
             }
             onChange={(e) =>
