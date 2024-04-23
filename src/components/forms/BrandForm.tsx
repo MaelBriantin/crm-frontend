@@ -9,6 +9,7 @@ import { theme } from "../../assets/themes";
 import { deepCompare } from "../../utils/helpers/spells";
 import { createBrand, deleteBrand, updateBrand } from "../../services/api/brands";
 import {useStoreBrands} from "../../stores/useStoreBrands.ts";
+import {useStoreProducts} from "../../stores/useStoreProducts.ts";
 
 type BrandFormProps = {
     brand?: BrandType;
@@ -26,6 +27,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
     const firstInputRef = useRef<HTMLInputElement>(null);
 
     const { fetchBrands, loadingBrands } = useStoreBrands();
+    const { fetchProducts } = useStoreProducts();
 
     useEffect(() => {
         setDisableClose(saving || loadingBrands);
@@ -59,6 +61,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
         e.preventDefault();
         //setSaving(true);
         !disableSave && await updateBrand(brandForm, callToast, fetchBrands, closeModal);
+        await fetchProducts();
         //setSaving(false);
     };
 
@@ -77,6 +80,7 @@ export const BrandForm: React.FC<BrandFormProps> = ({ brand }) => {
         if (brandForm.id) {
             setSaving(true);
             await deleteBrand(brand as BrandType, callToast, fetchBrands, closeModal);
+            await fetchProducts();
             setSaving(false);
         }
     };

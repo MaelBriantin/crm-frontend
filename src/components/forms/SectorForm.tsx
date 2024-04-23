@@ -9,6 +9,7 @@ import { SectorType, emptySector } from '../../types/SectorTypes';
 import { deepCompare } from '../../utils/helpers/spells';
 import { useKeyboardShortcut } from '../../hooks/system/useKeyboardShortcut';
 import {useStoreSectors} from "../../stores/useStoreSectors.ts";
+import {useStoreCustomers} from "../../stores/useStoreCustomers.ts";
 
 type SectorFormProps = {
     sector?: SectorType;
@@ -25,6 +26,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
     const { setData, setDeleteMessage, setIsDisableSave, setIsLoading, setOnDelete, setOnSave } = useFormActions();
 
     const { loadingSectors, fetchSectors } = useStoreSectors();
+    const { fetchCustomers } = useStoreCustomers();
 
     const firstInputRef = useRef<HTMLInputElement>(null);
 
@@ -60,6 +62,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         if (sector && sectorForm.id) {
             setSaving(true);
             await deleteSector({ id: sectorForm.id, name: sectorForm.name } as SectorType, callToast, fetchSectors, closeModal);
+            // await fetchCustomers();
             setSaving(false);
         }
     }
@@ -79,6 +82,7 @@ export const SectorForm: React.FC<SectorFormProps> = ({ sector }) => {
         e.preventDefault();
         if (sectorForm && sectorForm.postcodes.length > 0 && sectorForm.name !== '') {
             await updateSector(sectorForm as SectorType, callToast, fetchSectors, closeModal);
+            await fetchCustomers();
         }
     }
 
