@@ -64,8 +64,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
   });
 
   useEffect(() => {
-    console.log("productForm", productForm);
-    console.log("product", product);
     const editing = product ? deepCompare(productForm, product as ProductType) : false;
     setIsDisableSave(
       !validateProductForm(productForm) ||
