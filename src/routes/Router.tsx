@@ -11,6 +11,7 @@ import {
     BrandPage,
     CustomerPage
 } from "../pages";
+import { ProductPage } from "../pages/ProductPage.tsx";
 
 export const Router = () => {
     useCheckAuth();
@@ -34,6 +35,7 @@ export const Router = () => {
                     <Route path={'/sectors'} element={<SectorPage />} />
                     <Route path={'/brands'} element={<BrandPage />} />
                     <Route path={'/customers'} element={<CustomerPage />} />
+                    <Route path={'/products'} element={<ProductPage />} />
                     {/* Other routes to add */}
                 </Route>
 

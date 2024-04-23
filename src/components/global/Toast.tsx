@@ -80,7 +80,7 @@ const typeTitleColor = (type: string): { toastTitle: string, toastColor: string 
 const ToastStyle = styled.div<{ $color: string, $show: boolean }>`
     z-index: 99999;
     background-color: ${theme.colors.white};
-    position: absolute;
+    position: fixed;
     bottom: 50px;
     right: 50px;
     min-height: 100px;

@@ -76,9 +76,11 @@ const PageChanger = styled.div`
         font-size: ${theme.fonts.size.P0};
     }
     .changePage{
+        transition: all 250ms;
         font-size: ${theme.fonts.size.P0};
         cursor: pointer;
         &:hover{
+            transform: scale(1.2);
             color: ${theme.colors.primary};
         }
     }

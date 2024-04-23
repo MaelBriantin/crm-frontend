@@ -1,14 +1,13 @@
 import { styled, RuleSet, css, keyframes } from "styled-components";
 import { theme } from "../../assets/themes";
 import { NavbarItem } from "./NavbarItem";
-import { VscSettingsGear, VscQuestion, VscSignOut, VscHome, VscSmiley, VscSymbolMethod, VscGift, VscPieChart, VscJersey, VscFiles } from "react-icons/vsc";
-// import { PiButterflyThin } from "react-icons/pi";
+import { VscSettingsGear, VscQuestion, VscSignOut, VscHome, VscSmiley, VscGift, VscPieChart, VscJersey, VscFiles } from "react-icons/vsc";
 import { LiaMapMarkedAltSolid } from "react-icons/lia";
 import { useLogoutService } from "../../hooks/auth/useLogout";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Dispatch, SetStateAction } from "react";
 import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
-import { GiPotionBall } from "react-icons/gi";
+import { PiButterflyThin } from "react-icons/pi";
 
 type NavbarProps = {
     showNavbar: boolean;
@@ -42,18 +41,13 @@ export const Navbar = (props: NavbarProps) => {
 
     // shortcut to show/hide navbar
     useKeyboardShortcut({
-        'Control+Alt+s': () => setShowNavbar(prevShowNavbar => !prevShowNavbar)
+        'Control+q': () => setShowNavbar(prevShowNavbar => !prevShowNavbar)
     });
 
     const links: NavbarGroups[] = [
         {
             groupName: "Activité",
             items: [
-                {
-                    text: 'Stocks',
-                    path: '/stocks',
-                    icon: <VscSymbolMethod />,
-                },
                 {
                     text: 'Commandes',
                     path: '/orders',
@@ -99,8 +93,8 @@ export const Navbar = (props: NavbarProps) => {
             <NavListContainer $showNavbar={showNavbar}>
 
                 <AppName>
-                    {/* <PiButterflyThin className="logo" onClick={() => { }} /> */}
-                    <GiPotionBall  className="logo" onClick={() => { }} />
+                    <PiButterflyThin className="logo" onClick={() => { }} />
+                    {/* <GiPotionBall  className="logo" onClick={() => { }} /> */}
                 </AppName>
 
                 <NavLinks>

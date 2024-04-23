@@ -87,7 +87,7 @@ export const highlightSearchedValue = (searchedValue: string | number | undefine
 export const getRowValueAndHighlight = (searched: string | number | undefined, row: string | number | boolean | string[], arrayLimit: number) => {
     
     // let rowValue = highlightSearchedValue(searched, row);
-    let rowValue = row;
+    let rowValue = row || '';
     const highlight = [searched];
         
     if (Array.isArray(rowValue)) {

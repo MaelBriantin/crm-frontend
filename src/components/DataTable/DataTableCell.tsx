@@ -74,10 +74,15 @@ export const DataTableCell: React.FC<DataTableCellProps> = ({
                         </TableCellValue>
                 ))
             )}
-            {(!column.type || filterOut(['chips', 'link'], dataTableTypeList).includes(column.type) && !Array.isArray(rowValue)) && (
+            {(!column.type || filterOut(['chips', 'link', 'currency'], dataTableTypeList).includes(column.type) && !Array.isArray(rowValue)) && (
                 <TableCellValue
                     $color={{background: color?.background || '', color: color?.text || ''}}
                 >{ String(rowValue) }</TableCellValue>
+            )}
+            {(column.type === 'currency') && (
+                <TableCellValue
+                    $color={{background: color?.background || '', color: color?.text || ''}}
+                >{ `${rowValue} €` }</TableCellValue>
             )}
         </TableCell>
     );

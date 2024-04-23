@@ -12,7 +12,7 @@
  * const nonEmptyArray = isEmpty(['item']); // false
  * const nonEmptyObject = isEmpty({ key: 'value' }); // false
  */
-export const isEmpty = (element: Array<string | number> | object): boolean => {
+export const isEmpty = (element: Array<string | number> | object | string): boolean => {
   if (Array.isArray(element)) {
     return element.length === 0;
   } else if (typeof element === 'object' && element !== null) {

@@ -119,7 +119,7 @@ export const SectorPage: React.FC = () => {
 
     return (
         <Container>
-            {(isEmpty(sectors) || loadingSectors) && <Loader transparent />}
+            {(isEmpty(sectors) && loadingSectors) && <Loader transparent />}
             {(!isEmpty(sectors) || !loadingSectors) && 
             <DataTable
                 topBar

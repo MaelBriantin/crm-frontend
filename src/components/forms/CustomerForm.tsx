@@ -66,12 +66,12 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
     }, [saving, setDisableClose, loadingCustomers]);
 
     useEffect(() => {
-        if (firstInputRef.current) {
+        if (firstInputRef.current && !inputLoading) {
             setTimeout(() => {
                 firstInputRef.current?.focus();
             }, 250);
         }
-    }, []);
+    }, [inputLoading]);
 
     useEffect(() => {
         if (isEmpty(sectors)) {
@@ -116,7 +116,6 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
 
 
     const handleSave = async (e: React.FormEvent) => {
-        console.log(customerForm);
         e.preventDefault();
         if (customer) {
             setSaving(true);

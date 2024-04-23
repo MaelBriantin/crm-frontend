@@ -42,7 +42,7 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const showModal = (content: ReactNode, title: string, actions?: ReactNode) => {
     setContent(content);
-    setActions(actions);
+    setActions(actions || null);
     setTitle(title);
     setIsOpen(true);
   };

@@ -65,7 +65,7 @@ const TableRowBody = styled.tr <{ $selectable: boolean, $hoverable: boolean, $di
         ${({ $selectable }): false | RuleSet<object> =>
         $selectable &&
         css`
-            cursor: pointer;
+            cursor: default;
             user-select: none;
             background-color: #f9f9f9;
         `}
