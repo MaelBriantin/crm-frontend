@@ -72,6 +72,7 @@ export const ProductPage: React.FC = () => {
       text: "Référence",
       value: "reference",
       sortable: true,
+      type: "chips",
       width: "5%",
       maxWidth: "100px",
     },
