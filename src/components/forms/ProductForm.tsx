@@ -123,6 +123,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
 
   const onSave = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateProductForm(productForm) || saving || loadingProducts) return;
     setSaving(true);
     if (product) {
       handleUpdate(e);
@@ -236,7 +237,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
 
   return (
     <Container
-      onSubmit={validateProductForm(productForm) ? handleSave : () => {}}
+      onSubmit={onSave}
     >
       {loadingOptions && <Loader transparent />}
       <LeftContainer>
