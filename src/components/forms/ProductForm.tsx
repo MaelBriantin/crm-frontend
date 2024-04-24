@@ -4,10 +4,7 @@ import { Dropdown, Input, Textarea, Text, Loader } from "../global";
 import { ProductType, emptyProduct } from "../../types/ProductTypes.ts";
 import { useStoreProducts } from "../../stores/useStoreProducts";
 import { deepCompare, isEmpty } from "../../utils/helpers/spells";
-import {
-  roundPrice,
-  validateProductForm,
-} from "../../utils/productUtils";
+import { roundPrice, validateProductForm } from "../../utils/productUtils";
 import { useFormActions, useModal, useToast } from "../../contexts";
 import { useStoreBrands } from "../../stores/useStoreBrands";
 import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
@@ -64,14 +61,16 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
   });
 
   useEffect(() => {
-    const editing = product ? deepCompare(productForm, product as ProductType) : false;
+    const editing = product
+      ? deepCompare(productForm, product as ProductType)
+      : false;
     setIsDisableSave(
       !validateProductForm(productForm) ||
         saving ||
         loadingOptions ||
         loadingBrands ||
         editing
-      );
+    );
   }, [
     loadingBrands,
     loadingOptions,
@@ -236,7 +235,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
   ]);
 
   return (
-    <Container>
+    <Container
+      onSubmit={validateProductForm(productForm) ? handleSave : () => {}}
+    >
       {loadingOptions && <Loader transparent />}
       <LeftContainer>
         <NameContainer>
@@ -460,6 +461,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
           />
         </StockContainer>
       </RightContainer>
+      <input type="submit" style={{ display: "none" }} />
     </Container>
   );
 };
