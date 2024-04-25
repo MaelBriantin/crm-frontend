@@ -6,6 +6,7 @@ import {
     AppLoadingProvider,
     DeleteAlertProvider,
     FormActionsProvider,
+    NewOrderActionsProvider
 } from ".";
 
 interface ContextProviderProps {
@@ -19,9 +20,11 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) =>
                 <ToastProvider>
                     <DeleteAlertProvider>
                         <FormActionsProvider>
+                            <NewOrderActionsProvider>
                             <ModalProvider>
                                 {children}
                             </ModalProvider>
+                            </NewOrderActionsProvider>
                         </FormActionsProvider>
                     </DeleteAlertProvider>
                 </ToastProvider>
