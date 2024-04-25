@@ -89,6 +89,12 @@ export const ProductPage: React.FC = () => {
       width: "20%",
     },
     {
+      text: "Marque",
+      value: "brand_name",
+      sortable: true,
+      width: "20%",
+    },
+    {
       text: "Prix HT",
       value: "selling_price",
       type: "currency",
