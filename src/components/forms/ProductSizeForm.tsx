@@ -43,13 +43,13 @@ export const ProductSizeForm: React.FC<ProductSizeProps> = ({ productForm, setPr
 
     const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const newProductSizes = [...productSizes];
-        newProductSizes[index].size = event.target.value;
+        newProductSizes[index] = {...newProductSizes[index], size: event.target.value};
         setProductSizes(newProductSizes);
     };
-
+    
     const handleStockChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const newProductSizes = [...productSizes];
-        newProductSizes[index].stock = Number(event.target.value);
+        newProductSizes[index] = {...newProductSizes[index], stock: Number(event.target.value)};
         setProductSizes(newProductSizes);
     }
 

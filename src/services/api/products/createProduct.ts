@@ -5,7 +5,6 @@ import { CallToastProps } from '../../../contexts/global/ToastContext';
 
 export const createProduct = async (product: ProductType, callToast: CallToastProps, refreshProducts: { (): Promise<void>; (): void; }, closeModal?: { (): void; (): void; }) => {
     let productsResponse: ProductType[] = [];
-    console.log('product', product);
     try {
         const response: APIResponseFormat<ProductType> = await fetchAPI('/api/products', 'POST', product);
         handleAPIResponse<ProductType>(

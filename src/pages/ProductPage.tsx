@@ -72,6 +72,7 @@ export const ProductPage: React.FC = () => {
       text: "Référence",
       value: "reference",
       sortable: true,
+      type: "chips",
       width: "5%",
       maxWidth: "100px",
     },
@@ -84,6 +85,12 @@ export const ProductPage: React.FC = () => {
     {
       text: "Type de produit",
       value: "product_type_label",
+      sortable: true,
+      width: "20%",
+    },
+    {
+      text: "Marque",
+      value: "brand_name",
       sortable: true,
       width: "20%",
     },
