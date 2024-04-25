@@ -36,6 +36,7 @@ const DiscreteButtonContainer = styled.div<{ $color: string }>`
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 2px 0;
 `;
 
 const DiscreteContent = styled.div<{ $disabled: boolean | undefined }>`
