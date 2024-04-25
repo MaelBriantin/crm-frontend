@@ -34,14 +34,14 @@ export const BrandPage = () => {
     }, []);
 
     const newBrand = () => {
-        showModal(<BrandForm />, 'Nouvelle marque', <FormActions />);
+        showModal('Nouvelle marque', <BrandForm />, <FormActions />);
     }
 
     useKeyboardShortcut({ 'Control+Alt+n': () => newBrand() });
 
     const editBrand = (row: RowType) => {
         const brand = brands.find((brand: BrandType) => brand.id === row.id);
-        showModal(<BrandForm brand={brand as BrandType} />, 'Modifier une marque', <FormActions />);
+        showModal('Modifier une marque', <BrandForm brand={brand as BrandType} />, <FormActions />);
     }
 
     const handleDeleteAlert = (row: RowType) => {

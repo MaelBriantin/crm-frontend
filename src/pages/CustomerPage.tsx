@@ -34,8 +34,8 @@ export const CustomerPage: React.FC = () => {
 
     const newCustomer = () => {
         showModal(
-            <CustomerForm/>,
             'Nouveau client',
+            <CustomerForm/>,
             <FormActions/>
         );
     }
@@ -44,8 +44,8 @@ export const CustomerPage: React.FC = () => {
         const customer = customers.find((customer: CustomerType) => customer.id === row.id);
 
         showModal(
-            <CustomerForm customer={customer as CustomerType}/>,
             "Modifier les informations du client",
+            <CustomerForm customer={customer as CustomerType}/>,
             <FormActions/>
         );
     }

@@ -34,7 +34,7 @@ export const ProductPage: React.FC = () => {
   }, []);
 
   const newProduct = () => {
-    showModal(<ProductForm />, "Nouveau produit", <FormActions />);
+    showModal("Nouveau produit", <ProductForm />, <FormActions />);
   };
 
   const handleEditProduct = (row: RowType) => {
@@ -43,8 +43,8 @@ export const ProductPage: React.FC = () => {
       (product: ProductType) => product.id === row.id
     );
     showModal(
-      <ProductForm product={product as ProductType} />,
       `Modifier un produit`,
+      <ProductForm product={product as ProductType} />,
       <FormActions />
     );
     setAppLoading(false);
