@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { DataTable } from '../components/DataTable';
 import { useModal } from '../contexts';
 import { NewOrderActions } from '../components/forms/NewOrderForms/NewOrderActions';
-import { FormLogic } from '../components/forms/NewOrderForms/FormLogic';
+import { NewOrderFormLogic } from '../components/forms/NewOrderForms/NewOrderFormLogic';
 
 export const OrderPage: React.FC = () => {
 
@@ -13,7 +13,7 @@ export const OrderPage: React.FC = () => {
     const { showModal } = useModal();
 
     const newOrder = () => {
-        showModal("Nouvelle commande", <FormLogic />, <NewOrderActions />);
+        showModal("Nouvelle commande", <NewOrderFormLogic />, <NewOrderActions />);
     }
 
     const columns = [
@@ -59,7 +59,7 @@ export const OrderPage: React.FC = () => {
                columns={columns}
                onClickTopBar={newOrder}
                data={[]}
-               emptyMessage={"Aucune commande trouvée"}
+               emptyMessage={"Aucune commande enregistrée..."}
                sort={sort}
                setSort={setSort}
                sortDirection={sortDirection}

@@ -6,7 +6,7 @@ export const ProductList: React.FC = () => {
     const { setSubTitle } = useModal();
 
     useEffect(() => {
-        setSubTitle("Ajoutez des produits au panier");
+        setSubTitle("Séléction des produits");
     }, [setSubTitle]);
 
     return (

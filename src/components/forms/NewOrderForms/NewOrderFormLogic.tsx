@@ -4,8 +4,9 @@ import { CustomerList } from "./CustomerList";
 import { ProductList } from "./ProductList";
 import { useNewOrderActions } from "../../../contexts";
 
-export const FormLogic: React.FC = () => {
-  const { step, setStep, setNextMessage, setPreviousMessage } = useNewOrderActions();
+export const NewOrderFormLogic: React.FC = () => {
+  const { step, setStep, setNextMessage, setPreviousMessage } =
+    useNewOrderActions();
 
   useEffect(() => {
     setStep(1);
@@ -13,11 +14,11 @@ export const FormLogic: React.FC = () => {
 
   useEffect(() => {
     if (step === 1) {
-      setNextMessage("Aller aux produits");
+      setNextMessage("Valider");
       setPreviousMessage("");
     } else if (step === 2) {
-      setNextMessage("Vérifier le panier");
-      setPreviousMessage("Retour aux clients");
+      setNextMessage("Voir le panier");
+      setPreviousMessage("Retour à la sélection du client");
     }
   }, [setNextMessage, setPreviousMessage, step]);
 
@@ -30,10 +31,6 @@ export const FormLogic: React.FC = () => {
 };
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 600px;
-  width: 600px;
+  height: 60vh;
+  width: 1000px;
 `;
