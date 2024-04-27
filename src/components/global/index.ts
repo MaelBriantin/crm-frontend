@@ -11,3 +11,4 @@ export { Note } from "./Note";
 export { DiscreteButton } from "./DiscreteButton";
 export { Text } from "./Text";
 export { Icon } from "./Icon";
+export { SelectableList } from "./SelectableList";
