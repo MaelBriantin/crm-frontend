@@ -14,6 +14,7 @@ export type CustomerType = {
     createdAt: string;
     updatedAt: string;
     sector: SectorType | null;
+    sector_name?: string;
     notes: string;
     is_active: boolean;
     visit_frequency: VisitFrequencyType | null;
