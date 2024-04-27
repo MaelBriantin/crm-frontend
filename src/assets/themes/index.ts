@@ -11,7 +11,7 @@ const colors = {
     // primary: "#3fbac2", // blue
     // primary: "#4D4DFF", // neon blue
     // primary: "#DC582A", // orange
-    primary: "#6667AB", // very peri
+    primary: "#5f4b8b", // ultra violet
     primary_cake: "#3f7f8e",
     green: "green",
     success: "#60bd4f",
@@ -19,6 +19,7 @@ const colors = {
     redSecondary: "#c4151c",
     error: "#cc0202",
     blue: "#51a7e1",
+    greyUltraLight: "#f9f9f9",
     greyLight: "#e4e5e9",
     greyMedium: "#a7a8ad",
     greySemiDark: "#93a2b1",
