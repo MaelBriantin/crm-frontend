@@ -3,10 +3,10 @@ import React, { createContext, useContext, useState, Dispatch, SetStateAction } 
 type NewOrderActionsContextProps = {
     step: number;
     setStep: Dispatch<SetStateAction<number>>;
-    next: () => void;
-    setNext: Dispatch<SetStateAction<() => void>>;
-    previous: () => void;
-    setPrevious: Dispatch<SetStateAction<() => void>>;
+    disableNext: boolean;
+    setDisableNext: Dispatch<SetStateAction<boolean>>;
+    disablePrevious: boolean;
+    setDisablePrevious: Dispatch<SetStateAction<boolean>>;
     nextMessage: string;
     setNextMessage: Dispatch<SetStateAction<string>>;
     previousMessage: string;
@@ -16,35 +16,35 @@ type NewOrderActionsContextProps = {
 export const NewOrderActionsContext = createContext<NewOrderActionsContextProps>({
     step: 0,
     setStep: () => 0,
-    next: () => {},
-    setNext: () => () => {},
-    previous: () => {},
-    setPrevious: () => () => {},
     nextMessage: '',
     setNextMessage: () => '',
     previousMessage: '',
     setPreviousMessage: () => '',
+    disableNext: false,
+    setDisableNext: () => false,
+    disablePrevious: false,
+    setDisablePrevious: () => false,
 });
 
 export const NewOrderActionsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [step, setStep] = useState<number>(1);
-    const [next, setNext] = useState<() => void>(() => () => {});
-    const [previous, setPrevious] = useState<() => void>(() => () => {});
     const [nextMessage, setNextMessage] = useState<string>('');
     const [previousMessage, setPreviousMessage] = useState<string>('');
+    const [disableNext, setDisableNext] = useState<boolean>(false);
+    const [disablePrevious, setDisablePrevious] = useState<boolean>(false);
 
     return (
         <NewOrderActionsContext.Provider value={{
             step,
             setStep,
-            next,
-            setNext,
-            previous,
-            setPrevious,
             nextMessage,
             setNextMessage,
             previousMessage,
             setPreviousMessage,
+            disableNext,
+            setDisableNext,
+            disablePrevious,
+            setDisablePrevious,
         }}>
             {children}
         </NewOrderActionsContext.Provider>
