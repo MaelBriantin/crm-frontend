@@ -3,14 +3,18 @@ import styled from "styled-components";
 import { CustomerList } from "./CustomerList";
 import { ProductList } from "./ProductList";
 import { useNewOrderActions } from "../../../contexts";
+import { useStoreOrders } from "../../../stores/useStoreOrders";
 
 export const NewOrderFormLogic: React.FC = () => {
   const { step, setStep, setNextMessage, setPreviousMessage } =
     useNewOrderActions();
 
+  const { resetNewOrder } = useStoreOrders();
+
   useEffect(() => {
+    resetNewOrder();
     setStep(1);
-  }, [setStep]);
+  }, [resetNewOrder, setStep]);
 
   useEffect(() => {
     if (step === 1) {

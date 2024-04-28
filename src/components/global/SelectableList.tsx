@@ -6,7 +6,7 @@ import { Loader } from "./Loader";
 
 type SelectableListProps<T extends Record<string, unknown>> = {
   data: T[];
-  attributeList: { label: string; key: keyof T }[];
+  attributeList: { label: string; key: keyof T; type?: "subtitle" | "title" }[];
   multiple?: boolean;
   selected?: number[];
   selectKey: string;
@@ -24,7 +24,6 @@ export const SelectableList = <T extends Record<string, unknown>>({
   loading,
 }: SelectableListProps<T>) => {
   const handleSelection = (index: number) => {
-    console.log("index", index);
     if (selected.includes(index)) {
       setSelected(selected.filter((selectedIndex) => selectedIndex !== index));
     } else {
@@ -39,55 +38,59 @@ export const SelectableList = <T extends Record<string, unknown>>({
   const columnCount = attributeList.length + 1;
 
   return (
-    <Container>
-      {!loading && <ListContainer>
-        {data.map((element, index) => (
-          <ListElement
-            key={index}
-            data-index={index}
-            onClick={() => handleSelection(element[selectKey] as number)}
-            $selected={selected.includes(element[selectKey] as number) || false}
-          >
-            <AttributeList $columnCount={columnCount}>
-              {attributeList.map((attribute, index) => (
-                <React.Fragment key={index}>
-                  <Attribute>{`${
-                    String(element[attribute.key]) || ""
-                  }`}</Attribute>
-                </React.Fragment>
-              ))}
-            </AttributeList>
-            <SelectedAttribute>
-              {selected.includes(element[selectKey] as number) && <VscPass />}
-            </SelectedAttribute>
-          </ListElement>
-        ))}
-      </ListContainer>}
-      {!loading && <Spacer />}
-      {
-        loading && <Loader transparent />
-      }
-    </Container>
+    <>
+      {!loading && (
+        <ListContainer>
+          {data.map((element, index) => (
+            <ListElement
+              key={index}
+              $isLastIndex={index === data.length - 1}
+              $reducedData={data.length - 1 === index}
+              data-index={index}
+              onClick={() => handleSelection(element[selectKey] as number)}
+              $selected={
+                selected.includes(element[selectKey] as number) || false
+              }
+            >
+              <AttributeList $columnCount={columnCount}>
+                {attributeList.map((attribute, index) => (
+                  <React.Fragment key={index}>
+                    {attribute.type === null ||
+                      (attribute.type !== "subtitle" && (
+                        <Attribute>{`${
+                          String(element[attribute.key]) || ""
+                        }`}</Attribute>
+                      ))}
+                    {attribute.type === "subtitle" && (
+                      <Attribute
+                        style={{
+                          fontSize: theme.fonts.size.P0,
+                          color: theme.colors.greyMedium,
+                          fontStyle: "italic",
+                        }}
+                      >
+                        {`${String(element[attribute.key]) || ""}`}
+                      </Attribute>
+                    )}
+                  </React.Fragment>
+                ))}
+              </AttributeList>
+              <SelectedAttribute>
+                {selected.includes(element[selectKey] as number) && <VscPass />}
+              </SelectedAttribute>
+            </ListElement>
+          ))}
+        </ListContainer>
+      )}
+      {loading && <Loader transparent />}
+    </>
   );
 };
-
-const Container = styled.div`
-  width: 100%;
-  height: 55vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Spacer = styled.div`
-  height: ${theme.materialDesign.height.medium};
-`;
 
 const ListContainer = styled.div`
   width: 100%;
   height: 100%;
-  outline: 2px solid ${theme.colors.greyUltraLight};
+  border: 1px solid ${theme.colors.greyLight};
   border-radius: ${theme.materialDesign.borderRadius.rounded};
   display: flex;
   flex-direction: column;
@@ -96,18 +99,20 @@ const ListContainer = styled.div`
   overflow: auto;
 `;
 
-const ListElement = styled.div<{ $selected: boolean }>`
-  min-height: ${theme.materialDesign.height.medium};
-  max-height: ${theme.materialDesign.height.medium};
+const ListElement = styled.div<{
+  $selected: boolean;
+  $isLastIndex: boolean;
+  $reducedData: boolean;
+}>`
+  /* min-height: ${theme.materialDesign.height.medium}; */
+  /* max-height: ${theme.materialDesign.height.medium}; */
   width: calc(100% - 38px);
-  border-top: 2px solid ${theme.colors.greyUltraLight};
-  border-radius: ${theme.materialDesign.borderRadius.default};
-  border: 1px solid ${theme.colors.greyUltraLight};
+  border-bottom: 1px solid ${theme.colors.greyLight};
   transition: all 0.25s;
   opacity: ${({ $selected }): number => ($selected ? 1 : 0.8)};
   display: flex;
   align-items: center;
-  padding: 0 18px;
+  padding: 4px 18px;
   background: ${({ $selected }): string =>
     $selected ? theme.colors.greyUltraLight : "white"};
   color: ${({ $selected }): string =>
@@ -123,6 +128,7 @@ const Attribute = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  height: ${theme.materialDesign.height.medium};
   font-size: ${theme.fonts.size.P1};
 `;
 
@@ -138,9 +144,7 @@ const SelectedAttribute = styled.div`
 const AttributeList = styled.div<{ $columnCount: number }>`
   display: grid;
   grid-template-columns: ${({ $columnCount }): string =>
-    `repeat(${
-      $columnCount - 1
-    }, 1fr) auto`}; // give auto width to the last column
+    `repeat(${$columnCount}, 1fr) auto`};
   align-items: center;
   width: 98%;
 `;
