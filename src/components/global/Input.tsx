@@ -53,7 +53,7 @@ export const Input = forwardRef((
     const inputRef: RefObject<HTMLInputElement> = useRef(null);
     const [hidden, setHidden] = useState(true)
     const [isFocused, setIsFocused] = useState(false);
-    const [count, setCount] = useState(0);
+    const [count, setCount] = useState(null as number | null);
 
     const handleFocus = useCallback(() => {
         setIsFocused(true);
@@ -113,7 +113,7 @@ export const Input = forwardRef((
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (type === 'number') {
             if (!isNaN(Number(e.target.value))) {
-                if (noNegativeNumber && Number(e.target.value) < 0) {
+                if (noNegativeNumber && Number(e.target.value) < 0 && Number(e.target.value) !== 0) {
                     return;
                 }
                 if (maxLength && e.target.value.length <= maxLength) {
@@ -132,7 +132,7 @@ export const Input = forwardRef((
 
     return (
         <InputStyle
-            $value={!!value || !!count}
+            $value={!!value || !!count || (type === 'number' && value === 0)}
             $label={!!label} $width={width}
             $type={type} $icon={!!icon}
             $variantStyle={variantStyle}
@@ -184,7 +184,7 @@ export const Input = forwardRef((
                 placeholder={placeholder}
                 type={hidden ? type : 'text'}
                 onChange={handleChange}
-                value={type === 'number' ? count : value}
+                value={type === 'number' ? (count ?? '') : value}
                 onBlur={handleBlur}
                 onFocus={handleFocus}
                 onInput={handleInput}

@@ -23,9 +23,10 @@ type ButtonProps = {
     bigIcon?: boolean;
     disabled?: boolean;
     color?: string;
+    widthProp?: string;
 };
 
-export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant = 'regular', icon, bigIcon, disabled, color }) => {
+export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant = 'regular', icon, bigIcon, disabled, color, widthProp }) => {
     color = color ?? theme.colors.primary;
     const textRef: RefObject<HTMLInputElement> = useRef(null);
     const [width, setWidth] = useState(0);
@@ -44,6 +45,7 @@ export const Button: React.FC<ButtonProps> = ({ value, onClick, loading, variant
 
     return (
         <ButtonStyle
+            $widthProp={widthProp}
             $color={color}
             $disabled={disabled}
             $variantStyle={variantStyle as VariantStyleType}
@@ -69,8 +71,9 @@ const LoadingKeyframe = keyframes`
         transform: rotate(360deg);
     }
 `
-const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: VariantStyleType, $disabled: boolean | undefined, $color: string }>`
+const ButtonStyle = styled.div<{ $loading?: boolean | null, $variantStyle: VariantStyleType, $disabled: boolean | undefined, $color: string, $widthProp: string | undefined }>`
     ${({ $disabled }) => $disabled && css`opacity: 0.5;`};
+    width: ${({ $widthProp }) => $widthProp || ''};
     user-select: none;
     height: ${({ $variantStyle }) => $variantStyle.height};
     font-size: ${({ $variantStyle }) => $variantStyle.fontSize};

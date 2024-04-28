@@ -29,7 +29,7 @@ export const getVariantStyle = (variant: 'large' | 'regular' | 'small', textColo
             variantStyle.padding = theme.materialDesign.padding.default;
             break;
         case 'small':
-            variantStyle.fontSize = theme.fonts.size.P0;
+            variantStyle.fontSize = theme.fonts.size.S;
             variantStyle.borderSize = 1;
             variantStyle.height = theme.materialDesign.height.mini;
             variantStyle.textColor= textColor;
