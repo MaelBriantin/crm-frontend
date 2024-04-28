@@ -17,6 +17,7 @@ type DropdownProps = {
     label?: string;
     placeholder?: string;
     loading?: boolean;
+    disabled?: boolean;
 };
 
 export type DropdownValueType = {
@@ -49,6 +50,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
     label, 
     placeholder, 
     maxHeight, 
+    disabled,
     loading }) => {
 
     if (openOnBottom) {
@@ -69,7 +71,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
         value && setSelectedOption(value);
     }, [value]);
 
-    const toggling = () => !loading && setIsOpen(!isOpen);
+    const toggling = () => (!loading && !disabled) && setIsOpen(!isOpen);
 
     const onOptionClicked = (selectedElement: DropdownOptions) => () => {
         setSelectedOption(selectedElement as DropdownValueType);
@@ -98,7 +100,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
         <DropdownContainer $width={width} ref={dropdownRef} $variantStyle={variantStyle} >
             <DropdownHeader $selectedOption={!!selectedOption && selectedOption.label !== ''} onClick={toggling} $isOpen={isOpen} $openOnBottom={openOnBottom} $openOnTop={openOnTop} $variantStyle={variantStyle} >
                 {label && <Label $selectedOption={!!selectedOption && selectedOption.label !== ''} $isOpen={isOpen} >{label}</Label>}
-                {selectedOption && selectedOption.label || placeholder || "Selectionnez une valeur..."}
+                {selectedOption && selectedOption.label || placeholder || 'Sélectionner une option'}
                 {!loading && <VscChevronDown className={'dropdownIcon'} />}
                 {loading && <VscLoading className={'loadingIcon'} />}
             </DropdownHeader>
