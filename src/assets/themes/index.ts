@@ -100,6 +100,8 @@ const shadows = {
     card: "-5px 5px 25px 0px rgb(0 0 0 / 20%)",
     default: "-1px 1px 5px 1px rgb(0 0 0 / 20%)",
     inset: "inset -1px 1px 5px 2px rgb(0 0 0 / 20%)",
+    light: "0px 0px 5px 0px rgba(0,0,0,0.1)",
+    medium: "0px 0px 5px 0px rgba(0,0,0,0.2)",
 };
 
 export const theme = {
