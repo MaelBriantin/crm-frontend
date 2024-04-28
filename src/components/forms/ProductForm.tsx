@@ -196,7 +196,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
     if (productForm.product_sizes) {
       productForm.product_sizes.forEach((s) => {
         const stock = s.stock || 0;
-        total += stock;
+        total += Number(stock);
       });
     }
     setTotalProductSizeStock(total);
@@ -209,6 +209,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
       await deleteProduct(product, callToast, fetchProducts, closeModal);
       setSaving(false);
     }
+  };
+
+  const handleStockChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newProductForm = { ...productForm };
+    const newStock = { ...newProductForm, stock: Number(event.target.value) };
+    setProductForm(newStock);
   };
 
   React.useEffect(() => {
@@ -236,9 +242,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
   ]);
 
   return (
-    <Container
-      onSubmit={onSave}
-    >
+    <Container onSubmit={onSave}>
       {loadingOptions && <Loader transparent />}
       <LeftContainer>
         <NameContainer>
@@ -381,11 +385,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
         {productForm.product_type && productForm.product_type === "default" && (
           <MeasurementContainer>
             <Input
+              noNegativeNumber
               name="measurement_quantity"
-              label="Quantité"
+              label="Poids / Volume"
               type="number"
               maxLength={10}
-              placeholder="Quantité"
+              placeholder="Poids / Volume"
               width="120px"
               value={productForm.measurement_quantity || ""}
               onChange={(e) =>
@@ -428,15 +433,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
               name="stock"
               label={"Stock actuel"}
               type="number"
+              noNegativeNumber
               placeholder={"Stock actuel"}
-              width="120px"
-              value={productForm.stock || ""}
-              onChange={(e) =>
-                setProductForm({
-                  ...productForm,
-                  stock: Number(e.target.value),
-                })
-              }
+              width="150px"
+              value={productForm.stock}
+              onChange={handleStockChange}
             />
           )}
           {productForm.product_type === "clothes" && (
@@ -454,10 +455,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
             width="120px"
             value={productForm.alert_stock || ""}
             onChange={(e) =>
-              setProductForm({
-                ...productForm,
-                alert_stock: Number(e.target.value),
-              })
+              setProductForm(
+                {
+                  ...productForm,
+                  alert_stock: Number(e.target.value),
+                } || 0
+              )
             }
           />
         </StockContainer>
