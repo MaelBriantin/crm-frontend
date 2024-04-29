@@ -21,6 +21,7 @@ export type ProductType = {
 };
 
 export type ProductSizeType = {
+    id: string | number | null;
     product_id: number | null;
     size: string | null;
     stock: number | null;
