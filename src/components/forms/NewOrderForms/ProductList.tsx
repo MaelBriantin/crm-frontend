@@ -15,9 +15,10 @@ export const ProductList: React.FC = () => {
 
   useEffect(() => {
     setFilteredProducts(
-      products.filter((product) =>
-        product.name.toLowerCase().includes(search.toLowerCase()) ||
-        product.reference.toLowerCase().includes(search.toLowerCase())
+      products.filter(
+        (product) =>
+          product.name.toLowerCase().includes(search.toLowerCase()) ||
+          product.reference.toLowerCase().includes(search.toLowerCase())
       )
     );
   }, [search, products]);
@@ -29,8 +30,6 @@ export const ProductList: React.FC = () => {
   useEffect(() => {
     setSubTitle("Sélection des produits");
   }, [setSubTitle]);
-
-
 
   return (
     <Container>
@@ -49,7 +48,12 @@ export const ProductList: React.FC = () => {
         {isEmpty(products) && <Loader transparent />}
         {!isEmpty(products) &&
           filteredProducts.map((product, index) => (
-            <ProductCard key={index} product={product} isLastIndex={index === filteredProducts.length - 1} />
+            <ProductCard
+              key={index}
+              product={product}
+              isLastIndex={index === filteredProducts.length - 1}
+              productLength={filteredProducts.length}
+            />
           ))}
       </ProductListContainer>
     </Container>

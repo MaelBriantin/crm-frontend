@@ -7,11 +7,13 @@ import { AddToCart } from "./AddToCart";
 type ProductCardProps = {
   product: ProductType;
   isLastIndex: boolean;
+  productLength: number;
 };
 
 export const ProductCard: React.FC<ProductCardProps> = ({
   product,
   isLastIndex,
+  productLength,
 }) => {
   const {
     name,
@@ -23,7 +25,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     measurement_quantity,
     measurement_unit,
     product_type,
-    product_sizes,
   } = product;
 
   return (
@@ -37,42 +38,23 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <Price>{selling_price} € HT</Price>
         <VatPrice>{selling_price_with_vat} € TTC</VatPrice>
       </PriceContainer>
-
-      {product_type === "clothes" && product_sizes && (
-        <AllSizeContainer>
-          {product_sizes.map((size, index) => (
-            <React.Fragment key={index}>
-              <AddToCart
-                product={product}
-                productType={product_type}
-                weightOrSize={String(size.size)}
-                stock={Number(size.stock)}
-              />
-              {index !== product_sizes.length - 1 && <SizeDivider />}
-            </React.Fragment>
-          ))}
-        </AllSizeContainer>
-      )}
-
-      {product_type === "default" && (
-        <AddToCart
-          product={product}
-          productType={product_type}
-          weightOrSize={`${measurement_quantity} ${measurement_unit}`}
-          stock={stock}
-        />
-      )}
+      <AddToCart
+        bottomLine={isLastIndex && productLength > 4}
+        product={product}
+        productType={String(product_type)}
+        weightOrSize={`${measurement_quantity} ${measurement_unit}`}
+        stock={stock}
+      />
     </Card>
   );
 };
 
 const Card = styled.div<{ $isLastIndex: boolean }>`
   display: grid;
-  grid-template-columns: 25% 10% 55%;
-  gap: 5%;
+  grid-template-columns: 35% 20% 45%;
   position: relative;
   align-items: center;
-  padding: 1rem;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid ${theme.colors.greyLight};
   background-color: ${theme.colors.white};
   transition: all 0.25s;
@@ -81,11 +63,11 @@ const Card = styled.div<{ $isLastIndex: boolean }>`
   }
 `;
 
-const SizeDivider = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: ${theme.colors.greyLight};
-`;
+// const SizeDivider = styled.div`
+//   width: 100%;
+//   height: 1px;
+//   background-color: ${theme.colors.greyLight};
+// `;
 
 const InfoContainer = styled.div`
   display: flex;
@@ -131,12 +113,4 @@ const VatPrice = styled.div`
 const Price = styled.div`
   font-size: ${theme.fonts.size.S};
   color: ${theme.colors.greyDark};
-`;
-
-const AllSizeContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-direction: column;
-  grid-column: 3;
 `;

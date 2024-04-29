@@ -35,6 +35,6 @@ export const NewOrderFormLogic: React.FC = () => {
 };
 
 const Container = styled.div`
-  height: 60vh;
-  width: 1000px;
+  height: 64vh;
+  width: 1200px;
 `;
