@@ -9,12 +9,13 @@ export const NewOrderFormLogic: React.FC = () => {
   const { step, setStep, setNextMessage, setPreviousMessage } =
     useNewOrderActions();
 
-  const { resetNewOrder } = useStoreOrders();
+  const { resetNewOrder, resetCart } = useStoreOrders();
 
   useEffect(() => {
     resetNewOrder();
+    resetCart();
     setStep(1);
-  }, [resetNewOrder, setStep]);
+  }, [resetCart, resetNewOrder, setStep]);
 
   useEffect(() => {
     if (step === 1) {

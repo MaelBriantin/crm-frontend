@@ -10,6 +10,7 @@ type createOrdersStore = {
   resetNewOrder: () => void;
   cart: OrderedProduct[];
   addToCart: (product: OrderedProduct) => void;
+  resetCart: () => void;
 };
 
 type OrderedProduct = {
@@ -57,4 +58,5 @@ export const useStoreOrders = create<createOrdersStore>((set) => ({
       }
     });
   },
+  resetCart: () => set({ cart: [] }),
 }));

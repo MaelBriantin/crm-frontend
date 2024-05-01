@@ -28,9 +28,40 @@ export const AddToCart: React.FC<AddToCartProps> = ({
     const [selectedSize, setSelectedSize] = useState<DropdownOptions | null>(
         null
     );
+    const [inCart, setInCart] = useState<number>(0);
+    const [sizeInCart, setSizeInCart] = useState<number>(0);
     const [sizeStock, setSizeStock] = useState<number>(0);
+    const [maxNumber, setMaxNumber] = useState<number>(0);
 
-    const {addToCart} = useStoreOrders();
+    const {cart, addToCart} = useStoreOrders();
+
+    useEffect(() => {
+        const max = productType === "clothes" ? maxQuantity - sizeInCart : maxQuantity - inCart;
+        setMaxNumber(max > 0 ? max : 0);
+        max === 0 && setSelectedQuantity(0);
+    }, [inCart, maxQuantity, productType, sizeInCart]);
+
+    useEffect(() => {
+        const inCartQuantity = cart.reduce(
+            (acc, item) =>
+                item.product_id === Number(product.id) &&
+                item.product_type === productType
+                    ? acc + item.quantity
+                    : acc,
+            0
+        );
+        const inCartSizeQuantity = cart.reduce(
+            (acc, item) =>
+                item.product_id === Number(product.id) &&
+                item.product_type === productType &&
+                item.size_id === Number(selectedSize?.value)
+                    ? acc + item.quantity
+                    : acc,
+            0
+        );
+        setInCart(inCartQuantity);
+        setSizeInCart(inCartSizeQuantity);
+    }, [cart, product.id, productType, selectedSize?.value]);
 
     useEffect(() => {
         if (productType === "clothes" && product.product_sizes) {
@@ -74,6 +105,24 @@ export const AddToCart: React.FC<AddToCartProps> = ({
         setSelectedQuantity(1);
     };
 
+    const disable = selectedQuantity === 0
+        || selectedQuantity > maxNumber
+        || stock === 0
+        || productType === "clothes" && sizeStock === 0
+        || productType === "default" && stock === 0;
+
+    const inCartMessage = () => {
+        if (productType === "clothes" && sizeInCart > 0) {
+            return `${sizeInCart} ${
+                sizeInCart > 1 ? "articles" : "article"
+            } de cette taille dans le panier`;
+        }
+        if (productType === "default" && inCart > 0) {
+            return `${inCart} ${
+                inCart > 1 ? "articles" : "article"
+            } dans le panier`;
+        }
+    }
     return (
         <DetailsContainer>
             <WeightAndSize
@@ -118,7 +167,7 @@ export const AddToCart: React.FC<AddToCartProps> = ({
                         type={"number"}
                         showNumberButtons
                         noNegativeNumber
-                        maxNumber={maxQuantity}
+                        maxNumber={maxNumber}
                         showMaxNumber
                         value={selectedQuantity}
                         onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -128,7 +177,7 @@ export const AddToCart: React.FC<AddToCartProps> = ({
                 )}
                 <CartInfo>
                     <Button
-                        disabled={stock === 0 || selectedQuantity === 0 || selectedQuantity > maxQuantity}
+                        disabled={disable}
                         widthProp="180px"
                         variant="small"
                         value={
@@ -138,6 +187,12 @@ export const AddToCart: React.FC<AddToCartProps> = ({
                         }
                         onClick={handleAddToCart}
                     />
+                    {inCart > 0 && (
+                        <span className="inCart">
+                        {inCartMessage()}
+                        </span>
+                    )
+                    }
                 </CartInfo>
             </AddToCartContainer>
         </DetailsContainer>
@@ -227,9 +282,9 @@ const CartInfo = styled.div<{ $inCart?: boolean }>`
 
     .inCart {
         position: absolute;
-        top: 30px;
-        left: 0;
-        transform: translate(-50%, -50%);
+        top: 31px;
+        left: 50%;
+        transform: translateX(-50%);
         font-size: ${theme.fonts.size.XS};
         color: ${theme.colors.primary};
         width: 100%;

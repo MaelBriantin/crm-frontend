@@ -54,7 +54,7 @@ const Card = styled.div<{ $isLastIndex: boolean }>`
   grid-template-columns: 35% 20% 45%;
   position: relative;
   align-items: center;
-  padding: 1rem 1.5rem;
+  padding: 2rem 1.5rem;
   border-bottom: 1px solid ${theme.colors.greyLight};
   background-color: ${theme.colors.white};
   transition: all 0.25s;
