@@ -224,6 +224,7 @@ const DropdownHeader = styled.div<{
     white-space: nowrap;
     text-overflow: ellipsis;
     width: 80%;
+    line-height: 1.2;
   }
   .dropdownIcon {
     color: ${({ $isOpen }) => ($isOpen ? theme.colors.primary : "inherit")};
