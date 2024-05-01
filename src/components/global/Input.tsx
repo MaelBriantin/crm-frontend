@@ -122,6 +122,10 @@ export const Input = forwardRef((
                 if (maxNumber && valueAsNumber > maxNumber) {
                     return;
                 }
+                if (maxNumber === 0) {
+                    onChange({target: {value: 0}} as unknown as ChangeEvent<HTMLInputElement>);
+                    return;
+                }
                 if (maxLength && e.target.value.length <= maxLength) {
                     setCount(valueAsNumber);
                 }
@@ -141,6 +145,9 @@ export const Input = forwardRef((
             if (noNegativeNumber && count < 0) {
                 setCount(0);
                 onChange({target: {value: 0}} as unknown as ChangeEvent<HTMLInputElement>);
+                return;
+            }
+            if (maxNumber === 0) {
                 return;
             }
             if (maxNumber && count >= maxNumber) {
@@ -185,7 +192,7 @@ export const Input = forwardRef((
             }
             {
                 (type === 'number' && showNumberButtons) &&
-                <MinusIcon onClick={handleMinusClick}  $focus={isFocused}>
+                <MinusIcon onClick={handleMinusClick} $focus={isFocused}>
                     <VscChromeMinimize className={'minusClick'}/>
                 </MinusIcon>
             }
@@ -233,15 +240,12 @@ export const Input = forwardRef((
                     <VscAdd className={'plusClick'}/>
                 </PlusIcon>
             }
-            {
-                (type === 'number' && maxNumber && showMaxNumber) &&
-                <MaxNumber className="symbol">Max: {maxNumber}</MaxNumber>
-            }
+            {type === 'number' && showMaxNumber && <MaxNumberStyle>Max: {maxNumber || 0}</MaxNumberStyle>}
         </InputStyle>
     )
 });
 
-const MaxNumber = styled.div`
+const MaxNumberStyle = styled.div`
     cursor: default;
     color: ${theme.colors.greyDark};
     font-size: ${theme.fonts.size.XS};
