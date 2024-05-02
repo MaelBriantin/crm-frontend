@@ -1,17 +1,23 @@
 import React, { useEffect } from "react";
-import { useModal } from "../../../contexts";
+import {useModal, useNewOrderActions} from "../../../contexts";
 import { ProductCard } from "./ProductCard";
 import { useStoreProducts } from "../../../stores/useStoreProducts";
 import { isEmpty } from "../../../utils/helpers/spells";
 import { Loader, Input } from "../../global";
 import styled from "styled-components";
 import { theme } from "../../../assets/themes";
+import {useStoreOrders} from "../../../stores/useStoreOrders.ts";
 
 export const ProductList: React.FC = () => {
   const { setSubTitle } = useModal();
+  const { setDisableNext } = useNewOrderActions();
   const { products, fetchProducts } = useStoreProducts();
   const [search, setSearch] = React.useState<string>("");
   const [filteredProducts, setFilteredProducts] = React.useState(products);
+
+  const { cart } = useStoreOrders();
+
+  const disableNext = isEmpty(cart);
 
   useEffect(() => {
     setFilteredProducts(
@@ -29,7 +35,8 @@ export const ProductList: React.FC = () => {
 
   useEffect(() => {
     setSubTitle("Sélection des produits");
-  }, [setSubTitle]);
+    setDisableNext(disableNext);
+  }, [disableNext, setSubTitle]);
 
   return (
     <Container>

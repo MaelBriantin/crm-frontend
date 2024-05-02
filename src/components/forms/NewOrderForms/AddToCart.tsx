@@ -113,14 +113,22 @@ export const AddToCart: React.FC<AddToCartProps> = ({
 
     const inCartMessage = () => {
         if (productType === "clothes" && sizeInCart > 0) {
-            return `${sizeInCart} ${
-                sizeInCart > 1 ? "articles" : "article"
-            } de cette taille dans le panier`;
+            if (maxNumber === 0) {
+                return 'Tous les articles de cette taille sont dans le panier'
+            } else {
+                return `${sizeInCart} ${
+                    sizeInCart > 1 ? "articles" : "article"
+                } de cette taille dans le panier`;
+            }
         }
         if (productType === "default" && inCart > 0) {
-            return `${inCart} ${
-                inCart > 1 ? "articles" : "article"
-            } dans le panier`;
+            if (maxNumber === 0) {
+                return 'Tous les articles sont dans le panier'
+            } else {
+                return `${inCart} ${
+                    inCart > 1 ? "articles" : "article"
+                } dans le panier`;
+            }
         }
     }
     return (
@@ -159,7 +167,7 @@ export const AddToCart: React.FC<AddToCartProps> = ({
                 </Stock>
             </WeightAndSize>
             <AddToCartContainer>
-                {stock !== 0 && (
+                {(stock !== 0 && maxNumber !== 0) && (
                     <Input
                         placeholder={""}
                         width="100px"
@@ -168,7 +176,7 @@ export const AddToCart: React.FC<AddToCartProps> = ({
                         showNumberButtons
                         noNegativeNumber
                         maxNumber={maxNumber}
-                        showMaxNumber
+                        showMaxNumber={maxNumber !== 0}
                         value={selectedQuantity}
                         onChange={(e: ChangeEvent<HTMLInputElement>) =>
                             setSelectedQuantity(Number(e.target.value))

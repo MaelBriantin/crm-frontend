@@ -4,6 +4,7 @@ import { CustomerList } from "./CustomerList";
 import { ProductList } from "./ProductList";
 import { useNewOrderActions } from "../../../contexts";
 import { useStoreOrders } from "../../../stores/useStoreOrders";
+import {CartValidation} from "./CartValidation.tsx";
 
 export const NewOrderFormLogic: React.FC = () => {
   const { step, setStep, setNextMessage, setPreviousMessage } =
@@ -24,6 +25,9 @@ export const NewOrderFormLogic: React.FC = () => {
     } else if (step === 2) {
       setNextMessage("Voir le panier");
       setPreviousMessage("Retour à la sélection du client");
+    } else if (step === 3) {
+        setNextMessage("Valider la commande");
+        setPreviousMessage("Retour à la sélection des produits");
     }
   }, [setNextMessage, setPreviousMessage, step]);
 
@@ -31,6 +35,7 @@ export const NewOrderFormLogic: React.FC = () => {
     <Container>
       {step === 1 && <CustomerList />}
       {step === 2 && <ProductList />}
+      {step === 3 && <CartValidation />}
     </Container>
   );
 };

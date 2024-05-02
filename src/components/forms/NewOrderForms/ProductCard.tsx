@@ -63,12 +63,6 @@ const Card = styled.div<{ $isLastIndex: boolean }>`
   }
 `;
 
-// const SizeDivider = styled.div`
-//   width: 100%;
-//   height: 1px;
-//   background-color: ${theme.colors.greyLight};
-// `;
-
 const InfoContainer = styled.div`
   display: flex;
   flex-direction: column;
