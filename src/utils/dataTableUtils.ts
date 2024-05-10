@@ -129,7 +129,5 @@ export const getRowValueAndHighlight = (
       rowValue = limit(rowValue, arrayLimit);
     }
   }
-
-  console.log("rowValue", rowValue);
   return { rowValue, highlight };
 };
