@@ -7,7 +7,7 @@ import { ProductSizeType, ProductType } from "../types/ProductTypes";
  * @returns The rounded price.
  */
 export const roundPrice = (price: number): number => {
-  return Math.round(price * 100) / 100;
+  return parseFloat(price.toFixed(2))
 };
 
 const requiredProductFields: (keyof ProductType)[] = [
