@@ -9,20 +9,32 @@ type NewOrderActionsProps = {
 };
 
 export const NewOrderActions: React.FC<NewOrderActionsProps> = () => {
-  const { step, setStep, nextMessage, previousMessage, disableNext, disablePrevious } = useNewOrderActions();
+  const { step, setStep, nextMessage, previousMessage, disableNext, disablePrevious, maxStep, finalStepMethod } = useNewOrderActions();
+
+  const handleNext = () => {
+    if (step < maxStep) {
+      setStep(step + 1);
+    }
+  }
+
+  const handlePrevious = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  }
 
   return (
     <Container $step={step}>
       <DiscreteButton
         disabled={disablePrevious}
         value={previousMessage}
-        onClick={() => setStep(step - 1)}
+        onClick={handlePrevious}
         color={theme.colors.primary}
       />
       <Button
         disabled={disableNext}
         value={nextMessage}
-        onClick={() => setStep(step + 1)}
+        onClick={step === maxStep ? finalStepMethod : handleNext}
       />
     </Container>
   );
