@@ -36,17 +36,19 @@ export const AddToCart: React.FC<AddToCartProps> = ({
     const {cart, addToCart} = useStoreOrders();
 
     useEffect(() => {
+        const maxQuantity = productType === "clothes" ? sizeStock : stock;
+        setMaxQuantity(maxQuantity);
         const max = productType === "clothes" ? maxQuantity - sizeInCart : maxQuantity - inCart;
         setMaxNumber(max > 0 ? max : 0);
         max === 0 && setSelectedQuantity(0);
-    }, [inCart, maxQuantity, productType, sizeInCart]);
+    }, [inCart, maxQuantity, productType, sizeInCart, sizeStock, stock]);
 
     useEffect(() => {
         const inCartQuantity = cart.reduce(
             (acc, item) =>
                 item.product_id === Number(product.id) &&
                 item.product_type === productType
-                    ? acc + item.quantity
+                    ? acc + item.ordered_quantity
                     : acc,
             0
         );
@@ -54,8 +56,8 @@ export const AddToCart: React.FC<AddToCartProps> = ({
             (acc, item) =>
                 item.product_id === Number(product.id) &&
                 item.product_type === productType &&
-                item.size_id === Number(selectedSize?.value)
-                    ? acc + item.quantity
+                item.size?.id === Number(selectedSize?.value)
+                    ? acc + item.ordered_quantity
                     : acc,
             0
         );
@@ -87,20 +89,19 @@ export const AddToCart: React.FC<AddToCartProps> = ({
         }
     }, [selectedSize, product.product_sizes]);
 
-    useEffect(() => {
-        const maxQuantity = productType === "clothes" ? sizeStock : stock;
-        setMaxQuantity(maxQuantity);
-    }, [productType, sizeStock, stock]);
-
     const handleAddToCart = () => {
         const orderedProduct = {
             product_id: Number(product.id),
             product_type: productType as "clothes" | "default",
-            quantity: selectedQuantity,
+            ordered_quantity: selectedQuantity,
         };
         productType === "clothes" &&
-        selectedSize &&
-        Object.assign(orderedProduct, {size_id: Number(selectedSize.value)});
+        selectedSize && product.product_sizes &&
+        Object.assign(orderedProduct, {
+            size: product.product_sizes.find(
+                (size) => size.id === Number(selectedSize.value)
+            ),
+        });
         addToCart(orderedProduct);
         setSelectedQuantity(1);
     };
@@ -239,9 +240,6 @@ const WeightAndSize = styled.div<{ $clothes?: boolean }>`
     grid-template-columns: 50% 50%;
     gap: 20px;
     margin-bottom: ${({$clothes}) => ($clothes ? "12px" : "0")};
-        /* div {
-    font-size: ${theme.fonts.size.P0};
-  } */
 `;
 
 const WeightOrSize = styled.div`

@@ -90,7 +90,7 @@ export const SelectableList = <T extends Record<string, unknown>>({
 const ListContainer = styled.div`
   width: 100%;
   height: 100%;
-  border: 1px solid ${theme.colors.greyLight};
+  border: 2px solid ${theme.colors.greyLight};
   border-radius: ${theme.materialDesign.borderRadius.rounded};
   display: flex;
   flex-direction: column;
@@ -106,7 +106,7 @@ const ListElement = styled.div<{
 }>`
   /* min-height: ${theme.materialDesign.height.medium}; */
   /* max-height: ${theme.materialDesign.height.medium}; */
-  width: calc(100% - 38px);
+  width: calc(100% - 36px);
   border-bottom: 1px solid ${theme.colors.greyLight};
   transition: all 0.25s;
   opacity: ${({ $selected }): number => ($selected ? 1 : 0.8)};
