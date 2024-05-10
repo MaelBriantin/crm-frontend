@@ -1,9 +1,16 @@
 import { create } from "zustand";
-import { OrderType } from "../types/OrderTypes";
+import { OrderOptionsType, OrderType } from "../types/OrderTypes";
+import { ProductSizeType } from "../types/ProductTypes";
+import { firstOf, sortBy } from "../utils/helpers/spells.ts";
+import { fetchAllOrderOptions } from "../services/api/orders";
 
 type createOrdersStore = {
   orders: OrderType[];
   newOrder: OrderType;
+  paymentMethods: { label: string; value: string }[];
+  orderOptions: OrderOptionsType;
+  loadingOrderOptions: boolean;
+  fetchOrderOptions: () => void;
   loadingOrders: boolean;
   setLoadingOrders: (loadingOrders: boolean) => void;
   addCustomer: (customerId: number) => void;
@@ -11,17 +18,38 @@ type createOrdersStore = {
   cart: OrderedProduct[];
   addToCart: (product: OrderedProduct) => void;
   resetCart: () => void;
+  updateCartQuantity: (
+    product_id: number,
+    size_id: number | null,
+    quantity: number
+  ) => void;
+  removeFromCart: (productId: number, sizeId: number | null) => void;
 };
 
-type OrderedProduct = {
+export type OrderedProduct = {
   product_type: "clothes" | "default";
   product_id: number;
-  quantity: number;
-  size_id?: number;
+  ordered_quantity: number;
+  size?: ProductSizeType;
+  product_size_id?: number;
 };
 
 export const useStoreOrders = create<createOrdersStore>((set) => ({
   orders: [],
+  paymentMethods: [],
+  orderOptions: {} as OrderOptionsType,
+  loadingOrderOptions: false,
+  fetchOrderOptions: async () => {
+    set({ loadingOrderOptions: true });
+    const response = await fetchAllOrderOptions();
+    set({ orderOptions: firstOf(response) as OrderOptionsType });
+    set({
+      paymentMethods: convertOrderOptions(
+        firstOf(response) as OrderOptionsType
+      ),
+    });
+    set({ loadingOrderOptions: false });
+  },
   newOrder: {} as OrderType,
   loadingOrders: false,
   setLoadingOrders: (loadingOrders: boolean) => set({ loadingOrders }),
@@ -32,31 +60,78 @@ export const useStoreOrders = create<createOrdersStore>((set) => ({
   resetNewOrder: () => set({ newOrder: {} as OrderType }),
   cart: [],
   addToCart: (product: OrderedProduct) => {
-    // Define the function that updates the store's state
     set((state) => {
-      // Find the index of the product in the cart based on the product ID and (for clothes) the size
       const index = state.cart.findIndex(
         (item) =>
           item.product_id === product.product_id &&
-          (product.product_type === "default" ||
-            item.size_id === product.size_id)
+          (product.product_type === "default" || item.size === product.size)
       );
 
-      // If the index is found (-1 means the product is not in the cart)
       if (index !== -1) {
-        // Create a copy of the current cart
         const updatedCart = [...state.cart];
-
-        // Update the quantity of the existing product by adding the new quantity
-        updatedCart[index].quantity += product.quantity;
-
-        // Return the new state of the store with the updated cart
-        return { cart: updatedCart };
+        updatedCart[index].ordered_quantity += product.ordered_quantity;
+        return { cart: sortBy(updatedCart, "product_id") };
       } else {
-        // If the product is not in the cart, add the new product to the cart
-        return { cart: [...state.cart, product] };
+        const newProduct = { ...product };
+        if (product.product_type === "clothes" && product.size) {
+          newProduct.product_size_id = Number(product.size.id);
+        }
+        const newCart = [...state.cart, newProduct];
+        return { cart: sortBy(newCart, "product_id") };
       }
     });
   },
   resetCart: () => set({ cart: [] }),
+  updateCartQuantity: (
+    product_id: number,
+    size_id: number | null,
+    ordered_quantity: number
+  ) => {
+    set((state) => {
+      if (size_id) {
+        const index = state.cart.findIndex(
+          (item) => item.product_id === product_id && item.size?.id === size_id
+        );
+        if (index !== -1) {
+          const updatedCart = [...state.cart];
+          updatedCart[index].ordered_quantity = ordered_quantity;
+          return { cart: updatedCart };
+        }
+      } else {
+        const index = state.cart.findIndex(
+          (item) => item.product_id === product_id
+        );
+        if (index !== -1) {
+          const updatedCart = [...state.cart];
+          updatedCart[index].ordered_quantity = ordered_quantity;
+          return { cart: updatedCart };
+        }
+      }
+      return state;
+    });
+  },
+  removeFromCart: (productId: number, sizeId: number | null) => {
+    set((state) => {
+      if (sizeId) {
+        const updatedCart = state.cart.filter(
+          (item) => item.product_id !== productId || item.size?.id !== sizeId
+        );
+        return { cart: updatedCart };
+      } else {
+        const updatedCart = state.cart.filter(
+          (item) => item.product_id !== productId
+        );
+        return { cart: updatedCart };
+      }
+    });
+  },
 }));
+
+const convertOrderOptions = (orderOptions: OrderOptionsType) => {
+  const orderOptionDropdown: { label: string; value: string }[] = [];
+  Object.entries(orderOptions.payment_methods).map(([key, value]) => {
+    orderOptionDropdown.push({ label: key, value: String(value) });
+  });
+
+  return orderOptionDropdown;
+};

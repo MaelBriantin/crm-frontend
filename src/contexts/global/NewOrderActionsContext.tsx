@@ -11,6 +11,10 @@ type NewOrderActionsContextProps = {
     setNextMessage: Dispatch<SetStateAction<string>>;
     previousMessage: string;
     setPreviousMessage: Dispatch<SetStateAction<string>>;
+    maxStep: number;
+    setMaxStep: Dispatch<SetStateAction<number>>;
+    finalStepMethod: () => void;
+    setFinalStepMethod: Dispatch<SetStateAction<() => void>>;
 }
 
 export const NewOrderActionsContext = createContext<NewOrderActionsContextProps>({
@@ -24,6 +28,10 @@ export const NewOrderActionsContext = createContext<NewOrderActionsContextProps>
     setDisableNext: () => false,
     disablePrevious: false,
     setDisablePrevious: () => false,
+    maxStep: 0,
+    setMaxStep: () => 0,
+    finalStepMethod: () => {},
+    setFinalStepMethod: () => () => {},
 });
 
 export const NewOrderActionsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -32,6 +40,8 @@ export const NewOrderActionsProvider: React.FC<{ children: React.ReactNode }> = 
     const [previousMessage, setPreviousMessage] = useState<string>('');
     const [disableNext, setDisableNext] = useState<boolean>(false);
     const [disablePrevious, setDisablePrevious] = useState<boolean>(false);
+    const [maxStep, setMaxStep] = useState<number>(3);
+    const [finalStepMethod, setFinalStepMethod] = useState<() => void>(() => {});
 
     return (
         <NewOrderActionsContext.Provider value={{
@@ -45,6 +55,10 @@ export const NewOrderActionsProvider: React.FC<{ children: React.ReactNode }> = 
             setDisableNext,
             disablePrevious,
             setDisablePrevious,
+            maxStep,
+            setMaxStep,
+            finalStepMethod,
+            setFinalStepMethod,
         }}>
             {children}
         </NewOrderActionsContext.Provider>
