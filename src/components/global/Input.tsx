@@ -41,8 +41,9 @@ export const Input = forwardRef((
         loading?: boolean;
         symbol?: string;
         showNumberButtons?: boolean;
-        maxNumber?: number;
+        maxNumber?: number | undefined | null;
         showMaxNumber?: boolean;
+        maxMessage?: string;
     }, ref) => {
     const {
         name,
@@ -63,7 +64,8 @@ export const Input = forwardRef((
         symbol,
         showNumberButtons,
         maxNumber,
-        showMaxNumber
+        showMaxNumber,
+        maxMessage
     } = props
 
     const inputRef: RefObject<HTMLInputElement> = useRef(null);
@@ -240,7 +242,7 @@ export const Input = forwardRef((
                     <VscAdd className={'plusClick'}/>
                 </PlusIcon>
             }
-            {type === 'number' && showMaxNumber && <MaxNumberStyle>Max: {maxNumber || 0}</MaxNumberStyle>}
+            {type === 'number' && showMaxNumber && <MaxNumberStyle>{maxMessage || 'Max:'} {maxNumber || 0}</MaxNumberStyle>}
         </InputStyle>
     )
 });

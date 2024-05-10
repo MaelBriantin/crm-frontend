@@ -203,6 +203,7 @@ const DropdownHeader = styled.div<{
   transition: all 0.1s ease-in-out;
   width: 100%;
   border-radius: ${theme.materialDesign.borderRadius.rounded};
+  line-height: 1.2;
   border-radius: ${({ $isOpen, $openOnTop }) =>
     $openOnTop &&
     $isOpen &&
@@ -215,7 +216,6 @@ const DropdownHeader = styled.div<{
   justify-content: ${({ $disabled }) =>
     $disabled ? "flex-end" : "space-between"};
   align-items: center;
-
   cursor: pointer;
   color: ${({ $selectedOption }) =>
     $selectedOption ? theme.colors.dark : theme.colors.greyDark};
@@ -224,7 +224,6 @@ const DropdownHeader = styled.div<{
     white-space: nowrap;
     text-overflow: ellipsis;
     width: 80%;
-    line-height: 1.2;
   }
   .dropdownIcon {
     color: ${({ $isOpen }) => ($isOpen ? theme.colors.primary : "inherit")};
