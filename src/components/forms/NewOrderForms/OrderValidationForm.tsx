@@ -20,6 +20,8 @@ export const OrderValidationForm: React.FC = () => {
     });
 
     const {setDisableNext} = useNewOrderActions();
+
+    const {setOrderValidationForm} = useStoreOrders();
     
     const disableNext = isEmpty(cart) || !selectedPaymentMethod || (deferredPayment && (defferedDate.day === "" || defferedDate.month === "" || defferedDate.year === ""));
 
@@ -45,6 +47,15 @@ export const OrderValidationForm: React.FC = () => {
         setPaymentMethodOptions(paymentMethods);
         setSelectedPaymentMethod(paymentMethods[0]);
     }, [fetchOrderOptions, paymentMethodOptions, paymentMethods]);
+
+    useEffect(() => {
+        setOrderValidationForm({
+            payment_method: 'check',
+            comment: comment,
+            deferred_payment: deferredPayment,
+            deferred_date: deferredPayment ? `${defferedDate.year}-${defferedDate.month}-${defferedDate.day}` : undefined,
+        });
+    }, [comment, deferredPayment, defferedDate, selectedPaymentMethod, setOrderValidationForm]);
 
     return (
         <ValidationForm>

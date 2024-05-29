@@ -17,8 +17,6 @@ export type OrderCreationType = {
     products: OrderProductType[];
     deferred_date?: string;
     comment?: string;
-    vat_total: number;
-    no_vat_total: number;
 };
 
 export type OrderProductType = {

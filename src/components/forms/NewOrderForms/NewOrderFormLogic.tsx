@@ -14,7 +14,7 @@ export const NewOrderFormLogic: React.FC = () => {
     setNextMessage,
     setPreviousMessage,
     setMaxStep,
-    maxStep,
+    maxStep
   } = useNewOrderActions();
 
 

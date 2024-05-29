@@ -3,15 +3,15 @@ import { APIResponseFormat } from "../../../types/FetchTypes";
 import { OrderCreationType, OrderType } from "../../../types/OrderTypes";
 import { fetchAPI, handleAPIResponse } from "../fetchApi.config";
 
-export const createOrder = async (newOrder: OrderCreationType, callToast: CallToastProps, refreshOrders: { (): Promise<void>; (): void; }, closeModal: { (): void; (): void; }) => {
-    let orederResponse: OrderType[] = [];
+export const createOrder = async (newOrder: OrderCreationType, callToast: CallToastProps, refreshData: { (): Promise<void>; (): void; }, closeModal: { (): void; (): void; }) => {
+    let orderResponse: OrderType[] = [];
     try {
         const response: APIResponseFormat<OrderType> = await fetchAPI('/api/orders', 'POST', newOrder);
         handleAPIResponse<OrderType>(
             response,
             async (orders) => {
-                orederResponse = orders as OrderType[];
-                await refreshOrders();
+                orderResponse = orders as OrderType[];
+                await refreshData();
                 callToast('success', `Commande enregistrée avec succès.`, 3000);
                 closeModal();
             },
@@ -23,5 +23,5 @@ export const createOrder = async (newOrder: OrderCreationType, callToast: CallTo
     } catch (error) {
         console.error(error);
     }
-    return orederResponse;
+    return orderResponse;
 };
