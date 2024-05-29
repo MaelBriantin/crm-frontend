@@ -12,7 +12,6 @@ import { Loader } from "../components/global";
 import styled from "styled-components";
 import { ProductType } from "../types/ProductTypes";
 import { deleteProduct } from "../services/api/products";
-import { VscGift } from "react-icons/vsc";
 
 export const ProductPage: React.FC = () => {
   const [sort, setSort] = React.useState<string | null>(null);
@@ -149,7 +148,6 @@ export const ProductPage: React.FC = () => {
           topBar
           searchbar={!!products.length}
           buttonValueTopBar="Nouveau produit"
-          iconTopBar={<VscGift />}
           columns={columns}
           onDoubleClickOnRow={handleEditProduct}
           onClickTopBar={newProduct}

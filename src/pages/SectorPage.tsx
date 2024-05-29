@@ -6,7 +6,6 @@ import { ColumnProps, RowDataType, RowType } from '../types/DataTableTypes.ts';
 import { SectorType } from '../types/SectorTypes.ts';
 import { useModal, useAppLoading, useDeleteAlert, useToast } from '../contexts';
 import { SectorForm } from '../components/forms/SectorForm.tsx';
-import { LiaMapMarkedAltSolid } from "react-icons/lia";
 import { VscEdit, VscChromeClose } from "react-icons/vsc";
 import { theme } from '../assets/themes';
 import { deleteSector } from '../services/api/sectors';
@@ -124,7 +123,6 @@ export const SectorPage: React.FC = () => {
             <DataTable
                 topBar
                 searchbar={!!sectors.length}
-                iconTopBar={<LiaMapMarkedAltSolid />}
                 buttonValueTopBar='Nouveau secteur'
                 columns={columns}
                 onDoubleClickOnRow={handleDoubleClick}

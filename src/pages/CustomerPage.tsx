@@ -3,15 +3,14 @@ import React, {useEffect} from 'react';
 import {theme} from '../assets/themes';
 import {DataTable} from '../components/DataTable';
 import {isEmpty, deepCopy} from '../utils/helpers/spells';
-import {VscSmiley, VscEdit, VscChromeClose} from 'react-icons/vsc';
+import {VscEdit, VscChromeClose} from 'react-icons/vsc';
 import {RowDataType, ColumnProps, RowType} from '../types/DataTableTypes';
 import {Loader} from '../components/global';
-import {CustomerForm} from '../components/forms/CustomerForm';
+import {CustomerForm, FormActions} from '../components/forms';
 import {useModal, useDeleteAlert, useToast} from '../contexts';
 import {CustomerType} from '../types/CustomerTypes';
 import {deleteCustomer} from '../services/api/customers';
 import {useKeyboardShortcut} from '../hooks/system/useKeyboardShortcut';
-import {FormActions} from "../components/forms/FormActions.tsx";
 import {useStoreCustomers} from "../stores/useStoreCustomers.ts";
 export const CustomerPage: React.FC = () => {
     const [sort, setSort] = React.useState<string | null>(null);
@@ -121,7 +120,6 @@ export const CustomerPage: React.FC = () => {
                 <DataTable
                     topBar
                     searchbar={!!customers.length}
-                    iconTopBar={<VscSmiley/>}
                     onClickTopBar={newCustomer}
                     onDoubleClickOnRow={(row: RowType) => editCustomer(row)}
                     buttonValueTopBar='Nouveau client'
