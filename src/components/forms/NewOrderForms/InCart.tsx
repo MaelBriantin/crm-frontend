@@ -21,12 +21,7 @@ export const InCart: React.FC<InCartProps> = ({productCart}) => {
     }, [productCart]);
 
     const {products} = useStoreProducts();
-    const {updateCartQuantity, removeFromCart, cart} = useStoreOrders();
-
-
-    useEffect(() => {   
-        console.log(cart);
-    }, [cart]);
+    const {updateCartQuantity, removeFromCart} = useStoreOrders();
 
     useEffect(() => {
         if (product.product_id && product.product_type !== 'clothes') {
