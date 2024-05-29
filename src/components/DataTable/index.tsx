@@ -171,7 +171,6 @@ const FakeTableContainer = styled.div`
     height: 85%;
     overflow: auto;
     margin: auto;
-    overflow: auto;
     border-collapse: collapse;
     border: 1px solid #f9f9f9;
     border-radius: ${theme.materialDesign.borderRadius.rounded};
@@ -185,7 +184,6 @@ const Table = styled.table`
     height: 85%;
     overflow: auto;
     margin: auto;
-    overflow: auto;
     border-collapse: collapse;
     border: 1px solid #f9f9f9;
     border-radius: ${theme.materialDesign.borderRadius.rounded};

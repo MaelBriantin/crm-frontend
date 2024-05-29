@@ -223,6 +223,7 @@ const DropdownHeader = styled.div<{
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    color: ${theme.colors.dark};
     width: 80%;
   }
   .dropdownIcon {

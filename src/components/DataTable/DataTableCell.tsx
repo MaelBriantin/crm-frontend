@@ -20,6 +20,7 @@ export const DataTableCell: React.FC<DataTableCellProps> = ({
                                                             }) => {
 
     const {rowValue, highlight} = getRowValueAndHighlight(searchedValue, row[column.value], arrayLimit);
+
     return (
         <TableCell
             key={columnIndex}
