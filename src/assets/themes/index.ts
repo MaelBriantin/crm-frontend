@@ -18,6 +18,7 @@ const colors = {
     red: "#e25549",
     redSecondary: "#c4151c",
     error: "#cc0202",
+    warning: "#f9a825",
     blue: "#51a7e1",
     greyUltraLight: "#f9f9f9",
     greyLight: "#e4e5e9",
