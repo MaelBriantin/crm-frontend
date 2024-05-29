@@ -69,8 +69,8 @@ export const SectorPage: React.FC = () => {
             value: 'postcodes_list',
             sortable: false,
             type: 'chips',
-            limit: 6,
-            width: '70%'
+            limit: 4,
+            width: '60%'
         },
         // {
         //     text: 'Nombre de communes',
@@ -84,11 +84,11 @@ export const SectorPage: React.FC = () => {
         //     // ]
         // },
         {
-            text: 'Clients',
+            text: 'Nombre de clients',
             value: 'customers_count',
             sortable: true,
             type: 'number',
-            width: '5%',
+            width: '15%',
             maxWidth: '100px',
         },
         {

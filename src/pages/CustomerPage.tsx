@@ -116,8 +116,8 @@ export const CustomerPage: React.FC = () => {
 
     return (
         <Container>
-            {(isEmpty(customers) && loadingCustomers) && <Loader transparent/>}
-            {(!isEmpty(customers) || !loadingCustomers) &&
+            {(isEmpty(customers) || loadingCustomers) && <Loader transparent/>}
+            {!isEmpty(customers) &&
                 <DataTable
                     topBar
                     searchbar={!!customers.length}
