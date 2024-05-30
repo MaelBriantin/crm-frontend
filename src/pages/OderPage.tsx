@@ -10,6 +10,8 @@ import {ColumnProps, RowType} from "../types/DataTableTypes.ts";
 import {theme} from "../assets/themes";
 import {VscEye} from "react-icons/vsc";
 import {Loader} from "../components/global";
+import {OrderDetails} from "../components/forms/OrderDetails.tsx";
+import {OrderType} from "../types/OrderTypes.ts";
 
 export const OrderPage: React.FC = () => {
 
@@ -22,6 +24,11 @@ export const OrderPage: React.FC = () => {
 
     const newOrder = () => {
         showModal("Nouvelle commande", <NewOrderFormLogic />, <NewOrderActions />);
+    }
+
+    const orderDetails = (row: RowType) => {
+        const findOrder = orders.find(order => order.id === row.id);
+        showModal(`Détails de la commande ${findOrder?.order_number}`, <OrderDetails order={findOrder as OrderType} />);
     }
 
     useEffect(() => {
@@ -50,8 +57,8 @@ export const OrderPage: React.FC = () => {
             width: "20%"
         },
         {
-            text: "Secteur du client",
-            value: "customer_sector_name",
+            text: "Secteur",
+            value: "sector.name",
             sortable: true,
             width: "15%"
         },
@@ -76,9 +83,9 @@ export const OrderPage: React.FC = () => {
             sortable: true,
             width: "10%",
             color: [
-                { value: 'Payée', text: 'white', background: theme.colors.success },
-                { value: 'Non payée', text: 'white', background: theme.colors.error },
-                { value: 'En attente', text: 'white', background: theme.colors.warning }
+                { value: 'Payé', text: 'white', background: theme.colors.success },
+                { value: 'Impayé', text: 'white', background: theme.colors.error },
+                { value: 'Différé', text: 'white', background: theme.colors.warning }
             ],
         },
         {
@@ -87,7 +94,7 @@ export const OrderPage: React.FC = () => {
             type: "rowActions",
             width: "5%",
             actions: [
-                { icon: <VscEye />, onClick: (row: RowType) => {console.log(row)}, color: theme.colors.primary }
+                { icon: <VscEye />, onClick: (row: RowType) => orderDetails(row), color: theme.colors.primary }
             ]
         }
     ];
@@ -103,6 +110,7 @@ export const OrderPage: React.FC = () => {
                 buttonValueTopBar="Nouvelle commande"
                 columns={columns as ColumnProps[]}
                 onClickTopBar={newOrder}
+                onDoubleClickOnRow={orderDetails}
                 data={orders}
                 emptyMessage={"Aucune commande enregistrée..."}
                 sort={sort}
