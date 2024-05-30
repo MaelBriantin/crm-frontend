@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Chip} from '../global';
-import {filterOut} from '../../utils/helpers/spells.ts';
+import {filterOut, getValue} from '../../utils/helpers/spells.ts';
 import {DataTableCellProps, dataTableTypeList} from '../../types/DataTableTypes.ts';
 import {getRowValueAndHighlight} from '../../utils/dataTableUtils.ts';
 import {theme} from '../../assets/themes';
@@ -19,7 +19,12 @@ export const DataTableCell: React.FC<DataTableCellProps> = ({
                                                                 align
                                                             }) => {
 
-    const {rowValue, highlight} = getRowValueAndHighlight(searchedValue, row[column.value], arrayLimit);
+    const {rowValue, highlight} = getRowValueAndHighlight(
+        searchedValue,
+        Array.isArray(row[column.value])
+            ? row[column.value]
+            : getValue(row, column.value),
+        arrayLimit);
 
     return (
         <TableCell

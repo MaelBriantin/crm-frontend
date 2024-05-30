@@ -103,9 +103,9 @@ export const highlightSearchedValue = (
  * @returns An object containing the row value and the values to highlight.
  */
 export const getRowValueAndHighlight = (
-  searched: string | number | undefined,
-  row: string | number | boolean | string[],
-  arrayLimit: number
+    searched: string | number | undefined,
+    row: string | number | boolean | string[] | undefined,
+    arrayLimit: number
 ) => {
   // let rowValue = highlightSearchedValue(searched, row);
   let rowValue = row !== null && row !== undefined ? row : "";

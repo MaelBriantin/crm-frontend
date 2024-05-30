@@ -80,7 +80,7 @@ export const CustomerPage: React.FC = () => {
         },
         {
             text: 'Secteur',
-            value: 'sector_name',
+            value: 'sector.name',
             sortable: true,
             type: 'number',
             width: '10%',
