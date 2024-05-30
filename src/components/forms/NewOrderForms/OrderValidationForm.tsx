@@ -50,12 +50,12 @@ export const OrderValidationForm: React.FC = () => {
 
     useEffect(() => {
         setOrderValidationForm({
-            payment_method: 'check',
+            payment_method: selectedPaymentMethod?.value || paymentMethods[0]?.value,
             comment: comment,
             deferred_payment: deferredPayment,
             deferred_date: deferredPayment ? `${defferedDate.year}-${defferedDate.month}-${defferedDate.day}` : undefined,
         });
-    }, [comment, deferredPayment, defferedDate, selectedPaymentMethod, setOrderValidationForm]);
+    }, [comment, deferredPayment, defferedDate, paymentMethods, selectedPaymentMethod, setOrderValidationForm]);
 
     return (
         <ValidationForm>
