@@ -1,3 +1,5 @@
+import {ReactNode} from "react";
+
 /**
  * Checks if an array or object is empty.
  *
@@ -211,3 +213,25 @@ export const deepCompare = <T extends object>(obj1: T, obj2: T, keys?: string[])
 
   return true;
 };
+
+export const getValue = <T extends object, R = ReactNode>(obj: T, key: string): R | undefined => {
+  const keys = key.split('.');
+  let value: unknown = obj;
+
+  for (const k of keys) {
+    if (value && typeof value === 'object' && Object.prototype.hasOwnProperty.call(value, k)) {
+      value = (value as Record<string, unknown>)[k];
+    } else {
+      return undefined;
+    }
+  }
+
+  if (typeof value === 'object' && value !== null) {
+    if ((value as object) instanceof Date) {
+      return (value as unknown as Date).toISOString() as R;
+    } else {
+      return JSON.stringify(value) as R;
+    }
+  }
+  return value as R;
+}
