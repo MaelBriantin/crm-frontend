@@ -214,6 +214,15 @@ export const deepCompare = <T extends object>(obj1: T, obj2: T, keys?: string[])
   return true;
 };
 
+/**
+ * Retrieves the value of a nested property from an object.
+ *
+ * @template T - The type of the object.
+ * @template R - The type of the returned value.
+ * @param obj - The object to retrieve the value from.
+ * @param key - The key of the nested property.
+ * @returns The value of the nested property, or undefined if it doesn't exist.
+ */
 export const getValue = <T extends object, R = ReactNode>(obj: T, key: string): R | undefined => {
   const keys = key.split('.');
   let value: unknown = obj;
