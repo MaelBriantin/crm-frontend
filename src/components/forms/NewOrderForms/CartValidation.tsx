@@ -50,13 +50,13 @@ export const CartValidation = () => {
                     ))}
             </CartList>
             <Validation>
+                <OrderValidationForm />
                 <Total>
                     {vatTotal !== 0 && <TotalTitle>Total de la commande</TotalTitle>}
                     {vatTotal !== 0 && <VatTotal>{vatTotal} € <Label>TTC</Label></VatTotal>}
                     {vatTotal !== 0 && <NoVatTotal>{noVatTotal} € <Label>HT</Label></NoVatTotal>}
                     {vatTotal === 0 && <VatTotal>Votre panier est vide</VatTotal>}
                 </Total>
-                <OrderValidationForm />
             </Validation>
         </CartValidationContainer>
     );
@@ -72,7 +72,7 @@ const CartValidationContainer = styled.div`
 
 const CartList = styled.div`
     border-radius: ${theme.materialDesign.borderRadius.rounded};
-    border: 2px solid ${theme.colors.greyMedium};
+    border: 2px solid ${theme.colors.greyLight};
     justify-content: flex-start;
     flex-direction: column;
     overflow: auto;
