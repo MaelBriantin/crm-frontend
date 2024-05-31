@@ -1,9 +1,19 @@
-import { theme } from "../../assets/themes";
-import { RefObject, useEffect, useRef, useState, ReactNode, ChangeEvent, useCallback, forwardRef, useImperativeHandle } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import styled, { css, keyframes } from "styled-components";
-import { getVariantStyle } from "../../utils/inputUtils";
-import { VscChromeClose, VscLoading } from "react-icons/vsc";
+import {theme} from "../../assets/themes";
+import React, {
+    RefObject,
+    useEffect,
+    useRef,
+    useState,
+    ReactNode,
+    ChangeEvent,
+    useCallback,
+    forwardRef,
+    useImperativeHandle
+} from "react";
+import {FaEye, FaEyeSlash} from "react-icons/fa";
+import styled, {css, keyframes} from "styled-components";
+import {getVariantStyle} from "../../utils/inputUtils";
+import {VscAdd, VscChromeClose, VscChromeMinimize, VscLoading} from "react-icons/vsc";
 
 type VariantStyleType = {
     fontSize: string;
@@ -30,6 +40,10 @@ export const Input = forwardRef((
         label?: string;
         loading?: boolean;
         symbol?: string;
+        showNumberButtons?: boolean;
+        maxNumber?: number | undefined | null;
+        showMaxNumber?: boolean;
+        maxMessage?: string;
     }, ref) => {
     const {
         name,
@@ -47,13 +61,17 @@ export const Input = forwardRef((
         onChange,
         label,
         loading,
-        symbol
+        symbol,
+        showNumberButtons,
+        maxNumber,
+        showMaxNumber,
+        maxMessage
     } = props
 
     const inputRef: RefObject<HTMLInputElement> = useRef(null);
     const [hidden, setHidden] = useState(true)
     const [isFocused, setIsFocused] = useState(false);
-    const [count, setCount] = useState(0);
+    const [count, setCount] = useState(null as number | null);
 
     const handleFocus = useCallback(() => {
         setIsFocused(true);
@@ -92,32 +110,26 @@ export const Input = forwardRef((
     const variantStyle = getVariantStyle(variant, textColor);
 
     const handleClear = () => {
-        onChange({ target: { value: '' } } as ChangeEvent<HTMLInputElement>);
+        onChange({target: {value: ''}} as ChangeEvent<HTMLInputElement>);
         inputRef.current && inputRef.current.focus();
     };
 
-    // const handleCount = (operator: 'plus' | 'minus') => {
-    //     if (String(count) === '' || count === undefined) setCount(0);
-    //     if (noNegativeNumber
-    //         && operator === 'minus'
-    //         && (count === 0 || count < 0
-    //             || (String(count) === '' || count === undefined)))
-    //         return;
-    //
-    //     operator === 'plus' && setCount(prevCount => prevCount + 1);
-    //     operator === 'minus' && setCount(prevCount => prevCount - 1);
-    //
-    //     inputRef.current && inputRef.current.focus();
-    // };
-
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (type === 'number') {
-            if (!isNaN(Number(e.target.value))) {
-                if (noNegativeNumber && Number(e.target.value) < 0) {
+            const valueAsNumber = Number(e.target.value);
+            if (!isNaN(valueAsNumber)) {
+                if (noNegativeNumber && valueAsNumber < 0 && valueAsNumber !== 0) {
+                    return;
+                }
+                if (maxNumber && valueAsNumber > maxNumber) {
+                    return;
+                }
+                if (maxNumber === 0) {
+                    onChange({target: {value: 0}} as unknown as ChangeEvent<HTMLInputElement>);
                     return;
                 }
                 if (maxLength && e.target.value.length <= maxLength) {
-                    setCount(Number(e.target.value));
+                    setCount(valueAsNumber);
                 }
             }
         }
@@ -130,9 +142,47 @@ export const Input = forwardRef((
         }
     };
 
+    const handlePlusClick = () => {
+        if (count !== null) {
+            if (noNegativeNumber && count < 0) {
+                setCount(0);
+                onChange({target: {value: 0}} as unknown as ChangeEvent<HTMLInputElement>);
+                return;
+            }
+            if (maxNumber === 0) {
+                return;
+            }
+            if (maxNumber && count >= maxNumber) {
+                setCount(maxNumber);
+                onChange({target: {value: maxNumber}} as unknown as ChangeEvent<HTMLInputElement>);
+                return;
+            }
+            setCount(count + 1);
+            onChange({target: {value: count + 1}} as unknown as ChangeEvent<HTMLInputElement>);
+        }
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+    }
+
+    const handleMinusClick = () => {
+        if (count !== null) {
+            if (noNegativeNumber && count <= 0) {
+                setCount(0);
+                onChange({target: {value: 0}} as unknown as ChangeEvent<HTMLInputElement>);
+                return;
+            }
+            setCount(count - 1);
+            onChange({target: {value: count - 1}} as unknown as ChangeEvent<HTMLInputElement>);
+        }
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+    }
+
     return (
         <InputStyle
-            $value={!!value || !!count}
+            $value={!!value || !!count || (type === 'number' && value === 0)}
             $label={!!label} $width={width}
             $type={type} $icon={!!icon}
             $variantStyle={variantStyle}
@@ -142,35 +192,32 @@ export const Input = forwardRef((
             {label &&
                 <label className="label">{label}</label>
             }
+            {
+                (type === 'number' && showNumberButtons) &&
+                <MinusIcon onClick={handleMinusClick} $focus={isFocused}>
+                    <VscChromeMinimize className={'minusClick'}/>
+                </MinusIcon>
+            }
             {icon && <span className="icon">{icon}</span>}
             {
                 (type === 'password')
                 &&
                 <Hide onMouseDown={(e) => seeHidden(e)}>
                     {hidden
-                        ? <FaEye />
-                        : <FaEyeSlash />}
+                        ? <FaEye/>
+                        : <FaEyeSlash/>}
                 </Hide>
             }
             {
                 (clearable && value)
-                && <ClearButton onClick={handleClear}><VscChromeClose /></ClearButton>
+                && <ClearButton onClick={handleClear}><VscChromeClose/></ClearButton>
             }
             {
                 loading &&
                 <LoadingIcon>
-                    <VscLoading />
+                    <VscLoading/>
                 </LoadingIcon>
             }
-            {/*{*/}
-            {/*    (type === 'number')*/}
-            {/*    && (*/}
-            {/*        <CountButtons $variantStyle={variantStyle}>*/}
-            {/*            <VscChevronUp className="addButton" onClick={() => handleCount('plus')} />*/}
-            {/*            <VscChevronDown className="removeButton" onClick={() => handleCount('minus')} />*/}
-            {/*        </CountButtons>*/}
-            {/*    )*/}
-            {/*}*/}
             {
                 symbol &&
                 <Symbol $type={type} className="symbol">{symbol}</Symbol>
@@ -184,90 +231,167 @@ export const Input = forwardRef((
                 placeholder={placeholder}
                 type={hidden ? type : 'text'}
                 onChange={handleChange}
-                value={type === 'number' ? count : value}
+                value={type === 'number' ? (count ?? '') : value}
                 onBlur={handleBlur}
                 onFocus={handleFocus}
                 onInput={handleInput}
             />
+            {
+                (type === 'number' && showNumberButtons) &&
+                <PlusIcon onClick={handlePlusClick} $focus={isFocused}>
+                    <VscAdd className={'plusClick'}/>
+                </PlusIcon>
+            }
+            {type === 'number' && showMaxNumber && <MaxNumberStyle>{maxMessage || 'Max:'} {maxNumber || 0}</MaxNumberStyle>}
         </InputStyle>
     )
 });
 
-const InputStyle = styled.div<{ 
-    $width: string, 
-    $type: string, 
-    $icon: boolean, 
-    $variantStyle: VariantStyleType, 
-    $clearable: boolean, 
-    $label: boolean, 
-    $value: boolean, 
-    $symbol: boolean }>`
+const MaxNumberStyle = styled.div`
+    cursor: default;
+    color: ${theme.colors.greyDark};
+    font-size: ${theme.fonts.size.XS};
+    position: absolute;
+    bottom: -50%;
+    transform: translateY(50%);
+    right: 0;
+`
+
+const MinusIcon = styled.div<{
+    $focus: boolean
+}>`
+    user-select: none;
+    color: ${theme.colors.greyDark};
+    font-size: ${theme.fonts.size.P0};
+    padding: 0 2px;
+    background: ${theme.colors.greyLight};
+    border-right: ${({$focus}) => $focus ? theme.colors.primary : theme.colors.greyMedium} solid 1px;
+    border-radius: 3px 0 0 3px;
+    height: ${theme.materialDesign.height.mini};
+    max-width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 250ms;
+
+    &:hover {
+        color: ${theme.colors.white};
+        cursor: pointer;
+        background: ${theme.colors.primary};
+    }
+
+    &:active .minusClick {
+        transform: scale(0.8);
+    }
+`
+
+const PlusIcon = styled.div<{
+    $focus: boolean
+}>`
+    user-select: none;
+    color: ${theme.colors.greyDark};
+    font-size: ${theme.fonts.size.P0};
+    padding: 0 2px;
+    background: ${theme.colors.greyLight};
+    border-left: ${({$focus}) => $focus ? theme.colors.primary : theme.colors.greyMedium} solid 1px;
+    border-radius: 0 3px 3px 0;
+    height: ${theme.materialDesign.height.mini};
+    max-width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 250ms;
+
+    &:hover {
+        color: ${theme.colors.white};
+        cursor: pointer;
+        background: ${theme.colors.primary};
+    }
+
+    &:active .plusClick {
+        transform: scale(0.8);
+    }
+`
+
+const InputStyle = styled.div<{
+    $width: string,
+    $type: string,
+    $icon: boolean,
+    $variantStyle: VariantStyleType,
+    $clearable: boolean,
+    $label: boolean,
+    $value: boolean,
+    $symbol: boolean
+}>`
 
     // Remove arrows from input number
     // Chrome
+
     input[type='number']::-webkit-inner-spin-button,
     input[type='number']::-webkit-outer-spin-button {
         -webkit-appearance: none;
         margin: 0;
     }
+
     // Firefox
+
     input[type='number'] {
         -moz-appearance: textfield;
         appearance: textfield;
     }
 
-    min-height: ${({ $variantStyle }) => $variantStyle.height};
-    max-height: ${({ $variantStyle }) => $variantStyle.height};
-    font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
+    min-height: ${({$variantStyle}) => $variantStyle.height};
+    max-height: ${({$variantStyle}) => $variantStyle.height};
+    font-size: ${({$variantStyle}) => $variantStyle.fontSize};
     border-radius: ${theme.materialDesign.borderRadius.rounded};
-    min-width: ${({ $width }) => $width};
-    max-width: ${({ $width }) => $width};
+    min-width: ${({$width}) => $width};
+    max-width: ${({$width}) => $width};
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: text;
     position: relative;
-    border: solid ${theme.colors.greyMedium} ${({ $variantStyle }) => $variantStyle.borderSize}px;
+    border: solid ${theme.colors.greyMedium} ${({$variantStyle}) => $variantStyle.borderSize}px;
     background: ${theme.colors.white};
     transition: all 400ms;
 
-    /* ${({ $label }) => $label && css`margin-top: 20px;`}; */
+        /* ${({$label}) => $label && css`margin-top: 20px;`}; */
 
-    .label{
+    .label {
         user-select: none;
         font-size: ${theme.fonts.size.P0};
         color: ${theme.colors.greyDark};
         position: absolute;
         top: -20px;
-        left: -${({ $variantStyle }) => $variantStyle.borderSize}px;
-        transform: ${({ $value }) => $value ? 'translateY(0)' : 'translateY(20px)'};
-        clip-path: ${({ $value }) => $value ? 'inset(0)' : 'inset(0 0 100% 0)'};
+        left: -${({$variantStyle}) => $variantStyle.borderSize}px;
+        transform: ${({$value}) => $value ? 'translateY(0)' : 'translateY(20px)'};
+        clip-path: ${({$value}) => $value ? 'inset(0)' : 'inset(0 0 100% 0)'};
         transition: transform 0.3s, clip-path 0.3s;
-        
+
     }
 
     input {
-        color: ${({ $variantStyle }) => $variantStyle.textColor};
-        font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
-        padding-left: ${({ $icon }): string => $icon ? '35px' : '10px'};
+        color: ${({$variantStyle}) => $variantStyle.textColor};
+        font-size: ${({$variantStyle}) => $variantStyle.fontSize};
+        padding-left: ${({$icon}): string => $icon ? '35px' : '10px'};
         outline: none;
         border: none;
         width: 100%;
         height: 100%;
         font-family: ${theme.fonts.family.source};
-        padding-right: ${({ $type, $clearable, $symbol }): string =>
-        ($type === 'password' || $clearable) && $symbol
-            ? ' 42px'
-            : ($type === 'password' || $clearable)
-                ? ' 35px'
-                : '10px'};        
-            border-radius: ${theme.materialDesign.borderRadius.default};
+        padding-right: ${({$type, $clearable, $symbol}): string =>
+                ($type === 'password' || $clearable) && $symbol
+                        ? ' 42px'
+                        : ($type === 'password' || $clearable)
+                                ? ' 35px'
+                                : '10px'};
+        border-radius: ${theme.materialDesign.borderRadius.default};
         background: ${theme.colors.transparent};
     }
 
     .icon {
         color: ${theme.colors.greyDark};
-        font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
+        font-size: ${({$variantStyle}) => $variantStyle.fontSize};
         position: absolute;
         top: 50%;
         transform: translateY(-45%);
@@ -275,14 +399,12 @@ const InputStyle = styled.div<{
     }
 
     &:focus-within {
-        border: ${theme.colors.primary} solid ${({ $variantStyle }) => $variantStyle.borderSize}px;
+        border: ${theme.colors.primary} solid ${({$variantStyle}) => $variantStyle.borderSize}px;
         color: ${theme.colors.primary};
     }
 
     &:focus-within label {
         color: ${theme.colors.primary};
-        /* transform: translateY(0);
-        clip-path: inset(0); */
     }
 `
 const Hide = styled.div`
@@ -308,6 +430,7 @@ const ClearButton = styled.div`
     height: 20px;
     border-radius: 50%;
     transition: all 250ms;
+
     &:hover {
         color: ${theme.colors.error};
     }
@@ -331,38 +454,12 @@ const LoadingIcon = styled.div`
     animation: ${inputLoading} 1s infinite;
 `;
 
-// const CountButtons = styled.div<{ $variantStyle: VariantStyleType }>`
-//     display: flex;
-//     flex-direction: column;
-//     align-items: center;
-//     justify-content: center;
-//     position: absolute;
-//     top: 50%;
-//     transform: translateY(-50%);
-//     right: 10px;
-//     color: ${theme.colors.greyDark};
-//     font-size: ${({ $variantStyle }) => $variantStyle.fontSize};
-//     .addButton, .removeButton {
-//         cursor: pointer;
-//         transition: all 250ms;
-//     }
-//     .addButton {
-//         margin-bottom: -2.5px;
-//     }
-//     .removeButton {
-//         margin-top: -2.5px;
-//     }
-//     .addButton:hover, .removeButton:hover{
-//         color: ${theme.colors.primary};
-//     }
-// `
-
 const Symbol = styled.div<{ $type: string, }>`
     color: ${theme.colors.greyDark};
     font-size: ${theme.fonts.size.P2};
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    // right: ${({ $type }) => $type === 'number' || $type === 'password' ? '30px' : '10px'};
-    right: ${({ $type }) => $type === 'number' || $type === 'password' ? '10px' : '10px'};
+        // right: ${({$type}) => $type === 'number' || $type === 'password' ? '30px' : '10px'};
+    right: ${({$type}) => $type === 'number' || $type === 'password' ? '10px' : '10px'};
 `

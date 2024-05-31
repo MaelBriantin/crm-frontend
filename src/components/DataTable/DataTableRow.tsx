@@ -3,6 +3,7 @@ import styled, { RuleSet, css } from 'styled-components';
 import { DataTableCell } from './DataTableCell';
 import { getColor } from '../../utils/dataTableUtils';
 import { ColumnProps, RowType } from '../../types/DataTableTypes';
+import { theme } from '../../assets/themes';
 
 type DataTableRowProps = {
     row: RowType;
@@ -60,14 +61,14 @@ const TableRowBody = styled.tr <{ $selectable: boolean, $hoverable: boolean, $di
         ${({ $hoverable }): false | RuleSet<object> =>
         $hoverable &&
         css`
-            background-color: #f9f9f9;
+            background-color: ${theme.colors.greyUltraLight};
         `}
         ${({ $selectable }): false | RuleSet<object> =>
         $selectable &&
         css`
             cursor: default;
             user-select: none;
-            background-color: #f9f9f9;
+            background-color: ${theme.colors.greyUltraLight};
         `}
     }
 `;

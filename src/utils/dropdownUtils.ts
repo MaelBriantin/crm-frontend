@@ -41,3 +41,11 @@ export const getVariantStyle = (variant: 'large' | 'regular' | 'small') => {
 
     return variantStyle;
 };
+
+export const convertToDropdownOptions = (arrayObject: {key: string, value: string}[]) => {
+    const dropdownOptions: {label: string, value: string}[] = [];
+    arrayObject.map((object) => {
+        dropdownOptions.push({label: object.key, value: object.value});
+    });
+    return dropdownOptions;
+}

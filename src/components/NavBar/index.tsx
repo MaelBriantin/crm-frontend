@@ -5,7 +5,7 @@ import { VscSettingsGear, VscQuestion, VscSignOut, VscHome, VscSmiley, VscGift, 
 import { LiaMapMarkedAltSolid } from "react-icons/lia";
 import { useLogoutService } from "../../hooks/auth/useLogout";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { useKeyboardShortcut } from "../../hooks/system/useKeyboardShortcut";
 import { PiButterflyThin } from "react-icons/pi";
 
@@ -18,6 +18,7 @@ type NavbarItems = {
     text: string;
     path: string;
     icon: React.ReactNode;
+    disabled?: boolean;
 };
 
 type NavbarGroups = {
@@ -57,6 +58,7 @@ export const Navbar = (props: NavbarProps) => {
                     text: 'Rapports d\'activité',
                     path: '/reports',
                     icon: <VscPieChart />,
+                    disabled: true
                 }
             ]
         },
@@ -99,7 +101,11 @@ export const Navbar = (props: NavbarProps) => {
 
                 <NavLinks>
                     <Divider><div className="line"></div></Divider>
-                    <NavbarItem selected={actualPath === '/home'} value={'Accueil'} onClick={() => navigate('/home')} icon={<VscHome />} />
+                    <NavbarItem
+                        selected={actualPath === '/home'}
+                        value={'Accueil'}
+                        onClick={() => navigate('/home')}
+                        icon={<VscHome />} />
 
                     {
                         links.map((group) => (
@@ -112,6 +118,7 @@ export const Navbar = (props: NavbarProps) => {
                                         value={item.text}
                                         onClick={() => navigate(item.path)}
                                         icon={item.icon}
+                                        disabled={item.disabled}
                                     />
                                 ))}
                             </NavGroup>
@@ -120,8 +127,8 @@ export const Navbar = (props: NavbarProps) => {
                 </NavLinks>
                 <Settings>
                     <Divider><div className="line"></div></Divider>
-                    <NavbarItem selected={actualPath === '/help'} value={'Aide'} onClick={() => { }} icon={<VscQuestion />} />
-                    <NavbarItem selected={actualPath === '/settings'} value={'Paramètres'} onClick={() => navigate('/settings')} icon={<VscSettingsGear />} />
+                    <NavbarItem selected={actualPath === '/help'} value={'Aide'} onClick={() => { }} icon={<VscQuestion />} disabled />
+                    <NavbarItem selected={actualPath === '/settings'} value={'Paramètres'} onClick={() => navigate('/settings')} icon={<VscSettingsGear />} disabled />
                     <NavbarItem disconnect={true} selected={false} value={'Déconnexion'} onClick={(e) => logout(e)} icon={<VscSignOut />} />
                 </Settings>
             </NavListContainer>
@@ -187,7 +194,7 @@ const AppName = styled.div`
     align-items: center;
     gap: 10px;
     .logo{
-        font-size: ${theme.fonts.size.P5};
+        font-size: ${theme.fonts.size.P6};
         transition: all 450ms;
         opacity: 0.25;
     }

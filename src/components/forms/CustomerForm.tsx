@@ -114,12 +114,16 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({customer}) => {
         }
     }, [customerForm, customerForm.postcode, sectors, setCustomerForm]);
 
+    const updateRefresh = () => {
+      fetchCustomers();
+      fetchSectors();
+    };
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         if (customer) {
             setSaving(true);
-            await updateCustomer(customerForm, callToast, fetchCustomers, closeModal);
+            await updateCustomer(customerForm, callToast, updateRefresh, closeModal);
             setSaving(false);
         } else {
             setSaving(true);

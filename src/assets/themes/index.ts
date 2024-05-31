@@ -11,14 +11,16 @@ const colors = {
     // primary: "#3fbac2", // blue
     // primary: "#4D4DFF", // neon blue
     // primary: "#DC582A", // orange
-    primary: "#6667AB", // very peri
+    primary: "#5f4b8b", // ultra violet
     primary_cake: "#3f7f8e",
     green: "green",
     success: "#60bd4f",
     red: "#e25549",
     redSecondary: "#c4151c",
     error: "#cc0202",
+    warning: "#f9a825",
     blue: "#51a7e1",
+    greyUltraLight: "#f9f9f9",
     greyLight: "#e4e5e9",
     greyMedium: "#a7a8ad",
     greySemiDark: "#93a2b1",
@@ -99,6 +101,8 @@ const shadows = {
     card: "-5px 5px 25px 0px rgb(0 0 0 / 20%)",
     default: "-1px 1px 5px 1px rgb(0 0 0 / 20%)",
     inset: "inset -1px 1px 5px 2px rgb(0 0 0 / 20%)",
+    light: "0px 0px 5px 0px rgba(0,0,0,0.1)",
+    medium: "0px 0px 5px 0px rgba(0,0,0,0.2)",
 };
 
 export const theme = {

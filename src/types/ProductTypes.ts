@@ -13,6 +13,7 @@ export type ProductType = {
     stock: number;
     alert_stock?: number;
     brand_id: number;
+    brand_name?: string;
     image: string;
     createdAt: string;
     updatedAt: string;
@@ -20,6 +21,7 @@ export type ProductType = {
 };
 
 export type ProductSizeType = {
+    id: string | number | null;
     product_id: number | null;
     size: string | null;
     stock: number | null;

@@ -5,7 +5,7 @@ import { fetchAPI } from '../fetchApi.config';
 import { CallToastProps } from '../../../contexts/global/ToastContext';
 
 
-export const updateCustomer = async (customer: CustomerType, callToast: CallToastProps, refreshCustomers: { (): Promise<void>; (): void; }, closeModal: { (): void; (): void; }) => {
+export const updateCustomer = async (customer: CustomerType, callToast: CallToastProps, refreshData: () => void, closeModal: { (): void; (): void; }) => {
     let customersResponse: CustomerType[] = [];
     try {
         const response: APIResponseFormat<CustomerType> = await fetchAPI(`/api/customers/${customer.id}`, 'PATCH', customer);
@@ -13,7 +13,7 @@ export const updateCustomer = async (customer: CustomerType, callToast: CallToas
             response,
             async (customers) => {
                 customersResponse = customers as CustomerType[];
-                await refreshCustomers();
+                refreshData();
                 callToast('success', `Les données concernant ce client ont été modifiées avec succès.`, 3000);
                 closeModal();
             },

@@ -12,7 +12,6 @@ import { Loader } from "../components/global";
 import styled from "styled-components";
 import { ProductType } from "../types/ProductTypes";
 import { deleteProduct } from "../services/api/products";
-import { VscGift } from "react-icons/vsc";
 
 export const ProductPage: React.FC = () => {
   const [sort, setSort] = React.useState<string | null>(null);
@@ -34,7 +33,7 @@ export const ProductPage: React.FC = () => {
   }, []);
 
   const newProduct = () => {
-    showModal(<ProductForm />, "Nouveau produit", <FormActions />);
+    showModal("Nouveau produit", <ProductForm />, <FormActions />);
   };
 
   const handleEditProduct = (row: RowType) => {
@@ -43,8 +42,8 @@ export const ProductPage: React.FC = () => {
       (product: ProductType) => product.id === row.id
     );
     showModal(
-      <ProductForm product={product as ProductType} />,
       `Modifier un produit`,
+      <ProductForm product={product as ProductType} />,
       <FormActions />
     );
     setAppLoading(false);
@@ -90,7 +89,7 @@ export const ProductPage: React.FC = () => {
     },
     {
       text: "Marque",
-      value: "brand_name",
+      value: "brand.name",
       sortable: true,
       width: "20%",
     },
@@ -149,7 +148,6 @@ export const ProductPage: React.FC = () => {
           topBar
           searchbar={!!products.length}
           buttonValueTopBar="Nouveau produit"
-          iconTopBar={<VscGift />}
           columns={columns}
           onDoubleClickOnRow={handleEditProduct}
           onClickTopBar={newProduct}

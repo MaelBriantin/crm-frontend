@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState, ChangeEvent, useEffect, useRef } from 'react';
+import React, { useState, ChangeEvent, useEffect, useRef } from 'react';
 import { Button, Chip, Input } from '../global';
 import { VscAdd, VscClose } from "react-icons/vsc";
 import { theme } from '../../assets/themes';

@@ -22,7 +22,7 @@ export const ProductSizeForm: React.FC<ProductSizeProps> = ({ productForm, setPr
         }));
     }, [productSizes, setProductForm]);
 
-    const noEmptyProductSize = productSizes.every(size => size.size !== null && size.size !== '' && size.stock !== null && size.stock !== 0);
+    const noEmptyProductSize = productSizes.every(size => size.size !== null && size.size !== '');
     const disableRemoveButton = !noEmptyProductSize && productSizes.length === 1;
 
     const incrementSizeCount = () => {
@@ -73,7 +73,7 @@ export const ProductSizeForm: React.FC<ProductSizeProps> = ({ productForm, setPr
                         placeholder="Stock"
                         noNegativeNumber
                         width="100px"
-                        value={size.stock || ""}
+                        value={size.stock || 0}
                         onChange={(e) => handleStockChange(e, index)}
                     />
                     <Icon disabled={disableRemoveButton} variant={'small'} icon={<VscRemove />} onClick={() => removeSizeCount(index)} color={`${theme.colors.error}`} />

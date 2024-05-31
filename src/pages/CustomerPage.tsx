@@ -3,15 +3,14 @@ import React, {useEffect} from 'react';
 import {theme} from '../assets/themes';
 import {DataTable} from '../components/DataTable';
 import {isEmpty, deepCopy} from '../utils/helpers/spells';
-import {VscSmiley, VscEdit, VscChromeClose} from 'react-icons/vsc';
+import {VscEdit, VscChromeClose} from 'react-icons/vsc';
 import {RowDataType, ColumnProps, RowType} from '../types/DataTableTypes';
 import {Loader} from '../components/global';
-import {CustomerForm} from '../components/forms/CustomerForm';
+import {CustomerForm, FormActions} from '../components/forms';
 import {useModal, useDeleteAlert, useToast} from '../contexts';
 import {CustomerType} from '../types/CustomerTypes';
 import {deleteCustomer} from '../services/api/customers';
 import {useKeyboardShortcut} from '../hooks/system/useKeyboardShortcut';
-import {FormActions} from "../components/forms/FormActions.tsx";
 import {useStoreCustomers} from "../stores/useStoreCustomers.ts";
 export const CustomerPage: React.FC = () => {
     const [sort, setSort] = React.useState<string | null>(null);
@@ -34,8 +33,8 @@ export const CustomerPage: React.FC = () => {
 
     const newCustomer = () => {
         showModal(
-            <CustomerForm/>,
             'Nouveau client',
+            <CustomerForm/>,
             <FormActions/>
         );
     }
@@ -44,8 +43,8 @@ export const CustomerPage: React.FC = () => {
         const customer = customers.find((customer: CustomerType) => customer.id === row.id);
 
         showModal(
-            <CustomerForm customer={customer as CustomerType}/>,
             "Modifier les informations du client",
+            <CustomerForm customer={customer as CustomerType}/>,
             <FormActions/>
         );
     }
@@ -81,7 +80,7 @@ export const CustomerPage: React.FC = () => {
         },
         {
             text: 'Secteur',
-            value: 'sector_name',
+            value: 'sector.name',
             sortable: true,
             type: 'number',
             width: '10%',
@@ -116,12 +115,11 @@ export const CustomerPage: React.FC = () => {
 
     return (
         <Container>
-            {(isEmpty(customers) && loadingCustomers) && <Loader transparent/>}
-            {(!isEmpty(customers) || !loadingCustomers) &&
+            {(isEmpty(customers) || loadingCustomers) && <Loader transparent/>}
+            {!isEmpty(customers) &&
                 <DataTable
                     topBar
                     searchbar={!!customers.length}
-                    iconTopBar={<VscSmiley/>}
                     onClickTopBar={newCustomer}
                     onDoubleClickOnRow={(row: RowType) => editCustomer(row)}
                     buttonValueTopBar='Nouveau client'

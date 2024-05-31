@@ -5,15 +5,13 @@ import { DataTable } from '../components/DataTable';
 import { RowDataType, RowType } from '../types/DataTableTypes';
 import styled from 'styled-components';
 import { deepCopy } from '../utils/helpers/spells';
-import { VscJersey } from "react-icons/vsc";
-import { BrandForm } from '../components/forms/BrandForm';
+import { BrandForm, FormActions } from '../components/forms';
 import { BrandType } from '../types/BrandTypes';
 import { VscEdit, VscChromeClose } from "react-icons/vsc";
 import { theme } from '../assets/themes';
 import { deleteBrand } from '../services/api/brands';
 import { useKeyboardShortcut } from '../hooks/system/useKeyboardShortcut';
 import { Loader } from '../components/global';
-import { FormActions } from '../components/forms/FormActions';
 import {useStoreBrands} from "../stores/useStoreBrands.ts";
 
 export const BrandPage = () => {
@@ -34,14 +32,14 @@ export const BrandPage = () => {
     }, []);
 
     const newBrand = () => {
-        showModal(<BrandForm />, 'Nouvelle marque', <FormActions />);
+        showModal('Nouvelle marque', <BrandForm />, <FormActions />);
     }
 
     useKeyboardShortcut({ 'Control+Alt+n': () => newBrand() });
 
     const editBrand = (row: RowType) => {
         const brand = brands.find((brand: BrandType) => brand.id === row.id);
-        showModal(<BrandForm brand={brand as BrandType} />, 'Modifier une marque', <FormActions />);
+        showModal('Modifier une marque', <BrandForm brand={brand as BrandType} />, <FormActions />);
     }
 
     const handleDeleteAlert = (row: RowType) => {
@@ -107,7 +105,6 @@ export const BrandPage = () => {
             {(!isEmpty(brands) || !loadingBrands) && <DataTable
                 topBar
                 searchbar={!!brands.length}
-                iconTopBar={<VscJersey />}
                 buttonValueTopBar='Nouvelle marque'
                 onClickTopBar={newBrand}
                 onDoubleClickOnRow={editBrand}

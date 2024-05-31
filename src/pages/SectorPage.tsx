@@ -6,7 +6,6 @@ import { ColumnProps, RowDataType, RowType } from '../types/DataTableTypes.ts';
 import { SectorType } from '../types/SectorTypes.ts';
 import { useModal, useAppLoading, useDeleteAlert, useToast } from '../contexts';
 import { SectorForm } from '../components/forms/SectorForm.tsx';
-import { LiaMapMarkedAltSolid } from "react-icons/lia";
 import { VscEdit, VscChromeClose } from "react-icons/vsc";
 import { theme } from '../assets/themes';
 import { deleteSector } from '../services/api/sectors';
@@ -69,8 +68,8 @@ export const SectorPage: React.FC = () => {
             value: 'postcodes_list',
             sortable: false,
             type: 'chips',
-            limit: 6,
-            width: '70%'
+            limit: 4,
+            width: '60%'
         },
         // {
         //     text: 'Nombre de communes',
@@ -84,11 +83,11 @@ export const SectorPage: React.FC = () => {
         //     // ]
         // },
         {
-            text: 'Clients',
+            text: 'Nombre de clients',
             value: 'customers_count',
             sortable: true,
             type: 'number',
-            width: '5%',
+            width: '15%',
             maxWidth: '100px',
         },
         {
@@ -109,12 +108,12 @@ export const SectorPage: React.FC = () => {
     const handleDoubleClick = (row: RowType) => {
         setAppLoading(true);
         const sector = sectors.find((sector: SectorType) => sector.id === row.id);
-        showModal(<SectorForm sector={sector as SectorType} />, `Modifier un secteur`, <FormActions />);
+        showModal(`Modifier un secteur`, <SectorForm sector={sector as SectorType} />, <FormActions />);
         setAppLoading(false);
     };
 
     const newSector = () => {
-        showModal(<SectorForm />, 'Ajouter un secteur', <FormActions />);
+        showModal('Nouveau secteur', <SectorForm />, <FormActions />);
     };
 
     return (
@@ -124,8 +123,7 @@ export const SectorPage: React.FC = () => {
             <DataTable
                 topBar
                 searchbar={!!sectors.length}
-                iconTopBar={<LiaMapMarkedAltSolid />}
-                buttonValueTopBar='Ajouter un secteur'
+                buttonValueTopBar='Nouveau secteur'
                 columns={columns}
                 onDoubleClickOnRow={handleDoubleClick}
                 onClickTopBar={newSector}

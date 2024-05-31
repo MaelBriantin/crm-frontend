@@ -7,13 +7,15 @@ type NoteProps = {
     icon: React.ReactNode;
     width: string;
     iconColor: string;
+    children?: React.ReactNode;
 };
 
-export const Note: React.FC<NoteProps> = ({ message, icon, iconColor, width }) => {
+export const Note: React.FC<NoteProps> = ({ message, icon, iconColor, width, children }) => {
     return (
         <NoteContainer $width={width} $iconColor={iconColor}>
             <div className='noteIcon'>{icon}</div>
             <span className='message'>{message}</span>
+            {children}
         </NoteContainer>
     );
 };
