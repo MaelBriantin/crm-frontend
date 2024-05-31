@@ -1,6 +1,6 @@
-import { ReactNode } from "react"
-import { styled, css, RuleSet, keyframes } from "styled-components";
-import { theme } from "../../assets/themes";
+import React, {ReactNode} from "react"
+import {styled, css, RuleSet, keyframes} from "styled-components";
+import {theme} from "../../assets/themes";
 
 type NavbarItemPropsType = {
     value: string,
@@ -9,19 +9,24 @@ type NavbarItemPropsType = {
     icon: ReactNode,
     selected: boolean,
     disconnect?: boolean
+    disabled?: boolean
 }
 
 export const NavbarItem = (props: NavbarItemPropsType) => {
-    const { value, selected, disconnect, icon, onClick } = props;
+    const {value, selected, disconnect, icon, onClick, disabled} = props;
 
     return (
         <NavbarItemStyle
-            onClick={(e: React.MouseEvent<HTMLDivElement>) => onClick(e)}
+            onClick={!disabled
+                ? (e: React.MouseEvent<HTMLDivElement>) => onClick(e)
+                : () => {}
+            }
             $disconnect={disconnect}
             $selected={selected}
+            $disabled={!!disabled}
         >
-            <span className={'icon'}>{ icon }</span>
-            <span className={'title'}>{ value }</span>
+            <span className={'icon'}>{icon}</span>
+            <span className={'title'}>{value}</span>
         </NavbarItemStyle>
     );
 }
@@ -59,8 +64,8 @@ const FontTransition = keyframes`
     }
 `
 
-const NavbarItemStyle = styled.div<{ $selected: boolean, $disconnect?: boolean }>`
-    cursor: pointer;
+const NavbarItemStyle = styled.div<{ $selected: boolean, $disconnect?: boolean, $disabled: boolean }>`
+    opacity: ${({$disabled}): false | number => $disabled ? 0.25 : 1};
     overflow: hidden;
     font-size: ${theme.fonts.size.P0};
     user-select: none;
@@ -73,14 +78,15 @@ const NavbarItemStyle = styled.div<{ $selected: boolean, $disconnect?: boolean }
     padding: 5px 10px;
     transition: all 250ms;
     border-radius: ${theme.materialDesign.borderRadius.rounded};
-    ${({ $disconnect }): false | RuleSet<object> | undefined => $disconnect && css`
-    color: ${theme.colors.error};
+    ${({$disconnect}): false | RuleSet<object> | undefined => $disconnect && css`
+        color: ${theme.colors.error};
     `};
-    ${({ $selected }): false | RuleSet => $selected && css`
+
+    ${({$selected}): false | RuleSet => $selected && css`
         box-shadow: ${theme.shadows.default};
         background: white;
-        `}
-    .icon, .title{
+    `}
+    .icon, .title {
         height: 100%;
         margin: 0;
         padding: 0;
@@ -89,13 +95,15 @@ const NavbarItemStyle = styled.div<{ $selected: boolean, $disconnect?: boolean }
         align-items: center;
         transition: color 250ms;
     }
-    .icon{
+
+    .icon {
         font-size: ${theme.fonts.size.P2};
-        ${({ $selected }): false | RuleSet => $selected && css`
+        ${({$selected}): false | RuleSet => $selected && css`
             color: ${theme.colors.primary};
         `}
     }
-    .title{
+
+    .title {
         width: 100%;
         display: flex;
         justify-content: flex-start;
@@ -103,14 +111,18 @@ const NavbarItemStyle = styled.div<{ $selected: boolean, $disconnect?: boolean }
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        ${({ $selected }): false | RuleSet => $selected && css`
-        font-family: ${theme.fonts.family.dancing};
-        font-size: ${theme.fonts.size.P2};
-        animation: ${FontTransition} 250ms linear;
+        ${({$selected}): false | RuleSet => $selected && css`
+            font-family: ${theme.fonts.family.dancing};
+            font-size: ${theme.fonts.size.P2};
+            animation: ${FontTransition} 250ms linear;
         `}
     }
-    &:hover{
-        box-shadow: ${theme.shadows.default};
-        background: white;
+
+    &:hover {
+        ${({$disabled}): false | RuleSet => !$disabled && css`
+            box-shadow: ${theme.shadows.default};
+            background: white;
+            cursor: pointer;
+        `}
     }
 `
