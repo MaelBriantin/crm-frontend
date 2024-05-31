@@ -52,6 +52,7 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({
       setActions(null);
       setTitle("");
       setSubTitle("");
+      setDisableClose(false);
     }, 225);
   };
 
