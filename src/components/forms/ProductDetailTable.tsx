@@ -10,6 +10,19 @@ type ProductDetailTableProps = {
 
 export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({orderedProductsList}) => {
 
+    orderedProductsList.map((product) => {
+        const vat_total = parseFloat((Number(product.vat_price) * product.ordered_quantity).toFixed(2))
+        const no_vat_total =  parseFloat((Number(product.no_vat_price) * product.ordered_quantity).toFixed(2));
+        Object.assign(product, {
+            unite_price: `${product.no_vat_price}/${product.vat_price} €`,
+            total_price: `${no_vat_total}/${vat_total} €`,
+        });
+        const displayName = product.product_type === "clothes" ? `${product.product_name} - ${product?.product_size?.size}` : product.product.name;
+        Object.assign(product, {
+            displayName: displayName,
+        });
+    });
+
     const columns = [
         {
             label: "Référence",
@@ -17,23 +30,19 @@ export const ProductDetailTable: React.FC<ProductDetailTableProps> = ({orderedPr
         },
         {
             label: "Nom",
-            value: "product.name",
-        },
-        {
-            label: "Taille",
-            value: "product_size.size",
+            value: "displayName",
         },
         {
             label: "Quantité",
             value: "ordered_quantity",
         },
         {
-            label: "Prix HT",
-            value: "no_vat_price",
+            label: "Prix HT/TTC",
+            value: "unite_price",
         },
         {
-            label: "Prix TTC",
-            value: "vat_price",
+            label: "Total HT/TTC",
+            value: "total_price",
         },
     ];
 
@@ -72,7 +81,7 @@ const Container = styled.div`
     align-items: flex-start;
     justify-content: center;
     gap: 10px;
-    padding: 20px;
+    padding: 0 10px;
 `;
 
 const Label = styled.div`
@@ -85,6 +94,7 @@ const SimpleTable = styled.table`
     width: 100%;
     border-collapse: collapse;
     border-radius: ${theme.materialDesign.borderRadius.rounded};
+    outline: 1px solid ${theme.colors.greyLight};
 `;
 
 const Header = styled.thead`
@@ -96,7 +106,9 @@ const Body = styled.tbody``;
 const Row = styled.tr`
     display: flex;
     justify-content: space-between;
-    border-bottom: 1px solid ${theme.colors.greyLight};
+    border-top: 1px solid ${theme.colors.greyLight};
+    width: 100%;
+    overflow: hidden;
 `;
 
 const Col = styled.td`
@@ -104,8 +116,11 @@ const Col = styled.td`
     padding: 5px 0;
     justify-content: center;
     align-items: center;
-    width: 100px;
-    color: ${theme.colors.greyDark};
+    width: 125px;
+    color: ${theme.colors.dark};
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 `;
 
 

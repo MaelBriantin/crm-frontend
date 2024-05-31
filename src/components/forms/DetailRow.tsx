@@ -26,7 +26,7 @@ const Row = styled.div`
 `;
 
 const Label = styled.div`
-    width: 200px;
+    width: auto;
     color: ${theme.colors.greyMedium};
     font-weight: ${theme.fonts.weights.bold};
 `;

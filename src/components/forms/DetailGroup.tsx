@@ -6,14 +6,15 @@ import styled from "styled-components";
 type DetailGroupProps = {
     arrayValues: {label: string, value: string | number | undefined}[];
     label?: string;
+    width?: string;
 }
-export const DetailGroup: React.FC<DetailGroupProps> = ({arrayValues, label}) => {
+export const DetailGroup: React.FC<DetailGroupProps> = ({arrayValues, label, width}) => {
     return (
         <Container>
             <Label>
                 {label}
             </Label>
-            <GroupDetail>
+            <GroupDetail $width={width}>
                 {arrayValues.map((detail, index) => (
                     <DetailRow key={index} label={detail.label} value={String(detail.value)}/>
                 ))}
@@ -28,7 +29,7 @@ const Container = styled.div`
     align-items: flex-start;
     justify-content: center;
     gap: 10px;
-    padding: 20px;
+    //padding: 20px;
 `;
 
 const Label = styled.div`
@@ -37,13 +38,13 @@ const Label = styled.div`
     font-size: ${theme.fonts.size.P0};
 `;
 
-const GroupDetail = styled.div`
+const GroupDetail = styled.div<{ $width?: string }>`
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    width: 500px;
+    width: ${({$width}) => $width ? $width : '100%'};
     padding: 10px;
     margin-right: 10px;
     border-radius: ${theme.materialDesign.borderRadius.rounded};

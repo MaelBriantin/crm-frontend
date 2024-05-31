@@ -6,29 +6,49 @@ import { NewOrderActions } from '../components/forms/NewOrderForms/NewOrderActio
 import { NewOrderFormLogic } from '../components/forms/NewOrderForms/NewOrderFormLogic';
 import {isEmpty} from "../utils/helpers/spells.ts";
 import {useStoreOrders} from "../stores/useStoreOrders.ts";
-import {ColumnProps, RowType} from "../types/DataTableTypes.ts";
+import {ColumnProps, RowDataType, RowType} from "../types/DataTableTypes.ts";
 import {theme} from "../assets/themes";
 import {VscEye} from "react-icons/vsc";
 import {Loader} from "../components/global";
 import {OrderDetails} from "../components/forms/OrderDetails.tsx";
 import {OrderType} from "../types/OrderTypes.ts";
+import {OrderDetailsActions} from "../components/forms/OrderDetailsActions.tsx";
+import {useStoreOrderDetails} from "../stores/useStoreOrderDetails.ts";
+import {useKeyboardShortcut} from "../hooks/system/useKeyboardShortcut.tsx";
 
 export const OrderPage: React.FC = () => {
 
     const [sort, setSort] = React.useState<string | null>(null);
     const [sortDirection, setSortDirection] = React.useState<boolean>(true);
 
-    const { showModal } = useModal();
+    const { showModal, closeModal } = useModal();
 
     const { orders, fetchOrders, loadingOrders } = useStoreOrders();
+    const { setOrderDetails, loadingOrderDetails } = useStoreOrderDetails();
 
     const newOrder = () => {
         showModal("Nouvelle commande", <NewOrderFormLogic />, <NewOrderActions />);
     }
 
+    useKeyboardShortcut(
+        {
+            'Escape': () => {
+                if (loadingOrders || loadingOrderDetails) {
+                    return;
+                }
+                closeModal();
+            }
+        }
+    );
+
     const orderDetails = (row: RowType) => {
-        const findOrder = orders.find(order => order.id === row.id);
-        showModal(`Détails de la commande ${findOrder?.order_number}`, <OrderDetails order={findOrder as OrderType} />);
+        const findOrder = orders.find(order => order.id === row.id) as OrderType;
+        setOrderDetails(findOrder.id);
+        showModal(
+            `Détails de la commande ${findOrder?.order_number}`,
+            <OrderDetails isPaid={findOrder?.is_paid} />,
+            findOrder?.is_paid ? null : <OrderDetailsActions />
+        );
     }
 
     useEffect(() => {
@@ -111,7 +131,7 @@ export const OrderPage: React.FC = () => {
                 columns={columns as ColumnProps[]}
                 onClickTopBar={newOrder}
                 onDoubleClickOnRow={orderDetails}
-                data={orders}
+                data={orders as unknown as RowDataType[]}
                 emptyMessage={"Aucune commande enregistrée..."}
                 sort={sort}
                 setSort={setSort}

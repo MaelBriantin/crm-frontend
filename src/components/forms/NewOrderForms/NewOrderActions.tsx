@@ -12,6 +12,9 @@ type NewOrderActionsProps = {
 };
 
 export const NewOrderActions: React.FC<NewOrderActionsProps> = () => {
+
+    const [loading, setLoading] = React.useState<boolean>(false);
+
     const {step, setStep, nextMessage, previousMessage, disableNext, disablePrevious, maxStep} = useNewOrderActions();
     const {cart, newOrder, fetchOrders, orderValidationForm} = useStoreOrders();
     const {fetchProducts} = useStoreProducts();
@@ -20,8 +23,10 @@ export const NewOrderActions: React.FC<NewOrderActionsProps> = () => {
     const {closeModal} = useModal();
 
     const refreshData = async () => {
-        fetchOrders();
-        fetchProducts();
+        setLoading(true)
+        await fetchOrders();
+        await fetchProducts();
+        setLoading(false)
     }
 
     const saveOrder = () => {
@@ -61,6 +66,7 @@ export const NewOrderActions: React.FC<NewOrderActionsProps> = () => {
                 disabled={disableNext}
                 value={nextMessage}
                 onClick={handleNext}
+                loading={step === maxStep ? loading : false}
             />
         </Container>
     );
