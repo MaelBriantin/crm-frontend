@@ -18,6 +18,7 @@ export type OrderType = {
     status: string;
     created_at: string;
     updated_at: string;
+    is_paid: boolean;
 };
 
 export type OrderOptionsType = {
@@ -25,6 +26,7 @@ export type OrderOptionsType = {
 };
 
 export type OrderDetailsType = {
+    paid_at: string;
     id: number;
     order_number: number;
     order_date: string;
