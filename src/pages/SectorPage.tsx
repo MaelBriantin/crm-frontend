@@ -64,12 +64,12 @@ export const SectorPage: React.FC = () => {
             // ]
         },
         {
-            text: 'Communes',
+            text: 'Commune(s) rattachée(s) au secteur',
             value: 'postcodes_list',
             sortable: false,
             type: 'chips',
             limit: 4,
-            width: '60%'
+            width: '50%'
         },
         // {
         //     text: 'Nombre de communes',
@@ -83,11 +83,19 @@ export const SectorPage: React.FC = () => {
         //     // ]
         // },
         {
-            text: 'Nombre de clients',
+            text: 'Nombre de clients sur le secteur',
             value: 'customers_count',
             sortable: true,
             type: 'number',
-            width: '15%',
+            width: '12.5%',
+            maxWidth: '100px',
+        },
+        {
+            text: 'Montant TTC moyen par commande',
+            value: 'average_amount',
+            sortable: true,
+            type: 'currency',
+            width: '12.5%',
             maxWidth: '100px',
         },
         {

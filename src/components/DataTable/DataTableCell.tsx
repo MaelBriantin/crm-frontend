@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Chip} from '../global';
-import {filterOut, getValue} from '../../utils/helpers/spells.ts';
+import {filterOut, getValue, isEmpty} from '../../utils/helpers/spells.ts';
 import {DataTableCellProps, dataTableTypeList} from '../../types/DataTableTypes.ts';
 import {getRowValueAndHighlight} from '../../utils/dataTableUtils.ts';
 import {theme} from '../../assets/themes';
@@ -85,7 +85,7 @@ export const DataTableCell: React.FC<DataTableCellProps> = ({
                     $color={{background: color?.background || '', color: color?.text || ''}}
                 >{ String(rowValue) }</TableCellValue>
             )}
-            {(column.type === 'currency') && (
+            {(column.type === 'currency' && Boolean(rowValue)) && (
                 <TableCellValue
                     $color={{background: color?.background || '', color: color?.text || ''}}
                 >{ `${rowValue} €` }</TableCellValue>
