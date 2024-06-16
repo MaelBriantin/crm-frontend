@@ -9,9 +9,9 @@ import {theme} from "../../assets/themes";
 import {useStoreOrderDetails} from "../../stores/useStoreOrderDetails.ts";
 
 type OrderDetailsProps = {
-    isPaid: boolean;
+    isPaid?: boolean;
 }
-export const OrderDetails: React.FC<OrderDetailsProps> = ({ isPaid }) => {
+export const OrderDetails: React.FC<OrderDetailsProps> = ({ isPaid = true }) => {
 
     const {orderDetails, isOrderPaid, setIsOrderPaid, loadingOrderDetails} = useStoreOrderDetails();
 
@@ -38,7 +38,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({ isPaid }) => {
         {label: "", value: ""},
         {label: "Moyen de paiement", value: orderDetails?.payment_method_label},
         {
-            label: `Statut du paiement au ${new Date().toLocaleDateString()}`,
+            label: `Statut du paiement au ${new Date().toLocaleDateString('fr-FR')}`,
             value: orderDetails?.payment_status_label
         },
     ];
@@ -84,11 +84,12 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({ isPaid }) => {
                                 arrayValues={orderDetailsMap}
                                 width={'400px'}
                             />
-                            <DetailGroup
+                            {!customerContext && 
+                              <DetailGroup
                                 label={'Informations Client'}
                                 arrayValues={customerDetailsMap}
                                 width={'400px'}
-                            />
+                            />}
                         </InfoContainer>
                         <ProductContainer>
                             <ProductDetailTable
