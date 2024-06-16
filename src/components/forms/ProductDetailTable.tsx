@@ -81,7 +81,7 @@ const Container = styled.div`
     align-items: flex-start;
     justify-content: center;
     gap: 10px;
-    padding: 0 10px;
+    padding-right: 10px;
 `;
 
 const Label = styled.div`
