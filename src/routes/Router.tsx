@@ -12,7 +12,7 @@ import {
     CustomerPage
 } from "../pages";
 import { ProductPage } from "../pages/ProductPage.tsx";
-import { OrderPage } from "../pages/OderPage.tsx";
+import { OrderPage } from "../pages/OrderPage.tsx";
 
 export const Router = () => {
     useCheckAuth();
