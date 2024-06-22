@@ -35,7 +35,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
     },
     { label: "Email", value: orderDetails?.customer.email || "Non renseigné" },
     { label: "", value: "" },
-    { label: "Secteur", value: orderDetails?.sector.name },
+    { label: "Secteur", value: orderDetails?.sector?.name || 'Hors secteur' },
   ];
 
   const orderDetailsMap = [
