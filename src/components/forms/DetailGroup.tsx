@@ -4,7 +4,7 @@ import {theme} from "../../assets/themes";
 import styled from "styled-components";
 
 type DetailGroupProps = {
-    arrayValues: {label: string, value: string | number | undefined}[];
+    arrayValues: {label: string | React.ReactNode, value: string | number | undefined | React.ReactNode}[];
     label?: string;
     width?: string;
 }

@@ -4,8 +4,8 @@ import React from "react";
 
 
 type DetailRowProps = {
-    label: string;
-    value: string;
+    label: string | React.ReactNode;
+    value: string | React.ReactNode;
 }
 
 export const DetailRow: React.FC<DetailRowProps> = ({ label, value }) => {
