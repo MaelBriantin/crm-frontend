@@ -51,13 +51,14 @@ export const LoginForm = () => {
       </div>
       <div className={"button"}>
         <Button
+          widthProp="300px"
           variant="large"
           value={"Connexion"}
           onClick={login}
           loading={loading}
         />
         <DiscreteButton
-          value="Mot de passe oublié ?"
+          value="Mot de passe oublié"
           color={theme.colors.primary}
           onClick={() => {}}
         />
@@ -72,18 +73,21 @@ const LoginFormStyle = styled.form`
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
-  height: 400px;
+  padding: 20px 0;
+  //height: 400px;
   width: 400px;
   border-radius: ${theme.materialDesign.borderRadius.default};
   box-shadow: ${theme.shadows.default};
   background: white;
+  gap: 20px;
   .welcome {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     font-family: ${theme.fonts.family.dancing};
-    font-size: xxx-large;
+    font-size: ${theme.fonts.size.P6};
+    margin-bottom: 40px;
   }
   .input {
     display: flex;
