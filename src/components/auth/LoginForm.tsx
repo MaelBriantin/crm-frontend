@@ -1,15 +1,16 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { MdAlternateEmail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { Button, DiscreteButton, Input } from "../global";
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { theme } from "../../assets/themes/index.ts";
 import { useNavigate } from "react-router-dom";
 import { useLoginService } from "../../hooks/auth/useLogin.ts";
 
 export const LoginForm = () => {
-  const [email, setEmail] = useState("test@example.com");
-  const [password, setPassword] = useState("azerty");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [selectedSalutation, setSelectedSalutation] = useState('');
   const { loginService, loading } = useLoginService();
   const navigate = useNavigate();
 
@@ -24,16 +25,31 @@ export const LoginForm = () => {
     loginService(email, password, navigate);
   };
 
+  useEffect(() => {
+    const salutations = [
+      "Bonjour !",
+      "Hey !",
+      "Salut !",
+      "Bienvenue !",
+    ];
+
+    setSelectedSalutation(
+      salutations[Math.floor(Math.random() * salutations.length)],
+    );
+  }, []);
+
   return (
     <LoginFormStyle>
-      <div className={"welcome"}>Bonjour !</div>
+      <div className={"welcome"}>
+        {selectedSalutation || "Bonjour !"}<Hello>👋</Hello>
+      </div>
       <div className={"input"}>
         <Input
           variant="large"
           textColor={theme.colors.greyDark}
           placeholder={"Email"}
           icon={<MdAlternateEmail />}
-          width={"300px"}
+          width={"400px"}
           type={"email"}
           value={email}
           onChange={handleChangeEmail}
@@ -43,7 +59,7 @@ export const LoginForm = () => {
           textColor={theme.colors.greyDark}
           placeholder={"Mot de passe"}
           icon={<RiLockPasswordFill />}
-          width={"300px"}
+          width={"400px"}
           type={"password"}
           value={password}
           onChange={handleChangePassword}
@@ -51,16 +67,17 @@ export const LoginForm = () => {
       </div>
       <div className={"button"}>
         <Button
-          widthProp="300px"
+          widthProp="400px"
           variant="large"
           value={"Connexion"}
+          disabled={email === "" || password === ""}
           onClick={login}
           loading={loading}
         />
         <DiscreteButton
           value="Mot de passe oublié"
           color={theme.colors.primary}
-          onClick={() => {}}
+          onClick={() => navigate("/forgot-password")}
         />
       </div>
     </LoginFormStyle>
@@ -73,28 +90,43 @@ const LoginFormStyle = styled.form`
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
-  padding: 20px 0;
+  padding: 40px;
   //height: 400px;
   width: 400px;
   border-radius: ${theme.materialDesign.borderRadius.default};
   box-shadow: ${theme.shadows.default};
   background: white;
-  gap: 20px;
+  gap: 30px;
   .welcome {
+    margin: 20px 0;
+    width: 100%;
+    word-break: break-word;
     display: flex;
+    gap: 10px; 
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    font-family: ${theme.fonts.family.dancing};
+    font-size: ${theme.fonts.size.P5};
+  }
+  .emoji {
+    width: 100%;
+    word-break: break-word;
+    display: flex;
+    text-align: center;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     font-family: ${theme.fonts.family.dancing};
-    font-size: ${theme.fonts.size.P6};
-    margin-bottom: 40px;
+    font-size: ${theme.fonts.size.P4};
+    margin-bottom: 10px;
   }
   .input {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     flex-direction: column;
-    gap: 20px;
+    gap: 30px;
   }
   .button {
     display: flex;
@@ -103,4 +135,36 @@ const LoginFormStyle = styled.form`
     align-items: center;
     gap: 10px;
   }
+`;
+
+const Wave = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(14deg);
+  }
+  20% {
+    transform: rotate(-8deg);
+  }
+  30% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  60% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+`;
+
+const Hello = styled.div`
+  display: inline-block;
+  animation: ${Wave} 1s ease-in-out infinite;
 `;
