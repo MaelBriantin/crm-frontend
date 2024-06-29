@@ -144,6 +144,7 @@ export const ResetPasswordForm = () => {
           onClick={() => {
             navigate("/home");
           }}
+          disabled={loading}
         />
       </div>
     </LoginFormStyle>

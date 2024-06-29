@@ -25,7 +25,7 @@ export const ForgotPasswordForm = () => {
   const {callToast} = useToast();
 
   const forgotPasswordRequest = async() => {
-    forgotPassword(email, callToast, setLoading);
+    forgotPassword(email, callToast, setLoading, navigate);
   };
 
     return (
@@ -66,6 +66,7 @@ export const ForgotPasswordForm = () => {
             value="Retour au formulaire de connexion"
             color={theme.colors.primary}
             onClick={() => navigate("/login")}
+            disabled={loading}
           />
         </div>
       </LoginFormStyle>
