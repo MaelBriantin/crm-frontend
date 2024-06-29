@@ -1,4 +1,4 @@
-import {ReactNode} from "react";
+import { ReactNode } from "react";
 
 /**
  * Checks if an array or object is empty.
@@ -244,3 +244,9 @@ export const getValue = <T extends object, R = ReactNode>(obj: T, key: string): 
   }
   return value as R;
 }
+
+export const validateEmail = (email: string) => {
+  //const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const regex = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
+  return regex.test(email);
+};
