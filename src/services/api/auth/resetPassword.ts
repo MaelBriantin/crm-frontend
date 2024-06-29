@@ -15,9 +15,9 @@ export const resetPassword = async (
   props: ResetPassordPropsType,
   callToast: CallToastProps,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  navigate: (path: string) => void
+  navigate: (path: string) => void,
 ) => {
-  const {email, token, password, password_confirmation} = props;
+  const { email, token, password, password_confirmation } = props;
   try {
     setLoading(true);
     const response: APIResponseFormat<ResetPasswordType> = await fetchAPI(
@@ -33,25 +33,26 @@ export const resetPassword = async (
     handleAPIResponse<ResetPasswordType>(
       response,
       async () => {
-        callToast(
-          "success",
-          "Mot de passe modifié avec succès 👌",
-        );
+        callToast("success", "Mot de passe modifié avec succès 👌");
         setLoading(false);
-        navigate('/');
+        navigate("/");
       },
       (error) => {
-        error.message === "This password reset token is invalid." &&
+        if (error.message === "This password reset token is invalid.") {
           callToast(
             "error",
             "Vous n'êtes pas autorisé à effectuer cette action. Si vous êtes arrivé ici par un lien de réinitialisation, veuillez vous assurer que celui-ci n'est pas périmé (les liens ont une durée de vie de soixante minutes) ou qu'il n'a pas déjà été utilisé.",
-            12000
+            12000,
           );
-        error.message === "Please wait before retrying." &&
+        } else if (error.message === "Please wait before retrying.") {
           callToast(
             "info",
             "Merci de patienter quelques instans avant de renouveler votre demande.",
+            4000,
           );
+        } else {
+          callToast("error", error.message, 4000);
+        }
         setLoading(false);
       },
     );

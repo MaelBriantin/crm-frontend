@@ -10,6 +10,7 @@ export const forgotPassword = async (
   email: string,
   callToast: CallToastProps,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  navigate: (path: string) => void
 ) => {
   try {
     setLoading(true);
@@ -26,6 +27,7 @@ export const forgotPassword = async (
           "Un email contenant un lien de réinitialisation vient d'être envoyé à l'adresse indiquée 👍",
         );
         setLoading(false);
+        navigate("/");
       },
       (error) => {
         error.message === "We can't find a user with that email address." &&
