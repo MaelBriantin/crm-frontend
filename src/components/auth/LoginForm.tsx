@@ -6,11 +6,12 @@ import { useState, ChangeEvent, useEffect } from "react";
 import { theme } from "../../assets/themes/index.ts";
 import { useNavigate } from "react-router-dom";
 import { useLoginService } from "../../hooks/auth/useLogin.ts";
+import { validateEmail } from "../../utils/helpers/spells.ts";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [selectedSalutation, setSelectedSalutation] = useState('');
+  const [selectedSalutation, setSelectedSalutation] = useState("");
   const { loginService, loading } = useLoginService();
   const navigate = useNavigate();
 
@@ -26,22 +27,21 @@ export const LoginForm = () => {
   };
 
   useEffect(() => {
-    const salutations = [
-      "Bonjour !",
-      "Hey !",
-      "Salut !",
-      "Bienvenue !",
-    ];
+    const salutations = ["Bonjour !", "Hey !", "Salut !", "Bienvenue !"];
 
     setSelectedSalutation(
       salutations[Math.floor(Math.random() * salutations.length)],
     );
   }, []);
 
+  const isValidateLoginForm =
+    email !== "" && password !== "" && validateEmail(email);
+
   return (
     <LoginFormStyle>
       <div className={"welcome"}>
-        {selectedSalutation || "Bonjour !"}<Hello>👋</Hello>
+        {selectedSalutation || "Bonjour !"}
+        <Hello>👋</Hello>
       </div>
       <div className={"input"}>
         <Input
@@ -70,7 +70,7 @@ export const LoginForm = () => {
           widthProp="400px"
           variant="large"
           value={"Connexion"}
-          disabled={email === "" || password === ""}
+          disabled={!isValidateLoginForm}
           onClick={login}
           loading={loading}
         />
@@ -102,7 +102,7 @@ const LoginFormStyle = styled.form`
     width: 100%;
     word-break: break-word;
     display: flex;
-    gap: 10px; 
+    gap: 10px;
     text-align: center;
     justify-content: center;
     align-items: center;
