@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { Button, DiscreteButton, Input, Note } from "../global";
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { theme } from "../../assets/themes/index.ts";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IoIosCheckmarkCircle } from "react-icons/io";
@@ -20,6 +20,10 @@ export const ResetPasswordForm = () => {
   const location = useLocation();
 
   const { token, email } = location.state || {};
+
+  useEffect(() => {
+    (!token || !email) && navigate("/");
+  }, [token, email, navigate]);
 
   const handleChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
@@ -64,8 +68,9 @@ export const ResetPasswordForm = () => {
     password !== "" &&
     requirements.every((req) => containElement(req.check, password));
 
-  const resetPasswordRequest = () => {
-    resetPassword(
+  const resetPasswordRequest = async(e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    await resetPassword(
       {
         email,
         token,
@@ -79,7 +84,7 @@ export const ResetPasswordForm = () => {
   };
 
   return (
-    <LoginFormStyle>
+    <ResetPasswordFormStyle>
       <div className={"welcome"}>Enregistrer un nouveau mot de passe</div>
       <Note
         message={`Modification de mot de passe demandée pour le compte associé à l'adresse email : ${email}`}
@@ -147,11 +152,11 @@ export const ResetPasswordForm = () => {
           disabled={loading}
         />
       </div>
-    </LoginFormStyle>
+    </ResetPasswordFormStyle>
   );
 };
 
-const LoginFormStyle = styled.form`
+const ResetPasswordFormStyle = styled.form`
   font-size: ${theme.fonts.size.XXS};
   display: flex;
   flex-direction: column;

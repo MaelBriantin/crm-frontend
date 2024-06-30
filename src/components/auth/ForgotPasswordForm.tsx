@@ -24,12 +24,13 @@ export const ForgotPasswordForm = () => {
 
   const {callToast} = useToast();
 
-  const forgotPasswordRequest = async() => {
+  const forgotPasswordRequest = async(e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
     forgotPassword(email, callToast, setLoading, navigate);
   };
 
     return (
-      <LoginFormStyle>
+      <ForgotPasswordFormStyle>
         <div className={"welcome"}>Vous avez oublié votre mot de passe ?</div>
         <div className={"sentence"}>
           Ne vous en faites pas, cela arrive... Renseignez l'adresse email
@@ -69,11 +70,11 @@ export const ForgotPasswordForm = () => {
             disabled={loading}
           />
         </div>
-      </LoginFormStyle>
+      </ForgotPasswordFormStyle>
     );
   };
 
-  const LoginFormStyle = styled.form`
+  const ForgotPasswordFormStyle = styled.form`
   font-size: ${theme.fonts.size.XXS};
   display: flex;
   flex-direction: column;
