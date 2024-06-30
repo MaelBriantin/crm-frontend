@@ -27,7 +27,7 @@ export const LoginForm = () => {
   };
 
   useEffect(() => {
-    const salutations = ["Bonjour !", "Hey !", "Salut !", "Bienvenue !"];
+    const salutations = ["Bonjour", "Hey", "Salut", "Bienvenue"];
 
     setSelectedSalutation(
       salutations[Math.floor(Math.random() * salutations.length)],
@@ -102,7 +102,7 @@ const LoginFormStyle = styled.form`
     width: 100%;
     word-break: break-word;
     display: flex;
-    gap: 10px;
+    gap: 20px;
     text-align: center;
     justify-content: center;
     align-items: center;
