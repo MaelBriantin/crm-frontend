@@ -47,19 +47,19 @@ const FontTransition = keyframes`
     50% {
         opacity: 0;
         font-family: ${theme.fonts.family.dancing};
-        font-size: ${theme.fonts.size.P2};
+        font-size: ${theme.fonts.size.P3};
         transform: translateY(0);
     }
     75% {
         opacity: 0;
         font-family: ${theme.fonts.family.dancing};
-        font-size: ${theme.fonts.size.P2};
+        font-size: ${theme.fonts.size.P3};
         transform: translateY(-100%);
     }
     100% {
         opacity: 1;
         font-family: ${theme.fonts.family.dancing};
-        font-size: ${theme.fonts.size.P2};
+        font-size: ${theme.fonts.size.P3};
         transform: translateY(0);
     }
 `
@@ -70,12 +70,12 @@ const NavbarItemStyle = styled.div<{ $selected: boolean, $disconnect?: boolean, 
     font-size: ${theme.fonts.size.P0};
     user-select: none;
     width: 85%;
-    height: 25px;
+    height: ${theme.materialDesign.height.default};
     display: flex;
     justify-content: flex-start;
     align-items: center;
     gap: 10px;
-    padding: 5px 10px;
+    padding: 0px 10px;
     transition: all 250ms;
     border-radius: ${theme.materialDesign.borderRadius.rounded};
     ${({$disconnect}): false | RuleSet<object> | undefined => $disconnect && css`
@@ -113,7 +113,9 @@ const NavbarItemStyle = styled.div<{ $selected: boolean, $disconnect?: boolean, 
         text-overflow: ellipsis;
         ${({$selected}): false | RuleSet => $selected && css`
             font-family: ${theme.fonts.family.dancing};
-            font-size: ${theme.fonts.size.P2};
+            font-size: ${theme.fonts.size.P3};
+            margin-top: 5px;
+            //color: ${theme.colors.primary};
             animation: ${FontTransition} 250ms linear;
         `}
     }

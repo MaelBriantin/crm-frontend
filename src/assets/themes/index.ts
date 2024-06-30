@@ -66,7 +66,7 @@ const fonts= {
     },
     family: {
         source: "'Source Sans 3', sans-serif",
-        dancing: "'Dancing Script', sans-serif"
+        dancing: "'Cookie', sans-serif"
     }
 };
 const materialDesign = {

@@ -102,7 +102,7 @@ const ToastStyle = styled.div<{ $color: string, $show: boolean }>`
         justify-content: space-between;
         align-items: center;
         background-color: ${({ $color }): string => $color};
-        font-family: 'Dancing Script', 'sans-serif';
+        font-family: ${theme.fonts.family.dancing};
         font-size: ${theme.fonts.size.P3};
     }
     .closeIcon {
